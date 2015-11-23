@@ -1,0 +1,62 @@
+   Unknown
+
+   From :     Bailey, Frank T (GOV) [frank.bailey@alaska.gov]
+   Sent:      Wednesday, June 25, 2008 4:18 PM
+   To:        ExternalEmailgsp; 'fek9wnr@yahoo.com'; 'krisandclark@yahoo.com'; 'ivyfrye@yahoo.com'
+   Cc:        Nizich; Michael A (GOV); Mason; Janice L (GOV)
+   Subject : FW: 06/28/08 BLACKBERRY INTERNET SERVICE Unscheduled Service Interruption
+  FYI...8hrs is a long time for blackberries to be quiet. Kami called and   (calaska.oov emails will work
+  during that time, but other addresses people use on their blackberries (yahoo, gmail, etc) could be out of
+  service from 8pm Saturday to 4am Sunday.
+
+   F
+
+
+  From : Clark, Kami S (GOV)
+  Sent: Wednesday, June 25, 2008 4:07 PM
+  To: Bailey, Frank T (GOV)
+  Subject: FW: 06/28/08 BLACKBERRY INTERNET SERVICE Unscheduled Service Interruption
+
+  You should receive this notification but, just in case you didn't please make sure the Governor is also
+  aware of the outage Saturday, June 28th 8:00 pm to Sunday, June 29th 4:00 am.
+
+
+  From : Help, Center (DOA sponsored) [mailto:soa.help.center@alaska.gov]
+  Sent: Wednesday, June 25, 2008 11:20 AM
+  To: it-notification@list.state.ak.us
+  Subject : 06/28/08 BLACKBERRY INTERNET SERVICE Unscheduled Service Interruption
+
+
+
+
+  The Enterprise Technology Services Help Center has been advised of an upcoming service
+  interruption to the Blackberry data service for people who have their e-mail accounts tied to their
+  BlackBerry via BlackBerry Internet Service (BIS). This will not affect e-mail being delivered
+  through a BlackBerry Enterprise Server (BES), such as SOA Exchange accounts.
+
+  This outage is scheduled to occur on Saturday June 28, 2008. The outage time will begin at 8:00
+  PM Alaska Standard Time and ending on Sunday, June 29, 2008 at approximately 04:00 AM
+  Alaska Standard Time.
+
+  Impact: BlackBerry Internet Service (BIS) subscribers may be unable to send or receive
+  messages, use the BlackBerry. Internet Service web site, or perform activities such as creating
+  new accounts, accessing their internet mailbox, integrating third-party email accounts, or
+  viewing email attachments during the maintenance.
+
+  Research In Motion is scheduled to perform a BlackBerry Internet Service upgrade to v2.5.
+  There will be an estimated 8-hour outage window during this upgrade.
+
+  This will affect only the BlackBerry Internet Service (BIS) Data use of the blackberry. Phone
+  services and e-mail being delivered via the BlackBerry Enterprise Server (BES) such as SOA
+  Exchange accounts will not be affected. For more details, please review USD req97820.
+
+            Barbara, ETS Help Center
+
+                                                                                                 ROSTON 02651
+  10/14/2009
+
+
+
+
+Released to msnbc.com by the state of Alaska and presented by Crivella West
+

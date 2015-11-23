@@ -1,0 +1,234 @@
+Searchable Analytics at www.CrivellaWest.com                     Posted by msnbc.com, Mother Jones and Pro Publica. http://palinemail.msnbc.msn.com
+
+
+
+
+                                                                                                                             Page 1 of 4
+
+
+
+                  Unknown
+
+                   From :    Mills, Andy J (GOV) [/O=SOA/OU=FIRST ADMINISTRATIVE
+                             GROUP/CN=RECIPIENTS/CN=AJMILLS]
+                   Sent:     Thursday, November 29, 2007 12:37 PM
+                   To:       Keopple; Matthew T (DOT)
+                   Cc:      Von Scheben; Leo (DOT); Palin; Sarah H (GOV); Leschper, Beth (GOV)
+                   Subject: RE: Voices Across Alaska: State Budget Priorities
+
+                Thank you again for input.
+                Regards-
+                Andy Mills
+                Office of Governor Sarah Palin
+                Webmaster
+
+
+                From: Keopple, Matthew T (DOT)
+                Sent: Thursday, November 29, 2007 12:01 PM
+                To: Mills, Andy J (GOV)
+                Cc: Von Scheben, Leo (DOT); Leschper, Beth (GOV); Palin, Sarah H (GOV)
+                Subject: RE: Voices Across Alaska: State Budget Priorities
+
+                Andy,
+
+                The way this is setup is not very intuitive . I am a Network Specialist and the SE Region Web Manager and this
+                was not very intuitive to me and others had the same issue I experienced . The prominent blue banner links as
+                they are will not work with the American with Disabilities Act(ADA) requirements because the tags on the banner
+                only show Voices Across Alaska : State Budget Priorities and not dick here to go to the survey , blind people will
+                not be able to read the text in the image of the banner directing them that this is a link to the survey ... This is why
+                in the Statewide Web Functional Work Group it was previously decided that links shouldn 't be in banners unless
+                the alt tags (mouse over message) in the banner specifies what it links to and as a rule banner links should be
+                avoided if possible. I know it makes our sites not as flashy to the eye but it makes it easier to navigate especially
+                for those that may be disabled.
+
+                Also, the notification that was sent to all State Employees shows links that most people would expect to go to the
+                survey which don't. I can understand your reason behind doing it this way soft linking as you call it, but there are
+                better ways of meeting your needs that are more intuitive to the common user, which I will point out below. If it
+                isn't intuitive to me I can see many other people that it would not be intuitive for as well.
+
+               The links provided in the Statewide employee email notification didn't go to the news release instead it went to
+               either Governor Palins online office page which has a banner link to the survey or to the main State of Alaska
+               page which also has a banner with a link which was not intuitive because these banners look very similar to the
+               banner in the notification that was sent out that links to nothing. Most people naturally look for a web link not
+               banner links to the survey and the only link that looks like it may go to the survey is Gov. Invites Public Input on
+               Budget which goes right back to the news release.
+
+               It would make more sense to have the link inside the news release that goes directly to the survey or if you want
+               the ability to update the link you could setup a redirect link on the State Web Server that redirects to the survey,
+               this way you don't have to change the link just change the server redirect . This would allow for the redirect link to
+               be sent out in the notification that would navigate the user directly to the survey and would still meet your needs of
+               being able to update without resending the notification . Most users wouldn't be aware they are clicking a redirect
+               link and not a hard link.
+
+               I have done this for many of the SE Region DOT project websites because people bookmark old websites and we
+               need to redirect them to the current one without having to send a notification out, or another press release to the
+
+
+
+               8/24/2009
+
+
+
+                                                                                                                                PRA GSP01_0008208
+Searchable Analytics at www.CrivellaWest.com                      Posted by msnbc.com, Mother Jones and Pro Publica. http://palinemail.msnbc.msn.com
+
+
+
+
+                                                                                                                              Page 2 of 4
+
+
+                 public. This is done by setting all the old web pages with redirects that point to the new web pages and it also
+                 gives the ability to setup a timed notification to the user that the web page has been updated and they should
+                 update their saved links. This is seemless and beneficial to the public, you may want to consider using this
+                 method in the future instead of putting the links inside other links which can lead to confusion. This also avoids
+                 users from having dead links to sites that may have been updated to a new location.
+
+                 We must understand as Web Managers that we need to setup our sites for people that may not be that familiar
+                 with the internet yet and also meet the ADA requirements. The websites that I have setup have been setup so
+                 they are intuitive to people that are not that proficient with navigating through web sites. The less confusion to the
+                 common citizen the more useful the sites will be for them. Studies have been done that show people lose interest
+                 or get confused or lost if they have to click too many links to get to the information they are looking for. Some
+                 things to consider. Thanks for the response.
+
+                Matt Keopple
+                Microcomputer/Network Specialist
+                AKDOT SE Region Web Manager
+                (907)465-4595
+
+
+                From: Mills, Andy J (GOV)
+                Sent: Thursday, November 29, 2007 10:27 AM
+                To: Keopple, Matthew T (DOT)
+                Cc: Von Scheben, Leo (DOT); Leschper, Beth (GOV); Palfn, Sarah H (GOV)
+                Subject: RE: Voices Across Alaska: State Budget Priorities
+
+                Mr. Keopple-
+                Thank you for the email.
+                You are correct that the two links on the notification below go to the State and Governor's websites.
+                That is because both have prominent blue banners that link to the survey. And there is a reason for this.
+
+                The way the survey is setup, we can change the link to the survey and not have to send out a new notification,
+                just adjust the links on the State and Governor' s pages (we call it "soft linking"... instead of sending a "hard link'
+                that cannot be adjusted at a later date).
+
+                If you'd like a direct link to survey, it can be found at
+                http://www.surveymonkey.com/s.aspx?sm=SdLawkaxb2H6o7oAkmv2ZA 3d 3d
+
+                (Please note this link may change before the survey is finished)
+
+                If there is anything else I can provide you, please feel free to let me know.
+
+                Regards-
+                Andy Mills
+                Office of Governor Sarah Palin
+                Webmaster
+
+
+
+
+                From: Keopple, Matthew T (DOT)
+                Sent: Wednesday, November 28, 2007 3:22 PM
+                To: Palin, Sarah H (GOV)
+                Cc: Von Scheben, Leo (DOT)
+                Subject: RE: Voices Across Alaska: State Budget Priorities
+
+                Governor Palin,
+
+               You may want to have your staff check the link to the survey since it only points right back to the main State of
+               Alaska page. There is no link to any survey on the main State of Alaska page only a link to the news
+
+
+                8/24/2009
+
+
+
+                                                                                                                                 PRA GSPO1_0008209
+Searchable Analytics at www.CrivellaWest.com                            Posted by msnbc.com, Mother Jones and Pro Publica. http://palinemail.msnbc.msn.com
+
+
+
+
+                                                                                                                                     Page 3 of 4
+
+
+                 release. The link on the news release does exactly what the one below does which is point back to the
+                 main State of Alaska page, so nobody will be able to participate in this survey until this is fixed. Thanks.
+
+                 Matt Keopple
+                 Microcomputer/Network Specialist
+                 AKDOT SE Region Web Manager
+                 (907)465-4595
+
+
+                 From : Commissioner, DOT (DOT sponsored)
+                 Sent: Wednesday, November 28, 2007 9:30 AM
+                 To: DOT All Staff
+                 Subject: FW: Voices Across Alaska: State Budget Priorities
+
+                Attached is the Governor's Press release on the State's Budget Priorities Survey. I know that
+                you all have received a copy of this. I want to encourage you to take a couple of minutes and
+                complete the survey. It is an opportunity for each and every Alaskan to participate in setting the
+                state's priorities.
+
+                Leo
+
+
+
+                From: Governor Sarah Palin (GOV sponsored)
+                Sent: Wednesday, November 21, 2007 3:48 PM
+                To: SOA All employees
+                Subject: Voices Across Alaska: State Budget Priorities
+
+
+                 0   Right-click here to download pictures . To help protect your privacy, Outlook prevented automatic download of
+                     this picture from the Internet.
+
+
+
+
+                Good afternoon! I am inviting all Alaskans to become involved in the state budget
+                process by participating in a web survey.
+
+                Voices Across Alaska: State Budget Priorities is an opportunity for all Alaskans to
+                provide your opinion on how the state's projected budget surplus should be
+                saved and invested.
+
+                We all know oil prices will not remain at record levels forever , and planning
+                ahead will help ensure that we really are kicking off a new era of tax stability.
+                Under ACES, surplus revenue of approximately $1.6 billion could be realized this
+                year.
+
+
+
+                8/24/2009
+
+
+
+                                                                                                                                       PRA_GSP01_0008210
+Searchable Analytics at www.CrivellaWest.com      Posted by msnbc.com, Mother Jones and Pro Publica. http://palinemail.msnbc.msn.com
+
+
+
+
+                                                                                                   Page 4 of 4
+
+
+                 I hope you will take advantage of this opportunity to become part of the process.
+
+                 We will use your input to complete the FY2009 budget plan, which will be
+                 released to the public and the Legislature for consideration in mid-December.
+
+                 Surveys will be accepted through 5 p.m. on December 3, 2007.
+
+                 The survey can be accessed at www.alaska .gov or www. gov.state.ak.us.
+
+
+
+
+                8/24/2009
+
+
+
+                                                                                                      PRA_GSP01_0008211
+

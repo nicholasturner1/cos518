@@ -1,0 +1,78 @@
+  Unknown
+
+  From :   Commissioners Office, DOA (DOA sponsored) [doa.commissioner@alaska.gov]
+  Sent :   Monday, May 19, 2008 8:50 AM
+  To:      Collins; Donna S (GOV); Mason; Janice L (GOV); Nizich; Michael A (GOV); Fenumiai; Gail M (GOV);
+           Parnell; Sean R (GOV); Fabrello; Michelle A (GOV); Leschper; Beth (GOV); Fagerstrom; Erika (GOV);
+           Crome; Cora J (GOV); Bavard; Mary Lou (GOV); Mills; Andy J (GOV); Buck; Hannah K (GOV); Wilson;
+           Lauri L (GOV); Palin; Sarah H (GOV); Rowland; Mindy B (GOV); Balash; Joseph R (GOV); Essary;
+           Karen S (GOV); Ruaro; Randall P (GOV); Clark; Kami S (GOV); Bailey; Frank T (GOV); Kim; Anna C
+           (GOV); Yocom; Lauren J (GOV); Palin; Todd (GOV sponsored)
+  Cc:      Dubey; Anand (DOA); Jones; Christopher M (DOA); Moyer; Janet A (DOA); Petro; Rachael A (DOA);
+           Beecher; Carol L (DOA)
+  Subject: Upcoming Power Outage at Juneau Datacenter - June 1
+  Governor's Office Staff:
+
+  We will have a major power outage at the Juneau Datacenter on June 1
+  between 2 a.m. and 2 p.m. I have spoken with the Acting Chief of Staff for
+  Governor Palin, the Deputy Chief of Staff for Lt. Governor Parnell, the Director
+  of the Division of Elections and the Director of the Office of Management and
+  Budget to identify critical Juneau email accounts that must be moved to the
+  Anchorage server in the event these accounts are needed during that
+  timeframe.
+
+  Your email account has been identified as one that needs to be available during
+  this power outage. This outage affects most services housed in or routed
+  through the Juneau Datacenter such as email boxes in Juneau and the
+  Juneau Wide Area Network (WAN). Your mailbox will be moved to Anchorage
+  prior to June 1St and moved back to Juneau after the power has been
+  restored.
+
+  Chris Jones from the Department of Administration, Enterprise Technology
+  Services (ETS) will be coordinating this move with you. He will be contacting
+  you the week of May 19th to arrange a convenient time to move your mailbox.
+  The mailboxes will be moved as.close to June 1St as possible as a slight
+  performance degradation can occur when your mailbox is in a different location
+  than you are. Your mailbox will be unavailable during the move which will
+  occur outside of normal business hours and can take between 30 minutes and
+  2-3 hours depending on the size of your mailbox. Please note that ETS is
+  coordinating this effort with the Office of the Governor's IT staff.
+
+  You should also know that during the outage on June 1St between 2am and
+  2prn,
+               ·   Email on Blackberries and other mobile devices will NOT work
+                   anywhere in the state.
+               ·   Web Mail will NOT work in Southeast and will only work outside of
+                   Southeast in State facilities that are connected to the State
+                   network.
+               ·   Mail using Outlook will ONLY work if your mailbox is not housed
+                   in Juneau.
+
+                                                                                        ROSTON 02482
+
+  10/14/2009
+
+
+
+
+Released to msnbc.com by the state of Alaska and presented by Crivella West
+  Please feel free to contact Chris Jones at 907-269-6705 or chris.jonesgalaska.gov If
+  you have any questions or concerns or would prefer to have your staff work with
+  Chris for you. Thank you in advance for your cooperation and we apologize for the
+  inconvenience this will cause.
+
+  Annette Kreitzer
+  Commissioner
+  Department of Administration
+
+
+
+
+                                                                     ROSTON 02483
+  10/14/2009
+
+
+
+
+Released to msnbc.com by the state of Alaska and presented by Crivella West
+

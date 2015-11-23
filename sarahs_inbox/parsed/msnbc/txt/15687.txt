@@ -1,0 +1,165 @@
+Searchable Analytics at www.CrivellaWest.com                       Posted by msnbc.com, Mother Jones and Pro Publica. http://palinemail.msnbc.msn.com
+
+
+
+
+            Unknown
+            From:                            Internet Mail Delivery [postmaster c@ancmaill .state.ak.usj
+            Sent:                            Monday, June 02, 2008 2:54 PM
+            To:                              Palin; Sarah (GOV sponsored)
+            Subject:                         Delivery Notification: Delivery has been delayed
+
+            Attachments:                     details.txt; AT1178550.txt
+
+
+
+
+             details.bct (338 B) ATT178550.txt (3.
+                                       KB)
+                                                     This report relates to a message you sent with the following
+            header fields:
+
+
+
+               Return-path: <govpalin@alaska.gov>
+
+               Return-path: <govpalin@alaska.gov>
+
+               Received: from tcp-daemon.ancmaill.state.ak.us by ancmaill.state.ak.us
+
+                 (iPlanet Messaging Server 5.2 HotFix 2.14 (built Aug 8 2006))
+
+                id <OKlU00DOlY9H96@ancmaill.state.ak.us>; Mon,
+
+                2 Jun 2008 14:53:41 -0800 (AKDT)
+
+               Received: from SOAANCMSGBHO2.soa.alaska.gov (localhost [127.0.0.1])
+
+                by ancmaill.state.ak.us
+
+                 (iPlanet Messaging Server 5.2 HotFix 2.14 (built Aug 8 2006))
+
+                with ESMTP id <OKIUOOBC8VOR7P@ancmaill.state.ak.us> for fek9wnr@yahoo.com;
+
+                Mon, 02 Jun 2008 13:43:40 -0800 (AKDT)
+
+               Received: from SOAANCMSGO1.soa.alaska.gov ([10.200.1.16])
+
+                by SOAANCMSGBHO2.soa.alaska.gov with Microsoft SMTPSVC(6.0.3790.3959); Mon,
+
+                02 Jun 2008 13:43:40 -0800
+
+               Date: Mon, 02 Jun 2008 13:43:39 -0800
+
+               From: "Palin, Sarah (GOV sponsored)" <govpalin@alaska.gov>
+
+               Subject: Fw: Select Benefits Members I Open Enrollment May 19 - June 6, 2008
+
+              To: fek9wnr@yahoo.com
+
+              Message-id: <4C91C08B56668940AE2333F1BOFE25F4152BAB@SOAANCMSGOl.soa.alaska.gov>
+
+              MIME-version: 1.0
+
+              X-MIMEOLE: Produced By Microsoft Exchange V6.5
+
+              Content-type: multipart/alternative;
+
+                boundary="Boundary_(ID_2eP+p5uuua+7swtm5EAKZw)"
+
+                                                                             1
+
+
+
+
+                                                                                                                       PRA GSP01_0018668
+Searchable Analytics at www.CrivellaWest.com         Posted by msnbc.com, Mother Jones and Pro Publica. http://palinemail.msnbc.msn.com
+
+
+
+
+               Content-class: urn:content- classes : message
+
+               Importance: high
+
+               X-Priority: 1
+
+               Thread-topic :   Select . Benefits Members I Open Enrollment May 19 - June 6, 2008
+
+               Thread - index: Aci56wyw2a5s6DMZQFC4QrXDUHjRWwAAOOfQAsDkdrAAAolShg==
+
+               X-MS-Has -Attach:
+
+               X-MS-TNEF-Correlator:
+
+               X-OriginalArrivalTime: 02 Jun 2008 21:43:40.0607 (UTC)
+
+                FILETIME=[B8C7ECFO:01C8C4F9]
+
+
+
+            Your message has been enqueued and undeliverable for 1 hour
+
+            to the. following recipients:
+
+
+
+               Recipient address: fek9wnr@yahoo.com
+
+               Reason : unable to deliver this message after 1 hour
+
+
+
+
+            Delivery attempt history for your mail:
+
+
+
+            Mon,   2 Jun 2008 14:34:13 -0800 (AKDT)
+
+            Too many failures to this host during this run; skipping this host: Try again later
+
+
+
+            Mon,   2 Jun 2008 14:01:45 - 0800 (AKDT)
+
+            Too many failures to this host during this run; skipping this host: Couldn't deliver
+
+
+
+            Mon,   2 Jun 2008 13:43:48 -0800 (AKDT)
+
+            Too many failures to this host during this run; skipping this host: Try again later
+
+
+
+            The mail system will continue to try to deliver your message
+
+            for an additional 23 hours.
+
+
+
+
+                                                               2
+
+
+
+
+                                                                                                        PRA_GSP01_0018669
+Searchable Analytics at www.CrivellaWest.com       Posted by msnbc.com, Mother Jones and Pro Publica. http://palinemail.msnbc.msn.com
+
+
+
+
+                                                          details
+                 Reporting-MTA: dns;ancmaill . state.ak.us (tcp-daemon)
+                 original-recipient : rfc822;fek9wnr@yahoo.com
+                 Final - recipient : rfc822;fek9wnr@yahoo.com
+                 Action : delayed
+                 status: 4.4.7 (unable to deliver this message after 1 hour)
+
+
+
+
+                                                         Page 1
+

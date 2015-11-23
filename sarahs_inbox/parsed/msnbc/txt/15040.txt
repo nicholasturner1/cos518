@@ -1,0 +1,196 @@
+Searchable Analytics at www.CrivellaWest.com                    Posted by msnbc.com, Mother Jones and Pro Publica. http://palinemail.msnbc.msn.com
+
+
+
+
+                                                                                                                           Page 1 of 2
+
+
+                Unknown
+                From :     Kreitzer, Annette E (DOA) [annette.kreitzer@alaska.gov]
+                Sent:      Friday, May 09, 2008 1:43 PM
+                To:        Pritchett; Barbara A (DOA); Palin; Sarah H (GOV); Petro; Rachael A (DOA); Cayce; Sunny C (DOA)
+                Cc:        Dubey; Anand (DOA)
+                Subject: RE: customer complaint
+                Governor, Deputy Commissioner Petro, Director Dubey, Barbara:
+
+                I have asked for information about why the "dial zero for a live body" option doesn't work
+                for all CISCO phones. I have had a draft of an email to all State employees sitting on
+                my desk since I spoke with Mr. Hashagen, who called a Senate office today to say that
+                he has called my office 65 times with no answer.
+
+                Deputy Commissioner Kevin Brooks asked Mr. Hashagen for the numbers he's been
+                calling with no answer. He produced one number at Fish and Game. Kevin called the
+                number and in fact, it went to voice mail. Kevin then called the ASD for Fish and Game
+                to alert him to the problem.
+
+                We are working to resolve Mr. Hashagen 's concerns. I want to send out an email that
+                offers the best options as a reminder and not ones that don 't always work (zero for a
+                live body).
+                ak
+               From: Pritchett, Barbara A (DOA)
+               Sent: Friday, May 09, 2008 10:33 AM
+               To: Palin, Sarah H (GOV)
+               Cc: Kreitzer, Annette E (DOA); Dubey, Anand (DOA); Pritchett, Barbara A (DOA)
+               Subject: customer complaint
+
+               Good morning Governor Palin,
+               I had a customer call me yesterday morning . His name is Dave Hasha        and he lives in the Port
+               Tongass Village Association near Ketchikan . His number is Privilor] His address is P.O. Box 8311,
+                                                                                   ged
+               Ketchikan, Alaska 99901 . I promised him that I would email you and the Commissioner of the
+               Department of Administration with his complaint. I am also copying my division director since our division
+               is responsible for the State of Alaska's telecommunications . Mr. Hashagen stated that he had talked with
+               someone in the Commissioner ' s office several weeks ago, but he never heard from anyone via phone or
+               mail. He did not recall who he had talked with.
+
+               Here's the situation . The residents in his area no longer have land lines since cell phones were deployed.
+               In order to make a call , they have to row out into the middle of the bay to get cell phone connection. They
+               have to do this even in bad seas if a call needs to be made.
+
+               His complaint is not being able to talk to a live person whenever he calls State of Alaska numbers during
+               normal business hours (8:00am until 5:00pm ). All he gets are auto attendants or to leave a voice
+               message. He can't just sit in a skiff for hours waiting for someone to call him back . In addition, he has also
+               found that many state employees don't update their voice messages if they are on leave or out of their
+               office for an extended time. He would like to call and at least have the option to get to another live person.
+               He added , This is inefficient for the public and other government employees as well . We have advanced
+               communication technology ; but we have a breakdown in communication because State of Alaska
+               employees use that technology not to answer their phones. It should be a given if a customer calls the
+               state government, they are able to reach a live person.'
+
+               Under the previous Meridian phone system our telephones were programmed to either.
+
+
+
+               10/15/2009
+
+
+                                                                                                                              PRA GSP01_0017368
+Searchable Analytics at www.CrivellaWest.com                    Posted by msnbc.com, Mother Jones and Pro Publica. http://palinemail.msnbc.msn.com
+
+
+
+
+                                                                                                                         Page 2 of 2
+
+
+                   1)  go to the Information Operator when the customer pressed 0 during the voice message they were
+                      listening to
+                   2) go to another employee in that section that you are calling when you press 0
+                   3) go to the Division receptionist when you press 0
+
+               What I found by calling assorted numbers in my own division as a test and pressing 0 during the voice message:
+                  1) some went into a loop "insisting" you leave a voice message at the callee 's voice mailbox
+                  2) some rolled to the division receptionist
+                  3) the ETS Help Center' s staff personal lines roll to another Help Center analyst phone
+
+               We all know that the State of Alaska has a high staff turnover . I deal with State employees daily and whether they
+               are brand new to the State or have been with the state a long time, they need to be trained in their positions. Most
+               employees are not showed how to use their phones on their desk . Its assumed they know how to use any type of
+               phone. Each system has unique capabilities . The Enterprise Technology Services Division provides the following
+               site to assist in learning the current telephone system:
+               http/twwwstate ak us/local /akpages/ADMIN /infoIVolPphoneTrainingpp
+
+              However, most employees do not know this site even exists . Also, the site does not have the directions for State
+              of Alaska staff to reprogram their phone to redirect callers . I have included those directions below . Telephone
+              etiquette is no longer a priority . I too encounter auto attendants and voice mails all day long due to the nature of
+              my job duties , But I have the luxury of being able to sit at my desk to receive callbacks versus sitting in a skiff in
+              the middle of a bay waiting for a call from someone that I don 't know is even going to call me back. During my 20
+              years as a State of Alaska employee , I have seen a serious decline in quality customer service . We seem to be
+              making it harder for the public to perform business with the State. We don 't want to have live contact anymore. It
+              is assumed that everyone has a computer , and they know how to use it. I work with internal and external
+              customers all day long, and that is truly not the case.
+
+              Lastly, I supervise the State 's Information Operators. They answer an average of 100 plus calls a day. I answer
+              their calls during their breaks and lunch times if their normal backup is not available . I am always told , "I am so
+              glad to be talking to a real person . Can you assist me in finding ...?" Over 40% of those calls are customers trying
+              to find the division that administers a particular service.
+
+              Cisco VOIP phones can be programmed by each SOA employee to redirect callers:
+              -log into your voice mail
+              -select option 4 (setup options)
+              -select option 3 (personal settings)
+              -select option 4 (alternate contact number)
+              -listen to that number that is currently programmed
+              -select option 1 to change that number
+              -enter the new 4-digit number followed by a pound (#) sign (note : after the full deployment of the VOIP phones-
+              this step will change to `enter the new 7-digit number...')
+              -then press star/asterisk (*) to exit
+
+              Please note that employees ' phones that are part of auto attendants may already be programmed a certain way
+              within that. auto attendant; and that should be checked before an employee makes any changes to their phone.
+
+              I am going to mail Mr. Hashagen a copy of this email as a confirmation that I did send his complaint to the
+              Governor' s office and to the Department of Administration 's Commissioner's office.
+
+              Thank you,
+                     Barbara Pritchett, ETS Help Center
+
+
+
+
+              10/15/2009
+
+
+                                                                                                                             PRA GSP01_0017369
+Searchable Analytics at www.CrivellaWest.com               Posted by msnbc.com, Mother Jones and Pro Publica. http://palinemail.msnbc.msn.com
+
+
+
+
+                Untitled Document                                                                              Page 1 of 1
+
+
+                Unknown
+
+                From :   Governor Sarah Patin (GOV sponsored) [governor@alaska.govj
+                Sent:    Friday, May 09, 2008 11:37 AM
+                To: . Smith; Lynne M (GOV)
+                Subject: FW: WICHE Stat Alert - CORRECTION
+
+
+
+                From : Stats (mailtu:stats@wiche.edu)
+                Sent: Friday, May 09, 2008 9:55 AM
+                To: Patin, Sarah H (GOV)
+                Subject: WICHE Stat Alert - CORRECTION
+
+
+
+
+                Sta t Alert -May 9, 2008
+                  orrec tio n            -C
+                Yesterday's Stat Alert should have said that "CAEL's analysis indicates that states
+                and the nation cannot match the educational attainment levels - and continued global
+                competitiveness - by concentrating their efforts on traditional-age students alone."
+
+                The Council for Adult and Experiential Learning (CAEL) has recently released Adult Learning
+                in Focus: National and State-by-State Data
+                ( http://www.cael.org/pdf/ ublication xlf/State Indicators Monogr aph.pdf). This report
+                                                                                       r
+                examines how well states are doing on meeting the educational needs of their adult populations
+                and finds great variability. It argues that states and the nation cannot match the educational
+                attainment levels - and continued global competitiveness - by concentrating their efforts on
+                traditional-age students alone. In addition to the report, CAEL - in partnership with the National
+                Center for Higher Education Management Systems (NCHEMS) - has produced individual state
+                profiles with key indicators of success in serving adult students, available at
+                http_//www.cael.org/adultleaminginfocus.htm.
+
+                The Western Interstate Commission for Higher Education (WICHE) strives to maintain excellent
+                communication with the education policy and research communities. To subscribe or
+                unsubscribe to the Policy Alerts and/or Stat Alerts distribution lists, please email your name,
+                title, and organization to Cheryl Graves at cgraves@wiche.edu. These electronic distribution lists
+                are used only to support WICHE-sponsored programs and to share resources about relevant
+                issues in higher education policy and research. As an additional resource, WICHE maintains a
+                Policy Publication Clearinghouse on the web at http)/wiche.edu//policv/Clearinghouse, which
+                includes past Policy Alerts and Stat Alerts, as well as other studies, reports, surveys, and policy
+                briefs.
+
+
+
+
+                 10/15/2009
+
+
+                                                                                                                      PRA GSP01_0017370
+

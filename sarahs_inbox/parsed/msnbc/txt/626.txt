@@ -1,0 +1,99 @@
+ Unknown
+
+  From :     Fagerstrom, Erika (GOV) [/O=SOA/OU=FIRST ADMINISTRATIVE
+             GROUP/CN=RECIPIENTS/CN=EFAGERSTROM]
+  Sent :     Friday, August 31, 2007 1:24 PM
+  To:       Todd Palin
+  Subject : FW: Blackberry
+ Hello Todd,
+ Here are the instructions to access the Governor's calendar from your BlackBerry. Let me know if you
+ run into any glitches. Just remember that when you type in your password- ALT is for the numbers and
+ NUM is for the capitalization.
+ Have a great weekend!
+ Erika
+
+
+
+ Erika Fagerstrom
+ Executive Residence Manager
+ Governor's House
+ State ofAlaska, Office of the Governor
+ 716 Calhoun Avenue, Juneau, Alaska 99801
+ Phone: 907-465-3500; Fax.: 907-465-2031
+
+
+
+
+ From : Clark, Kami S (GOV)
+ Sent : Thursday, August 30, 2007 4:34 PM
+ To: Fagerstrom, Erika (GOV)
+ Subject : Blackberry
+
+ Erika and Mr. Palin
+
+ To access the Governor's Calendar via the Blackberry
+
+ You need to go to the Internet Browser so from the screen with the icons use the roller ball to move to the
+ Globe in the middle that only has the gold arrow going around it and the Blackberry should show Internet
+ Browser.
+
+ Select it by pressing in on your roller ball.
+
+ Scroll down to Blackberry Bookmarks and press in on the roller ball to select.
+
+ It should have Expand highlighted, press in on the roller ball to select.
+
+ You should have a bookmark: httr)s://webmail.alaska.gov/exchange/GovPalin/Calendar (note the s at
+ the end of https)
+ If you don't you will want to create one under BlackBerry Bookmarks. I believe this was setup on your
+ blackberry's so I won't write the instructions, but please let me know if you need help.
+
+ Then a pop down menu should display push in the roller ball and select Get Link
+
+ The Outlook Web Access authentication screen will be displayed. If it doesn't display and you receive an
+ error message about scripts, etc. We need to change some settings on your Blackberry.
+
+ Do this step if you didn't get the Outlook Web Access authentication screen:
+
+
+                                                                                                   ROSTON 00837
+  10/15/2009
+
+
+
+
+Released to msnbc.com by the state of Alaska and presented by Crivella West
+ You need to go back to the Blackberry bookmarks, press in on the roller ball, scroll down and select Options.
+ Select Browser Configuration, scroll down until you see Support HTML Tables.
+ From Support HTML Tables and on down you need to have a check mark next to each of them.
+ If you don't press in on the roller ball, select Change Option, do that for each one and then when all of them have
+ a check mark select Save Options.
+
+ Now go back to the Blackberry Bookmarks, select the bookmark you entered and then Select Get Link, if it still
+ has the message about the scripts on the page press in on the roller ball, scroll down and select Refresh.
+
+
+ The Outlook Web Access authentication screen will be displayed.
+
+ Domain\\user name: efagerstrom or tpalin
+ Password: your strong email password
+
+ Client select the Premium radio button
+ Security select the Public or shared computer radio button
+
+ Then click on the Log On button next to the password field
+
+ When you're done viewing the calendar be sure to logout it's in the upper right hand corner with a little key icon in
+ front of Log Off.
+
+
+
+
+                                                                                                ROSTON 00838
+ 10/15/2009
+
+
+
+
+Released to msnbc.com by the state of Alaska and presented by Crivella West
+

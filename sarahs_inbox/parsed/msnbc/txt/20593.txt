@@ -1,0 +1,332 @@
+Searchable Analytics at www.CrivellaWest.com             Posted by msnbc.com, Mother Jones and Pro Publica. http://palinemail.msnbc.msn.com
+
+
+
+
+          Unknown
+          From :                   gov.sarah@yahoo.com
+          Sent:                    Friday, August 22, 2008 10:32 AM
+          To:                      Colberg; Talis J (LAW)
+          Subject:                 Fw: failure notice
+
+
+
+
+          Sent from my BlackBerry® device from Cellular One
+
+
+
+          ----- Original Message-----
+
+          From: MAILER-DAEMON@yahoo.com
+
+
+
+
+          Date: 22 Aug 2008 18:20:22
+
+          To: <gov.sarah@yahoo.com>
+
+          Subject: failure notice
+
+
+
+          Hi. This is the qmail-send program at yahoo.com.
+
+          I'm afraid I wasn't able to deliver your message to the following addresses.
+
+          This is a permanent error; I've given up. Sorry it didn't work out.
+
+
+
+          <Talis.Colberg@law.state.ak.us>:
+
+          64.18.5.10 does not like recipient.
+
+          Remote host said: 550 5.1.2 unknown or illegal alias: Talis.Colberg@law.state.ak.us
+
+          Giving up on 64.18.5.10.
+
+
+
+          --     Below this line is a copy of the message.
+
+
+
+          Return-Path: <gov.sarah@yahoo.com>
+
+          Received: (qmail 34078 invoked from network); 22 Aug 2008 18:20:17 -0000
+
+          DomainKey-Signature: a=rsa-shal; q=dns; c=nofws;
+
+               s=s1024; d=yahoo.com;
+
+            h=Received:X-YMail-OSG:X-Yahoo-Newman-Property:X-rim-org-msg-ref-id:Message-ID:Reply-
+          To:X-Priority:References:In-Reply-
+          To:Sensitivity:Importance:To:Cc:Subject:From:Date:Content-Type: MIME-Version;
+
+
+          b=pvHyNAOOjsiw2BwY5QVh7kwZjCU/nTG6s/vfYt6V9EZ8BBX4yZmHCYDpMyEFMe2aiUzkEbkHpmEz+gwDa9Dd5mOR
+          3HIwzjwLpOBAbDNLPF4cGzzEtyGPl/RJkp4IfCcg3WDEsh+WVlYgpsGgVjvtsmD3GaG8Ui6g+Dgl3jVDGaY= ;
+                                                                F
+
+
+
+
+                                                                                                            PRA GSP01_0023466
+Searchable Analytics at www.CrivellaWest.com         Posted by msnbc.com, Mother Jones and Pro Publica. http://palinemail.msnbc.msn.com
+
+
+
+
+           Received : from unknown ( HELD bda2lO . bisx.prod . on.blackberry )   ( gov.sarah @ 206.53.150.130
+           with xymcookie)
+
+             by smtp102 -mob.biz . mail.mud . yahoo.com with SMTP ; 22 Aug 2008 18:20:17 -0000
+
+           X-YMail-OSG:
+           WbX77yYVMllz9k2KYWrizSsojvFj8IFjXRefIkQCpYBLfLoutAhrHYw2xLrD8zE86EpdgFa . FNX1GJr3TEnSHwYfAD
+           Y5V6o_ SzjXFZEddnlIuxoJDSF6a6VaU4ruTaY-
+
+           X-Yahoo- Newman-Property: ymail-3
+
+           X-rim-org-msg-ref-id:1491940795
+
+           Message -ID:<1491940795-1219429215-
+           cardhu decombobulator blackberry.rim.net-148577917-@bxel84.bisx.prod.on.blackberry>
+
+           Reply-To: gov.sarah@yahoo.com
+
+           X-Priority: Normal
+
+           References: <6000A5565000214288684EDECD93C857B8231F@SOAANCMSG04.soa.alaska.gov>
+
+           In-Reply-To: <6CCCA5565000214288684EDECD93C857B8231F@SOAANCMSGO4.soa.alaska.gov>
+
+           Sensitivity: Normal
+
+           Importance: Normal
+
+          To: "Marty Rutherford" <marty.rutherford@alaska.gov>
+
+          Cc.: "M Nizich" <mike.nizich@alaska.gov>,"Tom Irwin" <tom.irwin@alaska.gov>,"Tillery, Craig
+          J (LAW)" <craig.tillery@alaska.gov>,Talis.Colberg@law.state.ak.us
+
+          Subject: Re: Update on APOC "decision"
+
+         .From: gov.sarah@yahoo.com
+
+          Date: Fri, 22 Aug 2008 18:18:35 +0000
+
+          Content-Type: multipart/alternative; boundary="part70694-boundary-411689129-685862112"
+
+          MIME-Version: 1.0
+
+
+
+
+          --part70694-boundary-411689129-685862112
+
+          Content - Transfer -Encoding : base64
+
+          Content-Type: text/plain; charset-"utf-8"
+
+
+
+          R290IG10LiBUaGFuayB5b3UgTWFydHkNClNlbnQgZnJvbSBteSBCbGFjaOJlcnJ5wg4gZGV2aWN1
+
+          IGZyb2OgQ2VsbHVsYXIgT251DQoNCiOtLSOtT3JpZ2luYWwgTWVzc2FnZSOtLSOtDQpGcm9toiAi
+
+          UnVOaGVyZm9yZCwgTWFydHkgSyAoRESSKSIgPGlhcnR5LnJldGhlcmZvcmRAYWxhc2thLmdvdj4N
+
+          CgOKRGFOZTogRnJpLCAyMiBBdWcgMjAwOCAwOTolNjowMyANC1RvOiA8Z292LnNhcmFoQHlhaG9v
+
+          LmNvbT4NCkNjOiBOaXppY2gsIE1pY2hhZWwgQSAoRO9WKTxtaWtlLmSpemljaEBhbGFza2EuZ292
+
+          PjsgSXJ3aW4sIFRvbSBFIChETlIpPHRvbSSpcndpbkBhbGFza2EuZ292PjsgVGlsbGVyeSwgQ3Jh
+                                                           2
+
+
+
+
+                                                                                                       PRA GSP01 _0023467
+Searchable Analytics at www.CrivellaWest.com        Posted by msnbc.com, Mother Jones and Pro Publica. http://palinemail.msnbc.msn.com
+
+
+
+
+         aWcgSiAoTEFXKTxjcmFpZy5OaWxsZXJ5QGFsYXNrYS5nb3Y + OyA8VGFsaXMuQ29sYmVyZOBs
+         aWcgSiAoTEFXKTxjcmFpZy50aWxsZXJ5QGFsYXNrYS5nb3Y+YXcu
+
+         c3RhdGUuYWsudXM+ DQpTdWJgZWNOO1BVcGRhdGUgb24gQVBPQyAiZGVjaXNpb24iDQoNCgOK
+         c3RhdGUuYWsudXM+R292
+
+         ZXJub3IsDQpBlGdyb3VwIG9mIHVzIGZyb2OgdGhlIERlcHQgb2YgTGF3LCBERUMsIGFuZCBETlIg
+
+         anVzdCBtZXQgcmVnYXJkaW5nIEFQTOMncyAiaW50ZXJpbSIgZGVjaXNpb24uICBIZXJlJ3Mgd2hh
+
+         dCB3ZSBkZWNpZGVkLiAgQSBzdWItZ3JvdXAgaXMgZ29pbmcgdG8gbWFrZSBzb2ilIHNsaWdodCBt
+
+         b2RpZmljYXRpb25zIHRvIHRoZSB3ZWJzaXRlIGxhbmdlYWd1LCB3aXRoaW4gdGh1IG51eHQgaG91
+
+         ci4gIEFuZCBhcyByZXF1ZXNOZWQgYnkgQVBPQywgYXJvdWSkIDExYWOgd2UgYXJ1IGdvaW5nIHRv
+
+         IG11ZXQgd21OaCBOaGUgaW5kaXZpZHVhbHMgdGhhdCBmaWx1ZCBOaGUgQVBPQycgY29tcGxhaW5O
+
+          IG1uIGFuIGVmZm9ydCBObyByZWFjaCBhZ3JlZWllbnQgb24gd2hhdCBOaGUgd2Vic2lOZSBzaG91
+
+         bGQgc2F5LiAgV2UgYXJ1IG1ha2luZyBOaGlzIGVmZm9ydCBpbiBvcmRlciBObyByZWNvbmZpcmOg
+
+         b3VylHdpbGxpbmduZXNzIHRvIGJlIHJlYXNvbmFibGUgYW5kIHRvIHdvcrosgdG93YXJkIHJlc29s.
+
+         dXRpb24uICBIb3dldmVyLCBpbiBvdXlgb3BpbmlvbiwgcmVhY2hpbmcgYWdyZWVtZW50IHdpdGgg
+
+         dGhlIGNvbXBsYWludGFudHMgaXMgaGlnaGxSIHVubGIrZWx5LiAgU2ltdWxOYW5lb3VzbHkgdG8g
+
+         dGhpcyBlZmZvcnQsIEFBRyBSdXRoIEhhbWlsdG9uIEhlc3NleSBpcyBwcmVwYXJpbmcgYQOKU3Vw
+
+         ZXJpb3IgQ3JOIGFwcGVhbCBOaGFOIHd1IGludGVuZCBObyBmaWxlIGFzYXAuICBUaGlzIGFjdGly
+
+         biBpcyBhcHByb3ByaWFOZSBzaW5jZSB3ZSBhbGwgZmVlbCBzdHJvbmdseSBOaGFOIEFQTOMncyBk
+
+         ZWNpc2lvbiBpcyB3cm9uZyBhbmQgdGhleSBoYXZlIHNOZXBwZWQgb3VOc2lkZSBOaGVpciBhdXRo
+
+         b3JpdHkuIChPbmUgYXNwZWNOIG9mIHRoaXMgaXMgQVBPQyBpbnRlcnByZXRpbmcgdGhlIFByb3Bv
+
+         c21OaW9uIDQgbGFuZ3VhZ2UgYW5kIGluIHNvIGRvaW5nIGR1dGVybW1uZWQgdGhhdCBOaGUgRE5S
+
+         LORFQyB3ZWJzaXRllHdhcyBpbmFwcHJvcHJpYXR1IGJ1Y2F1c2UgaXQgaW50ZXJwcmVOZWQgdGh1
+
+         IFByb3AgNCBsYW5ndWFnZSBkaWZmZXJlbnRseSkuDQoNCkFOIDI6MDBwbSB3ZSB3aWxsIGFsbCBy
+
+         ZWFwcGVhciBiZWZvcmUgQVBPQyBhbmQgdGhleSB3aWxsIGlha2UgdGhlaXIgZmluYWwgZGVjaXNp
+
+         b24uICBXZSB3aWxsIGxldCB5b3Uga25vdyB3aGFOIG9jY3VycyBhdCBOaGFOIHRpbWUuDQpNYXJO
+
+         eQOKDQo=
+
+
+
+
+         --part70694 -boundary-411689129 - 685862112
+
+         Content - Transfer - Encoding : base64
+
+         Content -Type: text /html; charset =" utf-8"
+
+
+
+         PCFETONUWVBFIEhUTUwgUFVCTEIDICItLy9XMOMvLORURCBIVEIMIDMuMi8vRU4iPjxIVE1MPjxI
+
+         RUFEPjxNRVRBIEhUVFAtRVFVSVY9IkNvbnRlbnQtVH1wZSIgQO90VEVOVDOidGV4dC9odGlsOyBj
+
+         aGFyc2VOPVVURiO4Ij48TUVUQSBOQUIFPSJHZW51cmFOb3IiIENPTIRFT1Q9Ik1TIEV4Y2hhbmdl
+
+
+
+
+                                                                                                      PRA GSP01 _0023468
+Searchable Analytics at www.CrivellaWest.com       Posted by msnbc.com, Mother Jones and Pro Publica. http://palinemail.msnbc.msn.com
+
+
+
+
+           IFNIcnZlciB2ZXJzaW9uIDYuNS43NjUzLjM4Ij48VE1UTEU+VXBkYXR1IG9uIEFQTOMgJnFl
+           IFN1cnZ1ciB2ZXJzaW9uIDYuNS43NjUzLjM4Ij48VE1UTEU+b3Q7
+
+           ZGVjaXNpb24mcXVvdDs8LIRJVExFPjwvSEVBRD48Qk9EWT5Hb3QgaXQuIFRoyw5rIH1vdSBNYXJO
+
+           eTxwPlNlbnQgZnJvbSBteSBCbGFjaOJlcnJ5wg4gZGV2aWNlIGZyb2OgQ2VsbHVsYXIgT251PC9w
+
+           PjxwPjxociBzaXplPTIgd2lkdGg9MTAwJSBhbGlnbjljZW50ZXIgdGFiaW5kZXg9LTE + PGI+RnJv
+
+           bTwvYj46iCAiUnVOaGVyZm9yZCwgTWFydHkgSyAoRESSKSIgJmxOO21hcnR5LnJIdGhlcmZvcmRA
+
+           YWxhc2thLmdvdiZndDs8YnI + PGI+RGFOZTwvYj46IEZyaSwgMjIgQXVnIDIwMDggMDk6NTY6
+           YWxhc2thLmdvdiZndDs8YnI + PGI+MDMg
+
+           LTA4MDA8YnI+ PGI+VG88L2I + OiAmbHQ7Z292LnNhcmFoQHlhaG9vLmNvbSZndDs8YnI + PGI+QOM8
+
+           L2I+OiBOaXppY2gsIElpY2hhZWwgQSAoRO9WKSZsdDttaWtlLm5pemljaEBhbGFza2EuZ292
+           L21+JmdO
+
+           OzsgSXJ3aW4sIFRvbSBFIChET1IpJmxOO3RvbS5pcndpbkBhbGFza2EuZ292JmdOOzsgVGlsbGVy
+
+           eSwgQ3JhaWcgSiAoTEFXKSZsdDtjcmFpZy5OaWxsZXJ5QGFsYXNrYS5nb3YmZ3Q7OyAmbHQ7VGFs
+
+           aXMuQ29sYmVyZOBsYXcuc3RhdGUuYWsudXMmZ3Q7PGJyPjxiPlNlYmp1Y3Q8L2I + OIBVcGRh
+           aXMuQ29sYmVyZOBsYXcuc3RhdGUuYWsudXMmZ3Q7PGJyPjxiPlNlYmp1Y3Q8L2I+dGUg
+
+          b24gQVBPQyAiZGVjaXNpb24iPGJyPjwvZm9udD48L3A+PCEtLSBDb252ZXJOZWQgZnJvbSBO
+          b24gQVBPQyAiZGVjaXNpb24iPGJyPjwvZm9udD48L3A+ZXhO
+
+           L3BsYW1uIGZvcmlhdCAtLT4gPFA+PEZPT1QgUO1aRTOyPkdvdmVybm9yLDxCUj4gQSBncm91
+           L3BsYW1uIGZvcmlhdCAtLT4gPFA+cCBv
+
+           ZiBlcyBmcm9tIHRoZSBEZXBOIG9mIExhdywgREVDLCBhbmQgRESSIGplc3QgbWVOIHJ1Z2FyZGlu
+
+           ZyBBUE9DJ3MgJnF1b3Q7aW50ZXJpbSZxdW90OyBkZWNpc2lvbi4mbmJzcDsgSGVyZSdzIHdoYXQg
+
+          d2UgZGVjaWR1ZC4mbmJzcDsgQSBzdWItZ3JvdXAgaXMgZ29pbmcgdG8gbWFrZSBzb2llIHNsawdo
+
+          dCBtb2RpZmljYXRpb25zIHRvIHRoZSB3ZWJzaXRlIGxhbmdlYWdlLCB3aXRoaW4gdGhlIG5leHQg
+
+          aG91ci4mbmJzcDsgQW5kIGFzIHJ1cXV1c3R1ZCBieSBBUE9DLCBhcm9lbmQgMTFhbSB3ZSBhcmUg
+
+          Z29pbmcgdG8gbWVldCB3aXRoIHRoZSBpbmRpdmlkdWFscyBOaGFOIGZpbGVkIHRoZSBBUE9DJyBj
+
+          b21wbGFpbnQgaW4gYW4gZWZmb3JOIHRvIHJ1YWNoIGFncmVlbWVudCBvbiB3aGFOIHRoZSB3ZWJz
+
+          aXR1IHNob3VsZCBzYXkuJm5ic3A7IFdlIGFyZSBtYWtpbmcgdGhpcyBlZmZvcnQgaW4gb3JkZXIg
+
+          dG8gcmVjb25maXJtIG91ciB3aWxsaW5nbmVzcyBObyBiZSByZWFzb25hYmxlIGFUZCBObyB3b3Jr.
+
+          IHRvd2FyZCByZXNvbHVOaW9uLiZuYnNwOyBIb3dldmVyLCBpbiBvdXIgb3BpbmlvbiwgcmVhY2hp
+
+          bmcgYWdyZWVtZW50IHdpdGggdGhlIGNvbXBsYWludGFudHMgaXMgaGlnaGx5IHVubGlrZWx5Lizu
+
+          YnNwOyBTaWllbHRhbmVvdXNseSBObyBOaGlzIGVmZm9ydCwgQUFHIFJldGggSGFtaWxOb24gSGVz
+
+          c2V5IG1zIHByZXBhcmluZyBhPEJSPiBTdXBlcmlvciBDcnQgYXBwZWFsIHRoYXQgd2UgaW50ZW5k
+
+          IHRvIGZpbGUgYXNhcC4mbmJzcDsgvGhpcyBhy3Rpb24gaXMgYXBwcm9wcmlhdGUgc2luy2Ugd2Ug
+
+          YWxsIGZlZWwgc3Ryb25nbHkgdGhhdCBBUE9DJ3MgZGVjaXNpb24gaXMgd3JvbmcgYW5kIHRoZXkg
+
+          aGF2ZSBzdGVwcGVkIG9ldHNpZGUgdGhlaXIgYXVOaG9yaXR5LiAoT251IGFzcGvjdCBvZiBOaGlz
+
+          IGlzIEFQTOMgaW50ZXJwcmVOaW5nIHRoZSBQcm9wb3NpdGlvbiAOlGxhbmdlYWdlIGFuZCBpbiBz
+
+          byBkb2luZyBkZXRlcmlpbmVkIHRoYXQgdGh1IEROUi9ERUMgd2Vic2lOzSB3YXMgaW5hcHByb3By
+                                                          4
+
+
+
+
+                                                                                                      PRA GSP01 _0023469
+Searchable Analytics at www.CrivellaWest.com        Posted by msnbc.com, Mother Jones and Pro Publica. http://palinemail.msnbc.msn.com
+
+
+
+
+           aWFOZSBiZWNhdXNIIG1OIG1udGVycHJldGVkIHRoZSBQcm9wIDQgbGFuZ3VhZ2UgZG1mZmVyZW50
+
+          bHkpLjxCUj48Q1I + IEFOIDI6MDBwbSB3ZSB3aWxsIGFsbCByZWFwcGVhciBiZWZvcmUgQVBP
+          bHkpLjxCUj48Q1I+QyBh
+
+          bmQgdGhleSB3aWxsIGlha2UgdGhlaXIgZmluYWwgZGVjaXNpb24uJm5ic3A7IFdlIHdpbGwgbGVO
+
+           IHlvdSBrbm93IHdoYXQgb2NjdXJzIGFOIHRoYXQgdG1tZS48QII +IE1hcnR5PC9GT05UPjwv
+           IHlvdSBrbm93IHdoYXQgb2NjdXJzIGFOIHRoYXQgdG1tZS48Q1I+UD4g
+
+           PC9CTORZPjwvSFRNTD4gIA==
+
+
+
+           --part70694-boundary- 411689129 - 685862112--
+
+
+
+
+                                                                                                       PRA GSP01_0023470
+

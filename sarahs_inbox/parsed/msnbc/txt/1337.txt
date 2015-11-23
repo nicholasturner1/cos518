@@ -1,0 +1,57 @@
+  Unknown
+
+  From :      Mason, Janice L (GOV) [janice.mason@alaska.gov]
+  Sent :      Monday, May 05, 2008 12:37 PM
+  To:         ExternalEmailgsp; fek9wnr@yahoo.com; PARNELL; S (GOV sponsored)
+  Cc:         Perry; Kristina Y (GOV)
+  Subject : FW: *** JUNE 1st OUTAGE OF ALL SERVICES IN JUNEAU FOR 12 HOURS (2 am until 2 pm)
+  This notice went out to GOV employees. They have asked that I let the Governor, First Gentleman and
+  Lt. Governor know of planned outage in JNU on Sunday, June 1 from 2:00 a.m. through 2:00 p.m. This
+  will affect Blackberry and Telephone Service. Janice
+
+
+  From : Clark, Kami S (GOV)
+  Sent: Monday, May 05, 2008 12:24 PM
+  To: GOV Executive Anchorage; GOV Executive Fairbanks; GOV Executive Juneau; GOV Govenors House;
+  GOV Lieutenant Govenors Office All Staff
+  Subject : *** JUNE 1st OUTAGE OF ALL SERVICES IN JUNEAU FOR 12 HOURS (2 am until 2 pm)
+
+  There will be an outage, Sunday June 1st from 2am until 2pm. This is due to an Enterprise
+  Technology Services initiated major power upgrade project at the Juneau Data Center. Although
+  this outage impacts Juneau it will impact some services in other locations such as Anchorage and
+  Fairbanks.
+
+  This outage will affect all systems housed and routed through the Juneau Data center including
+  email for all Juneau employees, most Web Mail statewide, email to/from blackberries, network,
+  phones, mainframe, and servers (see detailed list attached) The servers in the Juneau Governor's
+  offices will be shut down during this 12 hours outage.
+
+  Below is a list of items that will be impacted in the Governor's Office.
+
+  State of Alaska services that will impact users in the Governor ' s Office
+         Telephone Services in Juneau
+
+              Blackberry and Mobile Devices Statewide
+                 o Cell phone calls will work but new email, calendar, and tasks will not be sent or
+                 received
+
+              Services hosted in the Juneau ETS Mid-tier Racks
+                 o Web delivered services including the State Web Site
+                 o Email and Calendars based in Juneau (Anchorage and Fairbanks will be
+                     available)
+                 o Web Mail from outside state offices will not work Statewide
+                 o Directory Services (White pages, LDAP, Active Directory)
+
+              Building Keycards
+
+
+
+
+                                                                                           ROSTON 02396
+  10/14/2009
+
+
+
+
+Released to msnbc.com by the state of Alaska and presented by Crivella West
+

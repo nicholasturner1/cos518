@@ -1,0 +1,244 @@
+Searchable Analytics at www.CrivellaWest.com         Posted by msnbc.com, Mother Jones and Pro Publica. http://palinemail.msnbc.msn.com
+
+
+
+
+           Unknown
+           From:                     PARNELL, S (GOV sponsored) [/O=SOA/OU=FIRST ADMINISTRATIVE
+                                     GROUP/CN=RECIPIENTS/CN=SRPARNELLI ]
+           Sent:                     Friday, September 14, 2007 12:30 PM
+           To:                       Tibbles; Michael A (GOV)
+           Cc:                       'gov.sarah@yahoo.com'
+           Subject:                  Fw: Parnell asks for review of state voting machines
+
+
+           Didn't know whether you saw this from the Peninsula Clarion, but am happy to get you a
+           copy of my letter to Fran Ulmer. I know your office has fielded some letters or inquiries
+           lately on our electronic voting systems. I felt like enlisting our university's help would
+           provide that independent third party review. (Should take about 8 wks from when we reach
+           agreement). I meet with Fran ulmer next week to discuss scope of work and cost of such a
+           study (we have some federal HAVA-Help America Vote Act-funds we intend to use).
+
+           Sean
+
+
+
+
+           ----- Original Message -----
+
+          From: Brewster, Whitney H (GOV)
+
+          To: PARNELL, S (GOV sponsored); Pullins, Jay D (GOV)
+
+          Sent: Fri Sep 14 12:16:36 2007
+
+          Subject: FW: Parnell asks for review of state voting machines
+
+
+
+
+          From: Brewster, Whitney H (GOV) [mailto:whitney.brewster@alaska.gov]
+
+          Sent: Friday, September 14, 2007 11:43 AM
+
+          To: ELECALL@GOV.state.ak.us
+
+          Subject: Parnell asks for review of state voting machines
+
+
+
+
+          Web posted Friday, September 14, 2007
+
+
+
+          Parnell asks for review of state voting machines
+
+                                                               1
+
+
+
+
+                                                                                                          PRA GSP01_0004879
+Searchable Analytics at www.CrivellaWest.com    Posted by msnbc.com, Mother Jones and Pro Publica. http://palinemail.msnbc.msn.com
+
+
+
+
+           Flaws with the system?
+
+
+
+           HAL SPENCE
+
+           Peninsula Clarion
+
+
+
+          Lt. Gov . Sean Parnell has asked the University of Alaska to conduct a review and recommend
+          possible changes to the state ' s electronic voting system.
+
+
+
+           The review comes in the wake of recent reports out of California documenting significant
+           security flaws with three of seven voting systems there, including the Diebold touch
+           screens and optical scanners used in Alaska and other states.
+
+
+
+          In a letter to UAA Chancellor Fran Ulmer, a former lieutenant governor and overseer of the
+          Division of Elections herself , Parnell said he had recently reviewed the University of
+          California , Berkeley , study that led California Secretary of State Debra Bowen to withdraw
+          approval for the equipment ' s use in California.
+
+
+
+          Parnell told Ulmer that Bowen had listed several security measures that must be
+          implemented in her state before approval could be restored . He said Alaska already meets
+          or exceeds those measures and is considering additional security measures as well.
+
+
+
+          "Nevertheless, as you can appreciate from your own experience as lieutenant governor, I
+          and the Division ' s Director, Whitney Brewster , want to do everything in the state ' s power
+          to ensure the reliability , accuracy and security of our voting systems, " Parnell told
+          Ulmer.
+
+
+
+          The university has not yet said it would conduct the review.
+
+
+
+          Computer experts at the University of California and at Princeton University, in New
+          Jersey, conducted California ' s evaluation , stating it their report that the Diebold system
+          did not meet requirements for a security - critical system, and saying that it was built on
+          "an inherently fragile design and suffers from implementation flaws that can expose the
+          entire voting system to attacks."
+
+
+
+          That could include an attack from " a single skilled individual with temporary access to a
+          single voting machine ," the report found.
+
+
+
+          An executive summary of the report said the system was vulnerable to malicious software,
+          was susceptible to viruses , failed to protect ballot secrecy , and was also vulnerable to
+          "malicious insiders " meaning it lacked adequate controls to ensure that county workers
+          with certain accesses would not exceed their authority.
+
+
+
+          "Anyone with access to a county ' s GEMS ( election management system ) server could tamper
+          with ballot definitions or election results and could also introduce malicious software
+                                                          2
+
+
+
+
+                                                                                                      PRA GSP01_0004880
+Searchable Analytics at www.CrivellaWest.com            Posted by msnbc.com, Mother Jones and Pro Publica. http://palinemail.msnbc.msn.com
+
+
+
+
+           into the GEMS server itself or into the county ' s voting machines."
+
+
+
+           The report also warned that fixing the Diebold system's individual defects piecemeal
+           without addressing underlying causes stemming from " deep architectural flaws " would be
+           "unlikely to render the system secure."
+
+
+
+           The safest way to repair the Diebold system , the report concluded , was to reengineer it
+           "so it is secure by design."
+
+
+
+           Division Director Whitney Brewster said Alaska uses exactly the same Diebold system as is
+           used in California . She noted that the California study did not include some security
+           processes and procedures , such as chain - of-custody measures and testing , that might have
+           mitigated at least some of the findings . Nevertheless , there were enough red flags to
+           raise real concerns for the integrity of the Alaska system.
+
+
+
+          "That ' s why we wanted to make sure we are as airtight as possible here in Alaska," she
+          said , adding that if the university agrees to conduct the Alaska study , completion would
+          be anticipated early enough to implement changes prior to the election in 2008.
+
+
+
+           If the university declines , there are other experts to whom the state could go, Brewster
+           said . What is imperative , she added , is that an independent third party conducts the
+           study . The perception that elections are fair is the bottom line.
+
+
+
+
+          "We absolutely want voters to have confidence that things are above board and airtight,"
+          Brewster said. " If the perception is out there ( that the system is flawed ), that's a
+          problem."
+
+
+
+
+          Brewster did note that the electronic voting system in Alaska does produce a paper trail,
+          which is an issue in some parts of the country . in addition , an audit conducted during the
+          certification process hand counts ballots from one precinct in every Alaska House
+          district .   If issues arise ,       the entire district is recounted ,       she said.
+
+
+
+          Monday, Parnell and members of his staff met with Alaska Democratic Party Chair Patti
+          Higgins, Democratic Reps . Lindsey Holmes and Berta Gardner , both of Anchorage , and Kay
+          Brown , communications director for the Democratic National Committee in Alaska , to discuss
+          the need for a study.
+
+
+
+          In a press release Tuesday , Higgins said the state was moving in the right direction in
+          proposing to conduct a thorough technical review of the system and its security
+          procedures.
+
+
+
+          "Time is running short to correct some very serious problems that have come to light, and
+          they recognize the urgency of fixing our voting system before the elections in 2008,"
+          Higgins said after meeting Monday with the Parnell and Brewster.
+
+
+
+
+                                                                  3
+
+
+
+
+                                                                                                              PRA GSP01_0004881
+Searchable Analytics at www.CrivellaWest.com   Posted by msnbc.com, Mother Jones and Pro Publica. http://palinemail.msnbc.msn.com
+
+
+
+
+           "This is not an issue that is going away anytime soon," Brewster said. "I look forward to
+           the study being conducted so that we are sure we are providing the best service
+           possible."
+
+
+
+           Hal Spence can be reached at hspence@ptialaska.net.
+
+
+
+
+                                                         4
+
+
+
+
+                                                                                                    P RA_GS P01 _0004882
+

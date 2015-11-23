@@ -1,0 +1,185 @@
+Searchable Analytics at www.CrivellaWest.com              Posted by msnbc.com, Mother Jones and Pro Publica. http://palinemail.msnbc.msn.com
+
+
+
+
+             Unknown
+             From :                   gov.sarah@yahoo.com
+             Sent:                    Friday, April 11, 2008 7:00 AM
+             To:                      Mason; Janice L (GOV)
+             Subject:                 Fw: failure notice
+
+
+             This won't send to Rosanne. Ugh.
+
+             Sent from my BlackBerry® device from Cellular one
+
+
+
+             -----Original Message-----
+
+             From: MAILER-DAEMON@yahoo.com
+
+
+
+
+             Date: 11 Apr 2008 14:59:57
+
+             To:gov.saraheyahoo.com
+
+             Subject: failure notice
+
+
+
+
+             Hi. This is the qmail- send program at yahoo.com.
+
+             I'm afraid I wasn 't able to deliver your message to the following addresses.
+
+             This is a permanent error ; I've given up. Sorry it didn't work out.
+
+
+
+             <rosanne.hughes@alaska.gov>:
+
+             64.18.5.10 does not like recipient.
+
+            Remote host said: 553 5.1.4 duplicate/ambiguous directory match: rosanne.hughes@alaska.gov
+
+            Giving up on 64.18.5.10.
+
+
+
+
+             --- Below this line is a copy of the message.
+
+
+
+            Return-Path: <gov.saraheyahoo.com>
+
+            Received: (qmail 29428 invoked from network); 11 Apr 2008 14:59:56 -0000
+
+            DomainKey-Signature:     a=rsa -shal; q=dns; c=nofws;
+
+               s=s1024; d=yahoo.com;
+
+              h=Received:X-YMail-OSG:X-Yahoo- Newman -Property:X-rim-org-msg-ref-id: Message -ID:Content-
+            Transfer-Encoding:Reply-To:X-
+            Priority:Sensitivity:Importance:To:Cc:Subject: From :Date:Content-Type:MIME-Version;
+
+              b=kKYlAn4UcHYlwkHnCGae4cE58BCUHU12eYiat9
+            +ugi/LHaWY+cYMKUr4LFx/UEhr9BEZiUKS1UDBmaD7rFQJt4RO+pmuojzeAWBnKn9jygBT9gNWKTTm/VtEOh9a/jYd
+            rRduT4/flc9kfTavgzpoPHsVIOQUFLYf9anWcBDNZXg= ;
+                                                                       1
+
+
+
+
+                                                                                                            PRA_GSP01 0014968
+Searchable Analytics at www.CrivellaWest.com     Posted by msnbc.com, Mother Jones and Pro Publica. http://palinemail.msnbc.msn.com
+
+
+
+
+             Received: from unknown (HELD bda208-cellO2.bisx.prod.on.blackberry) (gov.sarah@
+             206.53.150.128 with xymcookie)
+
+               by smtpl03-mob.biz.mail.mud.yahoo.com with SMTP; 11 Apr 2008 14:59:56 -0000
+
+             X-YMail-OSG: EaKr7vovNllKgy2y8gvjqp_15zdFnSzgcCZ2ynsIRPhPSRTfzPRliyFf3cF42rmi7R.3N2mJXw--
+
+             X-Yahoo-Newman-Property: ymail-3
+
+             X-rim-org-msg-ref-id:1782042516
+
+             Message -ID:<1782042516-1207925992-
+             cardhu_decombobulator_blackberry.rim.net-892184479-@bxeOl4.bisx.prod.on.blackberry>
+
+             Content-Transfer-Encoding: base64
+
+             Reply-To: gov.sarah@yahoo.com
+
+             X-Priority: Normal
+
+             Sensitivity: Normal
+
+             Importance: Normal
+
+             To: "Janice Mason " <janice. mason@alaska .gov>,"Beth Leschper"
+             <beth.leschper@alaska .gov>,"Kris Perry" <kris.perry@alaska.gov>
+
+             Cc: "Rosanne Hughes" <rosanne.hughes@alaska.gov>
+
+             Subject: Fw: Presser
+
+             From: gov.sarah@yahoo.com
+
+             Date: Fri, 11 Apr 2008 14:59:44 +0000
+
+             Content-Type: text/plain; charset="Windows-1252"
+
+             MIME-Version: 1.0
+
+
+
+
+             UGxzIGZvcndhcmQgdG8gUm9zYW5uZS4gRm9ylHNvbWUgcmVhc29uIGhlciBhZGRyZXNzlGlzbidO
+
+             IGFjY2VwdGluZyBteSBlbWFpbCBmcm9tIGVpdGhlciBvbmUgb2YgbXkgYWRkcmVzc2VzLiBJIG51
+
+             ZWQgdGhlIENvbWOgRGVwdCBObyBjb25maXJtIGEgcHJ1c3N1ciB3ZW50IG91dCBhZnRlciB5ZXNO
+
+             ZXJkYXkncyBiaWxsIHNpZ25pbmcgLSBhbG9uZyB3aXROIGFueSBwaWNzIG9mIHRoZSBzdHVkZW50
+
+             cyBhdCBOaGUgY2VyZWlvbnkgdGFrZW4gYnkgQW5keS4gDQpTZWSOIGZyb2OgbXkgQmxhY2tCZXJy
+
+             ea4gZGV2aWN1IGZyb2OgQ2VsbHVsYXIgT251DQoNCiOtLSOtT3JpZ21uYWwgTWVzc2FnZSOtLSOt
+
+            DQpGcm9tOiBnb3Yuc2FyYWhAeWFob28uY29tDQoNCkRhdGU6IEZyaSwgMTEgQXByIDIwMDggMTQ6
+
+            NTc6MTAgDQpUbzoiUm9zYW5uZSBIdWdoZXMiIDxyb3Nhbm5lLmhlZ2hlcOBhbGFza2EuZ292PgOK
+
+            Q2M6IkJldGggTGVzY2hwZXIiIDxiZXRoLmxlc2NocGVyQGFsYXNrYS5nb3Y+LCJSaG9uZGEg
+            Q2M6IkJldGggTGVzY2hwZXIiIDxiZXRoLmxlc2NocGVyQGFsYXNrYS5nb3Y+KEdP
+
+            VikgTWNCcmlkZSIgPHJob25kYS5tY2JyaWR]QGFsYXNrYS5nb3Y+LCJLcmlzIFBlcnJ5IiA8
+            VikgTWNCcmlkZSIgPHJob25kYS5tY2JyaWRlQGFsYXNrYS5nb3Y+a3Jp
+
+            cySwZXJyeUBhbGFza2EuZ292PgOKU3ViamVjdDogUHJlc3NlcgOKDQoNCkhpIFJvc2FubmUtIHBs
+
+            cyBtYWt11HNlcmUgd2UgcmVsZWFzZWQgYSBwcmVzc2VyIG9uIH11c3R1cmRheSdzIFNpbHZlciBI
+                                                          2
+
+
+
+
+                                                                                                   PRA_GSP01_0014969
+Searchable Analytics at www.CrivellaWest.com    Posted by msnbc.com, Mother Jones and Pro Publica. http://palinemail.msnbc.msn.com
+
+
+
+
+            YW5kIGJpbGwgc2lnbmluZyBhdCBOaGUgaGlnaCBzY2hvb2wgc28gYWxsIHRob3N1IHNOdWRlbnRz
+
+            IGNhbiBnZXQgY3J1ZG1OL3J1Y29nbm1OaW9uIGZvciBhIG51YXQgd2F5IHRvIHBhcnRpY21wYXR1
+
+            IG1uIHRoZSBsZWdpc2xhdG12ZSBwcm9jZXNzLiBUaGFua3MuIF1vdSBoYXZ1IG15IG5vdGVzIHJ1
+
+            OiB3aGFOIEkgZWSkZWQgdXAgc2F5aW5nIHRvIHRoZSBzdHVkZW50IGdvdmVybmllbnQgc3R1ZGVu
+
+            dHMgYWJvdXQgdGhlIGJpbGwncyByZWxldmFuY2UgdG8ganVzdGljZSwgZmFpcm5lc3MgYW5kIHJl
+
+            c3B1Y3QgZm9yIE5hdG12ZSBjdWxQdXJlLiANClNlbnQgZnJvbSBteSBCbGFjaOJlcnJ5riBkZXZp
+
+            Y2UgZnJvbSBDZWxsdWxhciBPbmU=
+
+
+
+
+                                                         3
+
+
+
+
+                                                                                                  PRA GSP01 0014970
+

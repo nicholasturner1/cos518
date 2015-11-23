@@ -1,0 +1,144 @@
+Searchable Analytics at www.CrivellaWest.com                     Posted by msnbc.com, Mother Jones and Pro Publica. http://palinemail.msnbc.msn.com
+
+
+
+
+                Unknown
+
+                From:      Ruaro, Randall P (GOV) [randall.ruaro@alaska.gov]
+                Sent:      Sunday, August 31, 2008 9:03 PM
+                To:        Nizich; Michael A (GOV); gov.palin@yahoo.com
+                Cc:        Clark; Kami S (GOV); Essary; Karen S (GOV)
+                Subject: Governor's website
+
+              Mike:
+
+              The Governor's website is up now. I think what was tripping visitors up was when you first go to gov.state.ak.us
+              you get the recent press release and if you don't scroll all the way to the bottom it looks like this is all there is on
+              the site.
+
+              If you closely, at the very bottom of that press release in small print is a note that if you want to go to the old
+              website to click here. I suggested to Karen and Kami that that make this note about 3 times larger in print size
+              and put it at the very top of the press release so people navigating to the website can see it and right away decide
+              to click on it and go to the Govemor's website.
+
+              I think this would help significantly. Please let me know if you want that done.
+
+              Randy
+
+
+
+
+             8/31/2009
+
+
+                                                                                                                             PRA GSP01 0023709
+Searchable Analytics at www.CrivellaWest.com                                                                 Posted by msnbc.com, Mother Jones and Pro Publica. http://palinemail.msnbc.msn.com
+
+          -.".'.',,                ;'·r - t iC           ..r;f, :f.;#! i' -t6ifF^toeK.CUSS;'.tXtSLS+`P.S9.S',5::....
+                       ^S'.                      t, 4^
+
+
+
+
+                                                                                                                                                             Page 1 of 2
+
+
+
+                        Unknown
+
+                         From:     Nizich, Michael A (GOV) [mike.nizich@alaska.gov]
+                         Sent:     Sunday, August 31, 2008 9:45 PM
+                         To:       Clark; Kami S (GOV); Ruaro; Randall P (GOV); 'gov.palin@yahoo.com'
+                         Subject: Re: Governor's website
+
+                      Thanks
+
+
+                      From: Clark, Kami S (GOV)
+                      To: Nizich, Michael A (GOV); Ruaro, Randall P (GOV); 'gov.patin@yahoo.com'
+                      Sent: Sun Aug 31 21:43:36 2008
+                      Subject: RE: Governor's website
+
+                      Will do I'm working on it now.
+
+
+                      From: Nizich, Michael A (GOV)
+                      Sent: Sun 8/31/2008 9:41 PM
+                      To: Clark, Kami S (GOV); Ruaro, Randall P (GOV); 'gov.palin@yahoo.wm'
+                      Subject: Re: Governor's website
+
+                      Just make the link obvious
+
+
+                      From: Clark, Kami S (GOV)
+                      To: Ruaro, Randall P (GOV); Nizich, Michael A (GOV); gov.palin@yahoo.com
+                      Sent: Sun Aug 3121:37:57 2008
+                      Subject: RE: Governor's website
+
+                      I can make arrangments to have that link moved up further so that you can see the link.
+
+                       Its very difficult to explain in an email everything that transpired during the Governor's announcement for V.P. I
+                      got a call at 6:00 am from the D.C . office that the Governor's Office website might be down due to the
+                      announcement on C.N . N. I got to the office shortly after 7:00 and the server appeared to be stable but, the pages
+                      were loading slowly. I called Enterprise Technology Services to request that GCI open up all the band width for
+                      us. They did and I then called other staff at ETS to see if we could put up an alternate page to take some of the
+                      load off of the server. Our server was getting hit so hard we couldn 't even get to it ourselves. About 15 IT staff
+                      came over from ETS , Brian Duncan our contractor , Peter Torkelson, Eric a contractor came over from
+                      Wostmann. We sent guys back over to ETS to build servers 3 of them, Peter then worked to convert the
+                      Governor's bio from PHP code to plain HTML text because it was causing problems how it handled the hits. So
+                      we knew people were just wanting to know about the Governor . So we got that going and moved over to 3 new
+                      servers over at ETS but, that took the load off our servers so we could bump up connections . Peter had to reuild
+                      his P14P code back to HTML which made many of the links broken . While the servers over at ETS where
+                      publishing the Governor's bio we built another server in our office that would take the hits before the Governor's
+                      web server so that it would cache the pages which means it wouldn 't hit our server everytime it could grab what
+                      was in memory. We worked on that until 11:00 that night We then came back the next day and redirected the
+                      www. gov.state.ak.us back to our server and have been monitoring it to see if it can handle the load which we
+                      think will get hit even harder come Tuesday morning. Peter will continue to work on the site to convert all the
+                      PHP code back to HTML so that all links will work . Remember when Florida servers had a melt down because of
+                      the Election we had the same for the State of Alaska with the announcement Many departments said there
+                      pages also got hit harder. This was big news and most servers aren 't built to handle that kind of volume. We did
+                      everything we could to get it back as fast as we possible could . I'll make some calls tonight to fix that link or see if
+                      we can even post it on the page so that we don 't even have even have it like that anymore.
+
+
+                      8/31/2009
+
+                                                                                                                                                                PRA_GSP01_0023710
+Searchable Analytics at www.CrivellaWest.com                     Posted by msnbc.com, Mother Jones and Pro Publica. http://palinemail.msnbc.msn.com
+
+
+
+
+             Thanks
+             Kami
+
+
+             From : Ruaro, Randall P (GOV)
+             Sent: Sun 8/31/2008 9:03 PM
+             To: Nizich, Michael A (GOV); gov. palin@yahoo.com
+             Cc: Clark, Kami S (GOV); Essary, Karen S (GOV)
+             Subject Govemor's website
+
+             Mike:
+
+             The Govemor's website is up now. I think what was tripping visitors up was when you first go to gov .state.ak.us
+             you get the recent press release and if you don 't scroll all the way to the bottom it looks like this is all there is on
+             the site.
+
+             If. you closely , at the very bottom of that press release in small print is a note that if you want to go to the old
+    I        website to click here. I suggested to Karen and Kami that that make this note about 3 times larger in print size
+             and put it at the very top of the press release so people navigating to the website can see it and right away decide
+             to click on it and go to the Govemor 's website.
+
+             I think this would help significantly. Please let me know if you want that done.
+
+             Randy
+
+
+
+
+             8/31/2009
+
+                                                                                                                              PRA_GSP01_0023711
+

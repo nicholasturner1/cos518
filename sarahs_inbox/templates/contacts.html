@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% load media %}
+
+{% block page_title %}Contacts | Elena's Inbox{% endblock %}
+
+
+{% block navigation %}
+<ul>
+  <li class="disabled">Inbox</li>
+  <li><a href="/">Sent Mail</a></li>
+  <li class="disabled">Drafts</li>
+  <li class="disabled">All Mail</li>
+  <li><a href="/starred/all/">Starred (all)</a></li>
+  <li><a href="/starred/">Starred (by you)</a></li>        
+</ul>
+{% endblock %}
+
+{% block content %}
+
+{% for thread in threads %}
+
+  {% if forloop.first %}
+    <div id="mail-index-wrapper">
+      {% if search %}<label id="search-results" class="top-explanation">Search results for: {{ search }}</label>{% endif %}
+      {% if path == '/starred/all/' %}<label class="top-explanation">Messages by number of stars awarded by all users (including you)</label>{% endif %}
+      {% if path == '/starred/' %}<label class="top-explanation">Messages you have starred</label>{% endif %}
+      <table id="mail-index">
+  {% endif %}
+
+        <script type="text/javascript">document.write((IsMarked(read, '{{ thread.id }}')) ? '<tr>' : '<tr class="unread">');</script><noscript><tr></noscript>
+          <script type="text/javascript">document.write((IsMarked(starred, '{{ thread.id }}')) ? '<td class="star"><a href="#" rel="{{ thread.id }}" class="star on"></a></td>' : '<td class="star"><a href="#" rel="{{ thread.id }}" class="star"></a></td>');</script>
+          <td class="name"><a href="/thread/{{ thread.id }}/{% if search %}?q={{ search_orig }}{% endif %}">To: {{ thread.all_recipient_html|safe|striptags }}{% if thread.count > 1 %} ({{ thread.count}}){% endif %}</a></td>
+          <td class="subject"><a href="/thread/{{ thread.id }}/{% if search %}?q={{ search_orig }}{% endif %}">{% if thread.name %}{{ thread.name|safe }}{% else %}(No subject){% endif %}</a></td>
+          <td class="date"><a href="/thread/{{ thread.id }}/{% if search %}?q={{ search_orig }}{% endif %}">{{ thread.date|date:"SHORT_DATE_FORMAT" }}</a></td>
+        </tr>
+      
+  {% if forloop.last %}
+      </table>
+    </div>
+     
+    <div id="page-navigation">
+      {% if prev %}
+        <a href="{{ path }}?page={{ first }}{% if search %}&q={{ search_orig }}{% endif %}">&laquo;&nbsp;Newest</a>
+        <a href="{{ path }}?page={{ prev }}{% if search %}&q={{ search_orig }}{% endif %}">&lsaquo;&nbsp;Newer</a>
+      {% endif %}
+        <span id="page-range">{{ range|safe }}</span>
+      {% if next %}
+        <a href="{{ path }}?page={{ next }}{% if search %}&q={{ search_orig }}{% endif %}">Older&nbsp;&rsaquo;</a>
+        <a href="{{ path }}?page={{ last }}{% if search %}&q={{ search_orig }}{% endif %}">Oldest&nbsp;&raquo;</a>
+      {% endif %}  
+    </div>
+  {% endif %}
+
+{% endfor %}
+
+<script type="text/javascript">
+$(function(){ 
+  // mark-as-read functionality
+  $('table#mail-index tr td.name a, table#mail-index tr td.subject a, table#mail-index tr td.date a').click(function(){
+    $(this).parent().parent().removeClass('unread');
+    return true;
+  });
+  
+  // star functionality
+  $('table#mail-index tr td.star a').click(function(){
+    var thread_id = $(this).attr('rel');
+
+    if($(this).hasClass('on')) {
+      RemoveID('kagan_star', thread_id);
+      $.getJSON('/star/ajax/' + thread_id + '/remove/', function(data) { });
+    }
+    else {
+      RecordID('kagan_star', thread_id);
+      $.getJSON('/star/ajax/' + thread_id + '/add/', function(data) { });
+    }
+
+    $(this).toggleClass('on');
+
+    return false;
+  });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,151 @@
+Unknown
+From :                   Bailey, Frank T (GOV) [/O=SOA/OU=FIRST ADMINISTRATIVE
+                         GROUP/CN=RECIPIENTS/CN=FTBAILEY]
+Sent :                   Thursday, February 07, 2008 11:50 AM
+To:                      'fek9wnr@yahoo. com'
+Subject :                Fw: Delivery Notification: Delivery has been delayed
+
+
+
+
+----- Original Message -----
+
+From: Internet Mail Delivery <postmaster@jnumail1.state. ak.us>
+
+To: Bailey, Frank T (GOV)
+
+Sent: Thu Feb 07 11:47:44 2008
+
+Subject: Delivery Notification: Delivery has been delayed
+
+
+
+This report relates to a message you sent with the following header fields:
+
+
+
+ Return-path: <frank . bailey@alaska.gov>
+
+ Return -path: <frank. bailey@alaska.gov>
+
+ Received : from tcp-daemon.jnumail l . state.ak .us by jnumaill. state.ak.us
+
+ (iPlanet Messaging Server 5.2 HotFix 2.14 (built Aug 8 2006))
+
+ id <OJW0038OZ3KKU@ jnumaill . state.ak .us>; Thu,
+
+ 7 Feb 2008 11:47:44 -0900 (AKST)
+
+ Received : from SOAJNUMSGBHOI. soa.alaska . gov (localhost [127.0.0.1])
+
+ by jnumaill .state.ak.us
+
+ (iPlanet Messaging Server 5.2 HotFix 2.14 (built Aug 8 2006))
+
+ with ESMTP id <OJVVOOOTJTML9S@ jnumaill . state . ak.us> for fek9wnr @yahoo.com;
+
+ Thu, 07 Feb 2008 09 :49:33 -0900 (AKST)
+
+ Received : from SOAJNUMSGO3. soa.alaska . gov ([10 .201.1.14])
+
+                                                         1                       ROSTON 01498
+
+
+
+
+Released to msnbc.com by the state of Alaska and presented by Crivella West
+  by SOAJNUMSGBH01.soa.alaska.gov with Microsoft SMTPSVC(6.0.3790.3959); Thu,
+
+  07 Feb 2008 09:49:33 -0900
+
+  Date: Thu, 07 Feb 2008 09:49:32 -0900
+
+  From: "Bailey, Frank T (GOV)" <frank.bailey@alaska.gov>
+
+ Subject: FW: [Fwd: FW: FW: Board of Game Appoointments]
+
+ To: fek9wnr@yahoo.com
+
+ Message-id:
+<BD68637FC602A44CBFE41 DD22FC2F43361AD3C@SOAJNUMSGO3.soa.alaska.gov>
+
+ MIME-version: 1.0
+
+ X-MIMEOLE: Produced By Microsoft Exchange V6.5
+
+ Content-type: multipart/mixed; boundary="Boundary_(ID_GCOAbC2ugncnJp3RYVEzrA)"
+
+ Content-class: urn:content-classes: message
+
+ Thread-topic: [Fwd: FW: FW: Board of Game Appoointments]
+
+ Thread-index: AchohMMz8ZahLTFVQBSTqaXqJsOjvABNWbhQ
+
+ X-MS-Has-Attach: yes
+
+ X-MS-TNEF-Correlator:
+
+ X-OriginalArrivalTime: 07 Feb 2008 18:49:33.0578 (UTC)
+
+  FILETIME=[2DF2CEA0:01 C869BA]
+
+
+
+Your message has been enqueued and undeliverable for 1 hour
+
+to the following recipients:
+
+
+
+ Recipient address: fek9wnr@yahoo.com
+
+ Reason: unable to deliver this message after 1 hour
+
+
+
+
+Delivery attempt history for your mail:
+                                                 2                    ROSTON 01499
+
+
+
+
+Released to msnbc.com by the state of Alaska and presented by Crivella West
+Thu, 7 Feb 2008 11:24:46 -0900 (AKST)
+
+Temporary error from SMTP partner: smtp;451 Message temporarily deferred - [170]
+
+
+
+Thu, 7 Feb 2008 10:47:27 -0900 (AKST)
+
+Too many failures to this host during this run; skipping this host: Couldn't deliver
+
+
+
+Thu, 7 Feb 2008 10:17:01 -0900 (AKST)
+
+Too many failures to this host during this run; skipping this host: Couldn't deliver
+
+
+
+Thu, 7 Feb 2008 09:58 :47 -0900 (AKST)
+
+Too many failures to this host during this run; skipping this host: Couldn't deliver
+
+
+
+The mail system will continue to try to deliver your message
+
+for an additional 23 hours.
+
+
+
+
+                                                                                       ROSTON 01500
+
+
+
+
+Released to msnbc.com by the state of Alaska and presented by Crivella West
+

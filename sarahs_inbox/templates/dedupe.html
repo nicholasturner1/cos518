@@ -1,0 +1,62 @@
+{% load media %}<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head profile="http://gmpg.org/xfn/11">
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
+<script type="text/javascript">
+$(function() {
+  $('td.downto a').click(function() {
+
+    $('.combine').attr('checked', false);    
+
+    var id = parseInt($(this).attr('id').replace('downto-', ''));
+
+    for(var i=0;i<=id;i++) {
+      $('#checkbox-' + i).attr('checked', true);
+    }
+    return false;
+  });
+});
+</script>
+</head>
+
+<body>
+
+<p>Total people: {{ total }}</p>
+
+<form method="GET">
+
+<p><input type="submit" /></p>
+
+<table>
+  <thead>
+  <tr>
+    <th>Select</th>
+    <th>Combine</th>
+    <th>Combine Into</th>
+    <th>Name</th>
+    <th>Distance</th>
+    <th>Emails</th>
+  </tr>
+
+  <tbody>
+  {% for person in people %}  
+  <tr id="row-{{ forloop.counter0 }}">
+    <td class="downto"><a href="#" id="downto-{{ forloop.counter0 }}">X</a></td>
+    <td><input type="checkbox" name="combine" class="combine" id="checkbox-{{ forloop.counter0 }}" value="{{ person.obj.id }}" /></td>
+    <td><input type="checkbox" name="into" value="{{ person.obj.id }}" /></td>
+    <td><a href="/dedupe/?id={{ person.obj.id }}">{{ person.obj.name }}</a></td>
+    <td>{{ person.dist }}</td>
+    <td><a href="/dedupe/mail/?id={{ person.obj.id }}">link</a></td>
+  </tr>    
+  {% endfor %}
+  </tbody>
+</table>
+
+<p>Total people: {{ total }}</p>
+
+<p><input type="submit" /></p>
+
+</form>
+
+</body>
+</html>

@@ -1,0 +1,192 @@
+Searchable Analytics at www.CrivellaWest.com            Posted by msnbc.com, Mother Jones and Pro Publica. http://palinemail.msnbc.msn.com
+
+
+
+
+              Unknown
+              From:                   gov. sarah @yahoo.com
+              Sent:                   Friday, February 01, 2008 12:41 PM
+              To:                     PARNELL; S (GOV sponsored)
+              Subject:                Fw: failure notice
+
+              Bounced back. I'll resend in a sec.
+
+              Sent from my BlackBerry® device from Cellular One
+
+
+
+              -----Original Message-----
+
+             From: MAILER-DAEMON @yahoo.com
+
+
+
+             Date: 1 Feb 2008 21:40:58
+
+             To:gov.sarah@yahoo.com
+
+             Subject: failure notice
+
+
+
+             Hi. This is the qmail-send program at yahoo.com.
+
+             I'm afraid I wasn't able to deliver your message to the following addresses.
+
+             This is a permanent error; I've given up. Sorry it didn't work out.
+
+
+
+             <sr_parnell@alaska.gov>:
+
+             64.18 .5.10 does not like recipient.
+
+             Remote host said: 550 5.1.1 unknown or illegal alias: sr_parnell@alaska.gov
+
+             Giving up on 64.18.5.10.
+
+
+
+             --- Below this line is a copy of the message.
+
+
+
+             Return-Path: <gov.sarah@yahoo.com>
+
+             Received: (qmail 77390 invoked from network); 1 Feb 2008 21:40:55 -0000
+
+             DomainKey-Signature: a=rsa-shal; q=dns; c=nofws;
+
+                s=s1024; d=yahoo.com;
+
+               h=Received:X-YMail-OSG:X-Yahoo-Newman-Property:X-rim-org-msg-ref-id:Message-ID:Content-
+             Transfer-Encoding:Reply-To:X-Priority:References: In-Reply-
+             To:Sensitivity:Importance:To:Subject:From:Date:Content-Type:MIME-Version;
+
+
+
+             b=YVlypkrGcMFTwmjXCcZG8w4BUn8/ZopeVrFBLdnY89F3JFlpp/gIGuAeoFlR8mQw6yGxGLvJ+WTSrWSNtI5B5VW+
+             +rFLfVp8wxc2yT15YA8FQZ83acVUp9gt2gNMlHfhobB+ObyaynXSSHIznSylhTJv66DelUTzAhElllXNwGg= ;
+                                                                    1
+
+
+
+
+                                                                                                           PRA_GSP01_0011215
+Searchable Analytics at www.CrivellaWest.com             Posted by msnbc.com, Mother Jones and Pro Publica. http://palinemail.msnbc.msn.com
+
+
+
+
+               Received : from unknown ( HELO bda2lO - cellO2.bisx .prod.on.blackberry) ( gov.saraho
+               216.9 . 248.130 with xymcookie)
+
+                 by smtpl02 - mob.biz . mail . re2.yahoo . com with SMTP ; 1 Feb 2008 21:40 : 55 -0000
+
+               X-YMail-OSG:
+               OQeRXe4VMlmvsSRiehV3plsWWOeV5taAQzzzAxgG9spdj9wSRAVOKsalw1F8dfjsTgPriixf2uTgyPABDdnDcprXYl
+               UCKLeP71ZtMK2h . v2fDxgaNTw-
+
+               X-Yahoo- Newman -Property: ymail-3
+
+               X-rim-org - msg-ref-id : 2046670495
+
+               Message - ID:<2046670495 - 1201902049-
+               cardhu_decombobulator_blackberry. rim.net - 2026282209 - @bxeO29 .bisx.prod.on.blackberry>
+
+               Content- Transfer - Encoding : base64
+
+               Reply-To: gov.sarahoyahoo.com
+
+               X-Priority: Normal
+
+               References :    < B110B3927C5AO64294A6785F58CEB8484BEA7E @ SOAANCMSG04 . soa.alaska.gov>
+
+               In-Reply-To: <B110B3927C5A064294A6785F58CEB8484BEA7EWSOAANCMSGO4 . soa.alaska.gov>
+
+               Sensitivity :   Normal
+
+               Importance : Normal
+
+              To: "Tom Irwin " < tom.irwin@alaska . gov>,sr_parnell@alaska . gov,"Joe Balash"
+              <joe.balash@alaska . gov>,"Lefebvre , Richard A ( DNR)" <richard . lefebvre@alaska .gov>,"Marty
+              Rutherford" <marty. rutherfordoalaska.gov>
+
+              Subject: Re: thank you
+
+              From : gov.sarah@yahoo.com
+
+              Date :   Fri, 1 Feb 2008 21:40:17 +0000
+
+              Content-Type: text/plain ;       charset= " utf-8"
+
+              MIME -Version: 1.0
+
+
+
+
+              VmVyeSwgdmVyeSBnb29kLiBUaGFua3MgZm9yIHROZSBzdWNjZXNzIG9uIHRoaXMsIGFsbCEgIAOK
+
+              U2VudCBmcm9tIG15IEJsYWNrQmVycnnCriBkZXZpY2UgZnJvbSBDZWxsdWxhciBPbmUNCgOKLSOt
+
+              LS1Pcm1naW5hbCBNZXNzYWd1LSOtLSONCkZyb206ICJJcndpbiwgVG9tIEUgKEROUikiIDxOb2Ou
+
+              aXJ3aW5AYWxhc2thLmdvdj4NCgOKRGFOZTogRnJpLCAwMSBGZWIgMjAwOCAxMjoxNjoONCANC1Rv
+
+              Omdvdi5zYXJhaEB5YWhvby5jb20sIHNyX3Bhcm5lbGxAYWxhc2thLmdvdiwiQmFsYXNoLCBKb3N1
+
+              cGggUiAORO9WKSIgPGpvZSSiYWxhc2hAYWxhc2thLmdvdj4slkxlZmVidnJ1LCBSaWNoYXJkIEEg
+
+              KEROUikiIDxyaWNoYXJkLmxlZmVidnJlQGFsYXNrYS5nb3Y + LCJSdXRoZXJmb3JkLCBNYXJO
+              KEROUikiIDxyaWNoYXJkLmxlZmVidnJlQGFsYXNrYS5nb3Y+eSBL
+
+              IChET11pIiA8bWFydHkucnVOaGVyZm9yZEBhbGFza2EuZ292PgOKU3ViamVjdDogRnc6IHRoYW5r
+
+              IHlvdQOKDQoNCkZvciBiYWNrZ3JvdW5kLCBOaHJvdWdoIHRoZSB3aG9sZSBwcm9jZXNzIG9mIHRo
+
+              ZSBLZW5haSBSaXZlciBldmFsdWFOaW9uIEkgY2FtZSBObyBteSBwZXJzb25hbCBjb25jbHVzaW9u
+                                                                    2
+
+
+
+
+                                                                                                             PRA GSP01_0011216
+Searchable Analytics at www.CrivellaWest.com     Posted by msnbc.com, Mother Jones and Pro Publica. http://palinemail.msnbc.msn.com
+
+
+
+
+               IHRoYXQgUm9iZXJOIGhhZCBOaGUgYmVzdCBrbm93bGVkZ2Ugb2YgdGhlIHJpdmVYIGFuZCBOaGUg
+
+              cm12ZXIncySiZXNOIG1udGVyZXNOcyBhdCBoZWFydC7CoMKgIElOlG1zIGdyZWFOIHRvIGh1YXIg
+
+              dGhpcyBmcm9tIGhpbS4KIAogCiAtLSOtLSBPcminaW5hbCBNZXNzYWd1ICOtLSOtCiBGcm9t0iRS
+
+              b2JlcnQgUnVmZm5lciA8cm9iZXJOQGtlbmFpd2FOZXJzaGVkLm9yZz4KIFRvOiBMZWZ1YnZyZSwg
+
+              UmljaGFyZCBBIChET1Ip0yBJcndpbiwgVG9tIEUgKEROUikKIFN1bnQ6IEZyaSBGZWIgMDEgMTE6
+
+              NTg6NDMgMjAwOAogU3ViamVjdDogdGhhbmsgeW9lCiAKIAogVGhhbmsgeW91ISBUaGlzIGizIGEg
+
+              c3R1cCBpbiBOaGUgcminaHQgZG1yZWNOaW9uIGZvciBOaGUgaGVhbHRoIG9mIHRoZSByaXZlci4K
+
+              IAogUm91ZXgOCiAKIAogCiAKIFJvYmVydCBSdWZmbmVyCiBFeGVjdXRpdmUgRGlyZWNOb3IKIEtl
+
+              bmFpIFdhdGVyc2hlZCBGb3JlbQogNDQlMzkgU3RlcmxpbmcgSHd5ICMyMDIKIFNvbGRvdG5hIEFL
+
+              IDk5NjY5CiAKICgSMDcpIDI2MCO1NDQ5IG9mZmljZQogKDkwNykgMzkOLTQ2NjQgY2VsbAogCiBo
+
+              dHRw0i8vd3d3LmtlbmFpd2FOZXJzaGVkLm9yZy8gPGhOdMA6Ly93d3cua2VuYW13YXR1cnNOZWQu
+
+              b3JnLz4gCiAKIAogCiAKIA==
+
+
+
+
+                                                            3
+
+
+
+
+                                                                                                      PRA GSP0I_0011217
+

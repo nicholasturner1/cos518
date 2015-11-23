@@ -1,0 +1,164 @@
+Searchable Analytics at www.CrivellaWest.com                 Posted by msnbc.com, Mother Jones and Pro Publica. http://palinemail.msnbc.msn.com
+
+
+
+
+                                                                                                                Page 1 of 2
+
+
+                 Unknown
+
+                 From :   Jackson, Karleen K (HSS) [karleen.jackson@alaska.gov)
+                 Sent:    Tuesday, April 22, 2008 11:29 AM
+                 To:      ExternalEmailgsp ; Palin; Sarah (GOV sponsored)
+                 Cc:      Tibbles; Michael A (GOV); Hughes; Rosanne 0 (GOV); Kim; Anna C (GOV); Hill; Sherry (HSS)
+                 Subject: Response to ADN article about health issues
+                Governor -
+
+                Many of your staff members and I have been working to craft a response to the negative ADN
+                article about what this administration is doing about health issues. Below is our final draft for
+                your review and approval.
+
+                If you would like to discuss it further I am in Anchorage and happy to stop by your office - or
+                you can reach me on my cell at Privilegedor in the office at 269-7806.
+
+                Thank you!
+
+                Karleen
+
+
+                Opinion Piece, Anchorage Daily news
+                April 22, 2008
+                673 words
+
+                Commissioner Karleen K. Jackson, Ph.D.
+                Alaska Department of Health and Social Services
+
+                Second opinion : solutions for health care need long-term look and fix
+
+
+                Alaskans need a second opinion regarding the outcome of the legislature's 90-day session on
+                health issues.
+
+                Governor Palin's vision with the Health Care Transparency Act was to increase access and
+                reduce costs of health care through competition, and provide information surrounding the cost
+                and quality of care. Alaskans would have been provided information to make better-informed
+                decisions about health care. Repealing Certificate of Need would have made health care more
+                market-driven.
+
+                The House and Senate Health, Education, and Social Services committees held numerous
+                committee hearings - 12 total - which provided an opportunity for legislators, the health care
+                industry, and the public to express a spectrum of opinions regarding the health care marketplace.
+                House Finance also held a lengthy hearing. This is the furthest any such legislation regarding
+                Certificate of Need has survived in the legislative process. We worked hard, but were unable to
+                move the legislation through in the shortened session.
+
+                However, Governor Palin is committed to working toward the recommendations of the Health
+                Care Strategies Planning Council: to make health care more affordable and accessible for
+                Alaskans, while achieving top-quality health care. This doesn't happen overnight - nor in 90
+
+
+                 10/22/2009
+
+                                                                                                                    PRA GSP01_0015520
+Searchable Analytics at www.CrivellaWest.com               Posted by msnbc.com, Mother Jones and Pro Publica. http://palinemail.msnbc.msn.com
+
+
+
+
+                                                                                                                  Page 2 of 2
+
+
+                 days; the issues are complex.
+
+                Providing access to health care for all is a noble goal , but giving everyone health insurance does not
+                ensure access to appropriate health care . We still need enough health practitioners and facilities to deliver
+                the right care at the right time for each Alaskan . That means adequate health infrastructure must be in
+                place to respond to increased health coverage . There is a need to gradually ramp up both infrastructure
+                and insurance to avoid overwhelming any one part of the health care system.
+
+                Last year, Governor Palin and the legislature supported the addition of 20 WWAMI program participants
+                (HB18). It is an important step, and more positions certainly need to be added - not just to accommodate
+                and support training for more doctors in Alaska, but also more nurses and other health care providers.
+
+                Another success from this legislative session to support the health care infrastructure was HB 325, which
+                extended and expanded a housing loan program to teachers and health care professionals . It will help
+                those in teaching and health care professions to receive home loan incentives , aiding recruitment efforts.
+
+                In addition, last year the legislature and Governor Palin supported lifting the freeze on income eligibility
+                levels by increasing Denali Kidcare to 175 percent of poverty . Again, it is important to ensure the cost
+                and the levels of service are sustainable before making additional increases . This year' s legislation to
+                increase Denali KidCare to 200 percent of poverty lacks strong federal support . It is still up to Congress
+                and the Centers for Medicare and Medicaid to reauthorize the program . Governor Palin has called on the
+                Congressional delegation to achieve timely reauthorization of the State Children 's Health Insurance
+                Program (SCHIP), which is only authorized through March 2009 . With many seats in Congress and the
+                presidency up for election, the outcome is unknown - it is not prudent to guess what will be allowed or
+                improved for this program.
+
+                Next steps : The department is assessing how to continue incremental improvements to health care in
+                Alaska using current resources including:
+                    . Establishing a Health Care Commission to work with a broad spectrum of health care professionals
+                      and consumers to address and formulate policy on health care issues concerning affordability,
+                      accessibility and quality of health care.
+                   . Consolidating information already available to provide a web-based resource on health care,
+                      prevention and healthy living.
+                   . Providing outreach to Alaskans on healthy living : through the recent promotion of the President's
+                      Challenge, for example.
+                   . Evaluating what information is readily available on quality and cost from health care providers, and
+                      what the state can link together into a comprehensive site.
+                    . Promulgating regulations on Certificate of Need, to improve definitions and address areas of
+                      concern , based on the Negotiated Rule Making Committee Recommendations.
+
+                The Governor and the department look forward to continuing to improve health care in Alaska, and
+                supporting Alaskans in achieving the greatest possible individual and public health.
+
+                Karleen K. Jackson, Ph.D., is the Commissioner of the Alaska Department of Health and Social Services
+
+
+
+
+                 10/22/2009
+
+                                                                                                                   PRA GSP01_0015521
+Searchable Analytics at www.CrivellaWest.com                 Posted by msnbc.com, Mother Jones and Pro Publica. http://palinemail.msnbc.msn.com
+
+
+
+
+                 PW Exp Warning                                                                                        Page 1 of I
+
+
+                 Unknown
+                 From :    ETS Help Center [help_center@admin.state. ak.us]
+                 Sent:     Tuesday, April 22, 2008 7:08 AM
+                 To: . Palin; Sarah (GOV sponsored)
+                 Subject: Password expiration warning
+                 The password for SOA userlD 'govsp' expires Sunday April 27th, 2:34 PM.
+                 In most state agencies, this is not the userlD and password used to logon to individual computers. The
+                 password can be changed using the SOA Password Change oaae or Outlook Web Access.
+                 Your new password must be at least eight characters long and include at least three of these four types of
+                 characters:
+
+                     � upper case alphabet
+                     � lower case alphabet
+                     � numbers
+                     � punctuation or symbols
+
+                 Prior passwords may not be re-used.
+
+                 Important Note ! - Web browsers, email clients, handheld email devices and other applications can store
+                 and continue to use an old password after it has been changed, possibly triggering lockout. Such
+                 applications should be closed while (or immediately after) changing a password. These stored passwords
+                 may need to be updated or deleted.
+
+                 Please contact your local or departmental support technicians with any questions or requests for
+                 assistance related to changing passwords.
+
+
+
+
+                 10/22/2009
+
+
+                                                                                                                        PRA GSP01 0015522
+
