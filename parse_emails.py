@@ -1,9 +1,12 @@
 #!/usr/bin/env python
-import numpy as np
-# from scipy import sparse, io
 import re
 import glob
 from sys import argv
+
+#Dependencies
+import numpy as np
+#nltk (within create_vocabulary)
+#sklearn.feature_extraction.text
 
 tags = ['From','To','Subject']
 
@@ -68,11 +71,6 @@ def save_vocabulary(vocab_dict, filename):
 def save_bow_as_dense(bow, filename):
   bow.tofile(filename)
 
-def load_bow_as_dense(filename, num_emails):
-  mat = np.fromfile(filename, dtype=np.uint8, count=-1)
-  mat.reshape((num_emails, -1))
-  return mat
-
 def save_bow_as_sparse(bow):
   pass
 
@@ -84,7 +82,33 @@ def vocab_filename(output_prefix):
 
 def mat_filename(output_prefix):
   return output_prefix + ".npy"
-  
+
+def load_bow_as_dense(filename, num_emails):
+  mat = np.fromfile(filename, dtype=np.uint8, count=-1)
+  mat.reshape((num_emails, -1))
+  return mat
+
+def perform_tfidf_transform(bow_matrix):
+  from sklearn.feature_extraction.text import TfidfTransformer
+
+  tr = TfidfTransformer()
+  tr(norm='l2')
+
+  return tr.fit_transform(bow_matrix)
+
+def load_vocab_as_list(filename):
+  vocab = []
+
+  with open(filename) as f:
+    lines = f.readlines()
+    lines = [line.split('\n')[0] for line in lines]
+    f.close()
+
+  for line in lines:
+    vocab.append( line.split(',')[1] )
+
+  return vocab
+
 #=============================================
 #Preprocessing 
 
@@ -129,7 +153,7 @@ def remove_junk_lines(emails):
 #Workhorses
 
 def create_vocabulary(emails):
-    print "Importing nltk dependencies (takes a bit)"
+    print "Importing nltk dependencies (can take a bit)"
     import nltk
     from nltk import word_tokenize
     from nltk.corpus import stopwords
