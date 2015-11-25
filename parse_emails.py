@@ -1,9 +1,5 @@
 #!/usr/bin/env python
-
-import nltk, re, pprint
-from nltk import word_tokenize
-from nltk.corpus import stopwords
-import numpy
+import numpy as np
 # from scipy import sparse, io
 import re
 import glob
@@ -132,12 +128,16 @@ def remove_junk_lines(emails):
 #=============================================
 #Workhorses
 
-
 def create_vocabulary(emails):
+    print "Importing nltk dependencies (takes a bit)"
+    import nltk
+    from nltk import word_tokenize
+    from nltk.corpus import stopwords
 
     porter = nltk.PorterStemmer() # also lancaster stemmer
     wnl = nltk.WordNetLemmatizer()
     stopWords = stopwords.words("english")
+    print "Processing documents"
 
     vocab = {}
     res_emails = []
@@ -181,7 +181,7 @@ def wordcount_filter(words, num=5):
 
 def find_wordcounts(docs, vocab):
 
-    bagofwords = numpy.zeros(shape=(len(docs),len(vocab)), dtype=numpy.uint8)
+    bagofwords = np.zeros(shape=(len(docs),len(vocab)), dtype=np.uint8)
     vocabIndex={}
     vocab = sorted(vocab.keys())
 
