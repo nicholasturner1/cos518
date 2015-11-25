@@ -20,6 +20,10 @@ def grab_all_txt_files():
   return glob.glob("*.txt")
 
 def read_all_emails(email_filenames):
+  '''
+  Reads a list of filenames, and returns a list of 
+  line-lists
+  '''
 
   emails = []
 
@@ -35,7 +39,10 @@ def read_all_emails(email_filenames):
   return emails
 
 def save_email_tags(all_email_tags, filename):
-  '''saves the tagged fields as a csv file'''
+  '''
+  Saves the tag fields (see get_email_tags below)
+  as a csv with a header line
+  '''
 
   keys = sorted(all_email_tags[0].keys())
 
@@ -52,7 +59,8 @@ def save_email_tags(all_email_tags, filename):
     f.close()
 
 def save_vocabulary(vocab_dict, filename):
-  '''Saves a word count (vocab) dictionary as a csv with each line
+  '''
+  Saves a word count (vocab) dictionary as a csv with each line
   taking the format
 
   word_index,word
@@ -72,31 +80,16 @@ def save_bow_as_dense(bow, filename):
   bow.tofile(filename)
 
 def save_bow_as_sparse(bow):
+  '''Could be useful later'''
   pass
-
-def tag_filename(output_prefix):
-  return output_prefix + "_tags.csv"
-
-def vocab_filename(output_prefix):
-  return output_prefix + "_vocab.csv"
-
-def mat_filename(output_prefix):
-  return output_prefix + ".npy"
 
 def load_bow_as_dense(filename, num_emails):
   mat = np.fromfile(filename, dtype=np.uint8, count=-1)
-  mat.reshape((num_emails, -1))
-  return mat
-
-def perform_tfidf_transform(bow_matrix):
-  from sklearn.feature_extraction.text import TfidfTransformer
-
-  tr = TfidfTransformer()
-  tr(norm='l2')
-
-  return tr.fit_transform(bow_matrix)
+  return mat.reshape((num_emails, -1))
 
 def load_vocab_as_list(filename):
+  '''Loads a vocab file as a list of words'''
+
   vocab = []
 
   with open(filename) as f:
@@ -110,9 +103,24 @@ def load_vocab_as_list(filename):
   return vocab
 
 #=============================================
+#Functions to abstract filename modifications
+def tag_filename(output_prefix):
+  return output_prefix + "_tags.csv"
+
+def vocab_filename(output_prefix):
+  return output_prefix + "_vocab.csv"
+
+def mat_filename(output_prefix):
+  return output_prefix + ".npy"
+
+#=============================================
 #Preprocessing 
 
 def get_email_tags(email_lines, email_filename, tags_fields=tags):
+    '''
+    Extracts the lines of the email which match a certain
+    tag, and will only return the first matching line
+    '''
 
     split_lines = [line.split(':') for line in email_lines]
 
@@ -130,10 +138,12 @@ def get_email_tags(email_lines, email_filename, tags_fields=tags):
     return fields
 
 def get_all_email_tags(emails, email_filenames, tag_fields=tags):
+  '''Loops get_email_tags over a list of email line-lists and filenames'''
   return [get_email_tags(emails[i], email_filenames[i], tags) 
     for i in range(len(emails))]
 
 def remove_junk_lines(emails):
+  '''Misc processing to remove lines we don't want'''
   res_emails = []
   for email in emails:
 
@@ -149,10 +159,26 @@ def remove_junk_lines(emails):
 
   return res_emails
 
+def perform_tfidf_transform(bow_matrix):
+  '''
+  Takes a numpy matrix, and transforms the values
+  to account for term and document frequency
+  '''
+  from sklearn.feature_extraction.text import TfidfTransformer
+
+  tr = TfidfTransformer(norm='l2')
+  return tr.fit_transform(bow_matrix)
+
 #=============================================
 #Workhorses
 
 def create_vocabulary(emails):
+    '''
+    Preprocesses the words in all emails, forms
+    a dictionary mapping a vocabulary of words
+    to the number of occurrences of that word within
+    the corpus
+    '''
     print "Importing nltk dependencies (can take a bit)"
     import nltk
     from nltk import word_tokenize
@@ -194,6 +220,10 @@ def create_vocabulary(emails):
     return(vocab, res_emails)
 
 def wordcount_filter(words, num=5):
+    '''
+    Filters the dictionary above for words which
+    occur more than ${num} times
+    '''
     res_words = {}
 
     for k in words.keys():
@@ -204,6 +234,10 @@ def wordcount_filter(words, num=5):
     return res_words
 
 def find_wordcounts(docs, vocab):
+    '''
+    Forms the document-term matrix over preprocessed
+    line-lists and vocabulary
+    '''
 
     bagofwords = np.zeros(shape=(len(docs),len(vocab)), dtype=np.uint8)
     vocabIndex={}
