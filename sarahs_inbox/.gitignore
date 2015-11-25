@@ -1,9 +1,0 @@
-*.pyc
-feedinator
-haystack
-local_settings.py
-*.sqlite3
-parsed/failures
-parsed/source.bak*
-whoosh/*
-data
