@@ -258,7 +258,7 @@ def find_wordcounts(docs, vocab):
 
 #=============================================
         
-def main(output_prefix, email_filenames = None, min_word_count=0):
+def main(output_prefix, min_word_count=0, email_filenames=None):
 
   if email_filenames is None:
     print "Defaulting to grab all txt files"
@@ -292,7 +292,9 @@ def main(output_prefix, email_filenames = None, min_word_count=0):
   print "Done!"
 
 if __name__ == "__main__":
-  if len(argv) > 1:
-    main(argv[1], argv[2:])
+  if len(argv) == 3:
+    main(argv[1], argv[2])
+  elif len(argv) > 3:
+    main(argv[1], argv[2], argv[3:])
   else:
     main('email_parse')
