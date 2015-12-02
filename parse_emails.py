@@ -83,9 +83,24 @@ def save_bow_as_sparse(bow):
   '''Could be useful later'''
   pass
 
+def load_datamat(filename, num_rows, dtype):
+  mat = np.fromfile(filename, dtype=dtype, count=-1)
+  return mat.reshape((num_rows, -1))
+
+def load_float64(filename, num_rows):
+  return load_datamat(filename, num_rows, np.float64)
+
+def load_int8(filename, num_rows):
+  return load_datamat(filename, num_rows, np.uint8)
+
 def load_bow_as_dense(filename, num_emails):
-  mat = np.fromfile(filename, dtype=np.uint8, count=-1)
-  return mat.reshape((num_emails, -1))
+  return load_int8(filename, num_emails)
+
+def load_email_x_topic(filename, num_emails):
+  return load_float64(filename, num_emails)
+
+def load_topic_x_word(filename, num_topics):
+  return load_float64(filename, num_topics)
 
 def load_vocab_as_list(filename):
   '''Loads a vocab file as a list of words'''
