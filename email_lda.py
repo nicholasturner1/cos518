@@ -2,11 +2,12 @@
 
 import parse_emails as pe
 import lda
+import numpy as np
 from sys import argv
 
-default_data_filename = 'data/13999.npy'
+default_data_filename = "data/13999.npy"
 default_num_emails = 13999
-default_output_prefix = "13999"
+default_output_prefix = "data/13999"
 
 def train_model(data_filename = 'data/13999.npy', num_emails = 13999):
 
@@ -28,10 +29,25 @@ def train_model(data_filename = 'data/13999.npy', num_emails = 13999):
 
 def save_model(model_obj, output_prefix):
 
-    model.doc_topic_.tofile('data/13999_email_x_topic.npy')
-    model.topic_word_.tofile('data/13999_topic_x_word.npy')
+    model_obj.doc_topic_.tofile( output_prefix + "_email_x_topic.npy" )
+    model_obj.topic_word_.tofile( output_prefix + "_topic_x_word.npy" )
 
+def print_top_n_words( topic_x_word_matrix, vocab_filename, num_words=10 ):
 
+    vocabulary = np.array( pe.load_vocab_as_list( vocab_filename ), dtype=object)
+
+    num_topics = topic_x_word_matrix.shape[0]
+
+    top_word_lists = []
+    for i in range(num_topics):
+        topic_dist = topic_x_word_matrix[i,:]
+
+        sort_indices = np.argsort( topic_dist )
+
+        sorted_words = vocabulary[sort_indices]
+        top_word_lists.append( sorted_words[:num_words] )
+
+    return top_word_lists
 
 if __name__ == '__main__':
     #really basic arg parsing bc I'm feeling lazy

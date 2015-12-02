@@ -295,7 +295,7 @@ def main(output_prefix, min_word_count=0, email_filenames=None):
 
   if min_word_count > 0:
     print "Filtering word counts..."
-    vocabulary = wordcount_filter(vocabulary)
+    vocabulary = wordcount_filter(vocabulary, word_count)
   print "Saving vocabulary..."
   save_vocabulary(vocabulary, vocab_filename(output_prefix))
 
