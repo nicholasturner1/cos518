@@ -1,60 +1,93 @@
 #!/usr/bin/env python
 
 import parse_emails as pe
-import lda
+import gensim
 import numpy as np
-from sys import argv
+import argparse
 
-default_data_filename = "data/13999.npy"
-default_num_emails = 13999
-default_output_prefix = "data/13999"
+def train_model(data_filename, num_emails, num_topics=10, num_passes=1,
+    topic_x_word=True, email_x_topic=True):
 
-def train_model(data_filename = 'data/13999.npy', num_emails = 13999):
-
-    #Constants
-    n_topics = 10
-    n_iter = 2000
-    random_state = 1
-
-    #Loading bag-of-words dataset
+    print "Loading data..."
     data = pe.load_bow_as_dense(data_filename, num_emails)
 
-    #lda package only accepts count matrices, not tfidf
-    model = lda.LDA(n_topics=n_topics, 
-        n_iter=n_iter, 
-        random_state=random_state)
+    #Converting to gensim corpus
+    corpus = gensim.matutils.Dense2Corpus(data, documents_columns=False)
 
-    #Training LDA model
-    model.fit(m)
+    print "Beginning training..."
+    model = gensim.models.ldamodel.LdaModel(corpus, 
+              num_topics=num_topics, passes=num_passes)
 
-def save_model(model_obj, output_prefix):
+    print "Done"
+    if email_x_topic:
+        ext = extract_email_topic_dist(model, corpus)
+    if topic_x_word:
+        txw = extract_topic_word_dist(model)
 
-    model_obj.doc_topic_.tofile( output_prefix + "_email_x_topic.npy" )
-    model_obj.topic_word_.tofile( output_prefix + "_topic_x_word.npy" )
+    if email_x_topic and topic_x_word:
+        return model, ext, txw
+    elif email_x_topic:
+        return model, ext
+    elif topic_x_word:
+        return model, txw
+    else:
+        return model
+
+def extract_email_topic_dist(model_obj, corpus):
+
+    print "Performing inference over data..."
+    email_x_topic = model_obj.inference(corpus)[0]
+    #Normalizing weights
+    email_x_topic = email_x_topic / email_x_topic.sum(1, keepdims=True)
+
+    return email_x_topic
+
+def extract_topic_word_dist(model_obj):
+
+    print "Extracting topic distributions..."
+    topic_x_word = model_obj.state.get_lambda()
+    #Normalizing topics
+    topic_x_word = topic_x_word / topic_x_word.sum(1, keepdims=True)
+
+    return topic_x_word
 
 def print_top_n_words( topic_x_word_matrix, vocab_filename, num_words=10 ):
+    pass
 
-    vocabulary = np.array( pe.load_vocab_as_list( vocab_filename ), dtype=object)
+def main( data_filename, num_emails, num_topics, num_passes, output_prefix ):
 
-    num_topics = topic_x_word_matrix.shape[0]
+    model, ext, txw = train_model( data_filename, num_emails, 
+                                   num_topics, num_passes, True, True )
 
-    top_word_lists = []
-    for i in range(num_topics):
-        topic_dist = topic_x_word_matrix[i,:]
-
-        sort_indices = np.argsort( topic_dist )
-
-        sorted_words = vocabulary[sort_indices]
-        top_word_lists.append( sorted_words[:num_words] )
-
-    return top_word_lists
+    ext.tofile( output_prefix + "_LDA_email_x_topic.npy")
+    txw.tofile( output_prefix + "_LDA_topic_x_word.npy")
+    model.save( output_prefix + "_LDA_model")
 
 if __name__ == '__main__':
-    #really basic arg parsing bc I'm feeling lazy
-    if len(argv) == 1:
-        model = train_model( default_data_filename, default_num_emails )
-        save_model( default_output_prefix )
+   
+    parser = argparse.ArgumentParser(description = __doc__)
 
-    elif len(argv) == 4:
-        model = train_model( argv[1], int(argv[2]) )
-        save_model( model, argv[3] )
+    parser.add_argument('data_filename',
+        default='data/14453.npy',
+        help="Name of data file")
+    parser.add_argument('num_emails',
+        type=int, default=14453,
+        help="Number of emails contained within data file")
+    parser.add_argument('-num_topics',
+        type=int, default=10,
+        help="Number of topics to fit")
+    parser.add_argument('-num_passes',
+        type=int, default=1,
+        help="Number of times to pass over dataset")
+    parser.add_argument('output_prefix',
+        default='14453',
+        help="Prefix for saved output")
+
+    args = parser.parse_args()
+
+    main(args.data_filename,
+         args.num_emails,
+         args.num_topics,
+         args.num_passes,
+         args.output_prefix)
+
