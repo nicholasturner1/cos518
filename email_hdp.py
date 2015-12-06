@@ -77,7 +77,7 @@ if __name__ == '__main__':
         help="Number of emails contained within data file")
     parser.add_argument('vocab_filename',
         default="data/14453_vocab.csv",
-        help="Number of times to pass over dataset")
+        help="Vocabulary file")
     parser.add_argument('output_prefix',
         default='14453',
         help="Prefix for saved output")

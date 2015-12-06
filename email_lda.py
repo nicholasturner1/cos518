@@ -52,7 +52,20 @@ def extract_topic_word_dist(model_obj):
     return topic_x_word
 
 def print_top_n_words( topic_x_word_matrix, vocab_filename, num_words=10 ):
-    pass
+    vocabulary = np.array( pe.load_vocab_as_list( vocab_filename ), dtype=object)
+
+    num_topics = topic_x_word_matrix.shape[0]
+
+    top_word_lists = []
+    for i in range(num_topics):
+        topic_dist = topic_x_word_matrix[i,:]
+
+        sort_indices = np.argsort( topic_dist )
+
+        sorted_words = vocabulary[sort_indices]
+        top_word_lists.append( sorted_words[:num_words] )
+
+    return top_word_lists
 
 def main( data_filename, num_emails, num_topics, num_passes, output_prefix ):
 
