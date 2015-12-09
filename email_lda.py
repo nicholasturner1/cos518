@@ -6,21 +6,25 @@ import numpy as np
 import argparse
 
 def train_model(data_filename, num_emails, num_topics=10, num_passes=1,
-    topic_x_word=True, email_x_topic=True):
+    topic_x_word=True, email_x_topic=True, binarize=False):
 
     print "Loading data..."
     data = pe.load_bow_as_dense(data_filename, num_emails)
+
+    if binarize:
+        data[np.nonzero(data)] = 1
 
     #Converting to gensim corpus
     corpus = gensim.matutils.Dense2Corpus(data, documents_columns=False)
 
     print "Beginning training..."
     model = gensim.models.ldamodel.LdaModel(corpus, 
-              num_topics=num_topics, passes=num_passes)
+              num_topics=num_topics, passes=num_passes,
+              alpha=0.01,eta=0.01)
 
     print "Done"
     if email_x_topic:
-        ext = extract_email_topic_dist(model, corpus)
+        ext = run_inference(model, corpus)
     if topic_x_word:
         txw = extract_topic_word_dist(model)
 
@@ -33,7 +37,20 @@ def train_model(data_filename, num_emails, num_topics=10, num_passes=1,
     else:
         return model
 
-def extract_email_topic_dist(model_obj, corpus):
+def run_inference_over_file(data_filename, num_emails, model_filename):
+
+    print "Loading data..."
+    data = pe.load_bow_as_dense(data_filename, num_emails)
+
+    #Converting to gensim corpus
+    corpus = gensim.matutils.Dense2Corpus(data, documents_columns=False)
+
+    print "Loading model..."
+    model = gensim.utils.SaveLoad.load(model_filename)
+
+    return run_inference(model, corpus)
+
+def run_inference(model_obj, corpus):
 
     print "Performing inference over data..."
     email_x_topic = model_obj.inference(corpus)[0]
@@ -63,6 +80,7 @@ def print_top_n_words( topic_x_word_matrix, vocab_filename, num_words=10 ):
         sort_indices = np.argsort( topic_dist )
 
         sorted_words = vocabulary[sort_indices]
+	sorted_words = sorted_words[::-1]
         top_word_lists.append( sorted_words[:num_words] )
 
     return top_word_lists
@@ -72,8 +90,13 @@ def main( data_filename, num_emails, num_topics, num_passes, output_prefix ):
     model, ext, txw = train_model( data_filename, num_emails, 
                                    num_topics, num_passes, True, True )
 
-    ext.tofile( output_prefix + "_LDA_email_x_topic.npy")
-    txw.tofile( output_prefix + "_LDA_topic_x_word.npy")
+    #Adding the number of rows to each saved result file
+    # to assist in reading
+    ext_suffix = str( ext.shape[0] )
+    txw_suffix = str( txw.shape[0] )
+
+    ext.tofile( output_prefix + "_LDA_email_x_topic_%s.npy" % ext_suffix)
+    txw.tofile( output_prefix + "_LDA_topic_x_word_%s.npy" % txw_suffix)
     model.save( output_prefix + "_LDA_model")
 
 if __name__ == '__main__':
