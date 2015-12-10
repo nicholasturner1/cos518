@@ -1,22 +1,64 @@
 #!/usr/bin/env python
+__doc__ = '''
+Email Parsing Script for COS518
+
+Primarily used for Sarah Palin Inbox thus far
+
+ORDER OF OPERATIONS
+-Read files
+-Extract fields of interest (tag fields)
+-Removing metadata lines
+-Removing junk characters (defined below)
+-Converting to lowercase
+-Removing common stop words
+-Removing terms containing numbers
+-Removing short terms (length < 3)
+-Lemmatizing across common forms of a word
+-Filtering out terms which are very rare (optional - not default)
+-Filtering out extremely common terms (optional - default)
+-Filtering out terms which appear in very few documents (optional - default)
+-Filtering out documents with very few terms (optional - default)
+
+Saves a copy of the tag fields for the full dataset,
+ as well as one for the emails surviving the filters above
+ (the former of these is indicated by 'full')
+
+Does the same for the bag-of-words matrix
+'''
+
 import re
 import glob
-from sys import argv
+import argparse
 
 #Dependencies
 import numpy as np
-#nltk (within create_vocabulary)
-#sklearn.feature_extraction.text
+import nltk
+from nltk import word_tokenize
+from nltk.corpus import stopwords
 
+#=============================================
+stemmer = nltk.PorterStemmer() # also lancaster stemmer
+lemmatizer = nltk.WordNetLemmatizer()
+stopWords = stopwords.words("english")
+
+#Fields wh
 tags = ['From','To','Subject']
 
+#Filtered out of all email texts within create_vocabulary
 junk_chars = ['{','}','#','%','&','\(','\)','\[','\]','<','>',',', '!', '.', ';', 
 '?', '*', '\\', '\/', '~', '_','|','=','+','^',':','\"','\'','@','-']
+
+#NOT currently filtered
+#junk_words = ['re','subject','sent','cc','bcc','com','http']
 
 #=============================================
 #IO
 
 def grab_all_txt_files():
+  '''
+  Returns a list of all files ending in .txt
+  within the current directory
+  '''
   return glob.glob("*.txt")
 
 def read_all_emails(email_filenames):
@@ -28,12 +70,16 @@ def read_all_emails(email_filenames):
   emails = []
 
   for filename in email_filenames:
+
+    #Reading the file as a list of lines
     with open(filename) as f:
       lines = f.readlines()
       lines = [line.split('\n')[0] for line in lines]
-      lines = [line.decode('ascii',errors='ignore')
+      lines = [line.decode('utf-8',errors='ignore')
               for line in lines]
       f.close()
+
+    #Appending each list to a list-list
     emails.append(lines)
 
   return emails
@@ -41,24 +87,24 @@ def read_all_emails(email_filenames):
 def save_email_tags(all_email_tags, filename):
   '''
   Saves the tag fields (see get_email_tags below)
-  as a csv with a header line
+  as a csv with a header line, delimited by ;;
   '''
 
   keys = sorted(all_email_tags[0].keys())
 
   with open(filename,'w+') as f:
 
-    f.write( ','.join(keys) )
+    f.write( ';;'.join(keys) )
     f.write('\n')
 
     for email_tags in all_email_tags:
       fields = [email_tags[key] for key in keys]
-      f.write( ','.join(fields) )
+      f.write( ';;'.join(fields) )
       f.write('\n')
 
     f.close()
 
-def save_vocabulary(vocab_dict, filename):
+def save_vocabulary(vocab_list, filename):
   '''
   Saves a word count (vocab) dictionary as a csv with each line
   taking the format
@@ -66,12 +112,12 @@ def save_vocabulary(vocab_dict, filename):
   word_index,word
   '''
 
-  words = sorted(vocab_dict)
+  #words = sorted(vocab_dict)
 
   with open(filename,'w+') as f:
 
-    for i in range(len(words)):
-      f.write( '%d,%s' % (i,words[i]) )
+    for i in range(len(vocab_list)):
+      f.write( '%d,%s' % (i,vocab_list[i]) )
       f.write('\n')
 
     f.close()
@@ -116,6 +162,46 @@ def load_vocab_as_list(filename):
     vocab.append( line.split(',')[1] )
 
   return vocab
+
+def load_tags(filename):
+    '''
+    Loads a tags file as a list of field dicts
+
+    Assumes that the file has a header line
+    '''
+    
+    tag_dicts = []
+
+    with open(filename) as f:
+      lines = f.readlines()
+      lines = [line.split('\n')[0] for line in lines]
+      lines = [line.split(';;') for line in lines]
+      f.close()
+
+    header_line = line[0]
+
+    #Creating dicts, appending to lists
+    for line in lines[1:]:
+      tag_dicts.append( { header_line[i]: line[i] for i in range(len(header_line))} )
+
+    return tag_dicts
+    
+    
+
+def print_email_rep(bow_filename, vocab_filename, num_emails, email_num):
+    '''
+    Takes an email index (row) number from a bag of words matrix, and prints
+    the verbal representation of that document. This can be useful for understanding
+    which words make it through the filters below
+    '''
+    bow = load_bow_as_dense(bow_filename, num_emails)
+    vocab = load_vocab_as_list(vocab_filename)
+
+    rep = ""
+    for i in range(len(bow[email_num,:])):
+        rep += bow[email_num,i] * (" %s " % vocab[i] )
+
+    print rep
 
 #=============================================
 #Functions to abstract filename modifications
@@ -166,6 +252,14 @@ def remove_junk_lines(emails):
     email = [line for line in email 
             if 'msnbc' not in line]
 
+    metadata_fieldnames = ['Date:','To:','From:',
+        'Subject:','Sent:','Cc:','Attachments:','Recipients:',
+        'Importance:','Sender:','Bcc:']
+
+    for fieldname in metadata_fieldnames:
+        email = [line for line in email
+            if fieldname not in line]
+
     #---Original Message--- lines
     email = [line for line in email 
             if 'Original Message' not in line]
@@ -178,16 +272,26 @@ def perform_tfidf_transform(bow_matrix):
   '''
   Takes a numpy matrix, and transforms the values
   to account for term and document frequency
+
+  NOT CURRENTLY USED
   '''
   from sklearn.feature_extraction.text import TfidfTransformer
 
   tr = TfidfTransformer(norm='l2')
   return tr.fit_transform(bow_matrix)
 
+def contains_num(word):
+    num_strings = ['0','1','2','3','4','5','6','7','8','9']
+
+    for num in num_strings:
+        if num in word:
+            return True
+    return False
+
 #=============================================
 #Workhorses
 
-def create_vocabulary(emails):
+def create_corpus_vocabulary(emails):
     '''
     Preprocesses the words in all emails, forms
     a dictionary mapping a vocabulary of words
@@ -195,44 +299,74 @@ def create_vocabulary(emails):
     the corpus
     '''
     print "Importing nltk dependencies (can take a bit)"
-    import nltk
-    from nltk import word_tokenize
-    from nltk.corpus import stopwords
-
-    porter = nltk.PorterStemmer() # also lancaster stemmer
-    wnl = nltk.WordNetLemmatizer()
-    stopWords = stopwords.words("english")
     print "Processing documents"
 
     vocab = {}
     res_emails = []
 
-    for email in emails:
+    for i in range(len(emails)):
+      print "Email: # %d" % (i+1)
 
-      #Collapsing across lines
-      email_text = ' '.join(email)
+      tokens = process_email_tokens( emails[i] )
 
-      # remove noisy characters; tokenize
-      junk_removed = re.sub('[%s]' % ''.join(junk_chars), ' ', email_text)
-      tokens = word_tokenize(junk_removed)
-
-      # lotsa processing
-      tokens = [w.lower() for w in tokens]
-      tokens = [w for w in tokens if w not in stopWords]
-      tokens = [wnl.lemmatize(t) for t in tokens]
-      tokens = [porter.stem(t) for t in tokens]
-
-      for t in tokens: 
-      # this is a hack but much faster than lookup each
-      # word within many dict keys
-        try:
-          vocab[t] = vocab[t]+1
-        except:
-          vocab[t] = 1
+      vocab = add_tokens_to_vocab( vocab, tokens )
 
       res_emails.append(tokens)
 
     return(vocab, res_emails)
+
+def process_email_tokens( email ):
+    '''
+    Takes an individual email, splits it into tokens,
+    and filters that list of tokens for various issues
+    '''
+    #Collapsing across lines
+    email_text = ' '.join( email )
+
+    # remove noisy characters
+    junk_removed = re.sub('[%s]' % ''.join(junk_chars), ' ', email_text)
+
+    #Splitting document into words
+    tokens = word_tokenize(junk_removed)
+
+    #Converts to lowercase
+    tokens = [w.lower() for w in tokens]
+
+    #Removes stopwords from argument
+    tokens = [w for w in tokens if w not in stopWords]
+
+    #Removes 'junk words' defined above - NOT CURRENTLY USED
+    #tokens = [w for w in tokens if w not in junk_words]
+
+    #Removes words containing a number (filtering dates, prices, etc.)
+    tokens = [w for w in tokens if not contains_num(w)]
+
+    #Removes short terms
+    tokens = [w for w in tokens if len(w) >= 3]
+
+    #Lemmatizes words to condense across grammatical forms
+    tokens = [lemmatizer.lemmatize(t) for t in tokens]
+
+    #Stemming is similar to lemmatization, but works differently
+    #tokens = [stemmer.stem(t) for t in tokens]
+
+    return tokens
+
+def add_tokens_to_vocab( vocab, tokens ):
+    '''
+    Takes a dictionary which tracks the total corpus
+    bag of word count so far, and adds new tokens to the record
+    '''
+    
+    for t in tokens: 
+    # this is a hack but much faster than lookup each
+    # word within many dict keys
+      try:
+        vocab[t] = vocab[t]+1
+      except:
+        vocab[t] = 1
+
+    return vocab
 
 def wordcount_filter(words, num=5):
     '''
@@ -269,11 +403,62 @@ def find_wordcounts(docs, vocab):
            if index_t>=0:
               bagofwords[i,index_t]=bagofwords[i,index_t]+1
 
-    return bagofwords
+    return bagofwords, vocab
+
+def remove_indices_from_bow(bow, aux, to_remove, axis):
+    '''Removes corresponding indices from a bow matrix
+    and an auxiliary list (either the vocab or the email id's
+    w/ tag fields'''
+    bow = np.delete(bow, to_remove, axis)
+    to_remove = to_remove[::-1]
+
+    print "%d items to remove" % to_remove.size
+    for i in to_remove:
+        del aux[i]
+
+    return bow, aux
+
+def dynamic_stopword_filter(bow, vocab=None, threshold=None):
+    '''Filtering out the ${threshold} most common words'''
+
+    word_counts = bow.sum(0)
+
+    word_ranks = np.argsort(word_counts)
+
+    to_remove = np.where(word_ranks >= (word_ranks.size - threshold) )[0]
+
+    return remove_indices_from_bow(bow, vocab, to_remove, 1)
+
+def term_min_doc_filter(bow, vocab, threshold):
+    '''
+    Filters out terms which appear in fewer than ${threshold} 
+    documents
+    '''
+
+    #binarize
+    bow_copy = np.copy(bow)
+    bow_copy[np.nonzero(bow_copy)] = 1
+
+    word_counts = bow_copy.sum(0)
+
+    to_remove = np.where( word_counts < threshold )[0]
+
+    return remove_indices_from_bow(bow, vocab, to_remove, 1)
+
+def document_min_length_filter(bow, tags, threshold):
+    '''Removing documents with fewer than threshold terms'''
+
+    doc_counts = bow.sum(1)
+
+    to_remove = np.where(doc_counts < threshold)[0]
+
+    return remove_indices_from_bow(bow, tags, to_remove, 0)
+    
 
 #=============================================
         
-def main(output_prefix, min_word_count=0, email_filenames=None):
+def main(output_prefix, email_filenames=None, min_word_count=-1,
+   dynamic_stopword_thr=-1, term_min_doc_thr=-1, doc_min_len_thr=-1):
 
   if email_filenames is None:
     print "Defaulting to grab all txt files"
@@ -284,32 +469,71 @@ def main(output_prefix, min_word_count=0, email_filenames=None):
 
   print "Fetching tagged fields..."
   email_tags = get_all_email_tags(emails, email_filenames)
-  print "Saving tagged fields..."
-  save_email_tags(email_tags, tag_filename(output_prefix))
-
   print "Removing junk lines..."
   cleaned_emails = remove_junk_lines(emails)
 
   print "Generating word counts..."
-  vocabulary, cleaned_emails = create_vocabulary(cleaned_emails)
+  vocabulary, cleaned_emails = create_corpus_vocabulary(cleaned_emails)
 
   if min_word_count > 0:
-    print "Filtering word counts..."
-    vocabulary = wordcount_filter(vocabulary, word_count)
-  print "Saving vocabulary..."
-  save_vocabulary(vocabulary, vocab_filename(output_prefix))
+    print "Filtering word counts to those > %d..." % (min_word_count)
+    vocabulary = wordcount_filter(vocabulary, min_word_count)
 
   print "Generating data matrix..."
-  bow = find_wordcounts(cleaned_emails, vocabulary)
+  bow, vocab_list = find_wordcounts(cleaned_emails, vocabulary)
+
+  if dynamic_stopword_thr > 0:
+    print "Filtering out common terms..."
+    bow, vocab = dynamic_stopword_filter(bow, vocab_list,
+                      dynamic_stopword_thr)
+
+  if term_min_doc_thr > 0:
+    print "Filtering out uncommon terms..."  
+    bow, vocab = term_min_doc_filter(bow, vocab_list, 
+                      term_min_doc_thr)
+
+  if doc_min_len_thr > 0:
+    print "Filtering out small documents..."
+    filtered_bow, filtered_email_tags = document_min_length_filter(
+                      bow, email_tags, doc_min_len_thr)
+
+  print "FINAL Bag-of-Words Matrix Dimensions:" 
+  print filtered_bow.shape
+  print 
+
+  print "Saving tagged fields..."
+  save_email_tags(filtered_email_tags, tag_filename(output_prefix))
+  save_email_tags(email_tags, tag_filename(output_prefix + "_full"))
+
+  print "Saving vocabulary..."
+  save_vocabulary(vocab, vocab_filename(output_prefix))
+
   print "Saving data matrix..."
-  save_bow_as_dense(bow, mat_filename(output_prefix))
+  save_bow_as_dense(filtered_bow, mat_filename(output_prefix))
+  save_bow_as_dense(bow, mat_filename(output_prefix + "_full"))
 
   print "Done!"
 
 if __name__ == "__main__":
-  if len(argv) == 3:
-    main(argv[1], argv[2])
-  elif len(argv) > 3:
-    main(argv[1], argv[2], argv[3:])
-  else:
-    main('email_parse')
+
+  parser = argparse.ArgumentParser(description=__doc__)
+
+  parser.add_argument('output_prefix',default='email_parse')
+  parser.add_argument('-min_word_count',
+    type=int, default=-1)
+  parser.add_argument('-dynamic_stop_thr',
+    type=int, default=30)
+  parser.add_argument('-term_min_doc_thr',
+    type=int, default=10)
+  parser.add_argument('-doc_min_len_thr',
+    type=int, default=10)
+
+  args = parser.parse_args()
+
+  main(
+    args.output_prefix,
+    None,
+    args.min_word_count,
+    args.dynamic_stop_thr,
+    args.term_min_doc_thr,
+    args.doc_min_len_thr)
