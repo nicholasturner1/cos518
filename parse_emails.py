@@ -178,7 +178,7 @@ def load_tags(filename):
       lines = [line.split(';;') for line in lines]
       f.close()
 
-    header_line = line[0]
+    header_line = lines[0]
 
     #Creating dicts, appending to lists
     for line in lines[1:]:
