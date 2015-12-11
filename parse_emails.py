@@ -411,6 +411,7 @@ def remove_indices_from_bow(bow, aux, to_remove, axis):
     w/ tag fields'''
     bow = np.delete(bow, to_remove, axis)
     to_remove = to_remove[::-1]
+    aux = list(aux) # copying so references are intact
 
     print "%d items to remove" % to_remove.size
     for i in to_remove:
