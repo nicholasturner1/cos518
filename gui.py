@@ -5,6 +5,7 @@ import parse_emails as pe
 import gensim
 import numpy as np
 import argparse
+import disp_interface as di
 
 from Tkinter import *
 import email_lda
@@ -21,11 +22,10 @@ class HomeFrame(Frame):
         
         
     def initialize(self):
-      
         self.parent.title("Simple")
         self.pack(fill=BOTH, expand=1)
-        for x in range(2,4):
-            Grid.columnconfigure(self, x, weight=1)
+        Grid.columnconfigure(self, 2, weight=1)
+        Grid.columnconfigure(self, 4, weight=1)
         Grid.rowconfigure(self, 1, weight=1)
         
         #View Buttons
@@ -35,7 +35,7 @@ class HomeFrame(Frame):
         
         #Email View 
         self.emailText = Text(self)
-        self.emailText.grid(row=1, column=3, sticky=W+E+N+S)
+        self.emailText.grid(row=1, column=4, sticky=W+E+N+S)
         
         #Topic List
         self.listboxScrollbar = Scrollbar(self, orient=VERTICAL)
@@ -46,7 +46,8 @@ class HomeFrame(Frame):
         #       The email index can be used to look up the filename from the tag dicts, which can read & displayed.
         #       (This is a note to self. -Paul)
         
-        #self.listbox.bind('<<ListboxSelect>>', self.fetch_email)  #uncomment to have selection load an email
+        self.listbox.bind('<<ListboxSelect>>', self.fetch_email)  #uncomment to have selection load an email
+        self.listbox.bind('<Double-Button-1>', self.display_emails_for_topic)
         self.listbox.grid(row=1,column=0, columnspan=3, sticky=W+E+N+S)
         
         self.listboxScrollbar.config(command=self.listbox.yview)
@@ -54,25 +55,64 @@ class HomeFrame(Frame):
         
         
     def display_topics(self):
+    
+        self.view_is_topic = True
+        
         #clear listbox
         self.listbox.delete(0,END)
-    
-        #Load the topics x word
+
+        # Add new topics to display
         topic_x_word = pe.load_topic_x_word('./model_results/round3_LDA_topic_x_word_30.npy', 30)
-        #For each topic print the top n words
         word_lists = email_lda.print_top_n_words(topic_x_word, './data/round3_vocab.csv', 10)
-        #add these to the display
+
         for i in range(len(word_lists)):
             self.listbox.insert(END, 'Topic'+ str(i) + ': ' + ', '.join(map(str,word_lists[i])))
 
+    def display_emails_for_topic(self, evt):
+    
+        if self.view_is_topic:
+            self.view_is_topic = False
+        else:
+            return
+            
+        w = evt.widget
+        topic_id = w.curselection()[0] #assumes nth row in listbox corresponds to nth topic!
+        print 'Displaying emails for topic %i' % topic_id
+        
+        #Sort emails into their top 3 topics
+        ext = pe.load_email_x_topic('./model_results/round3_LDA_email_x_topic_FULL_14453.npy', 14453)
+        e_x_sorted_topic = di.assign_emails(ext, 3)
+        
+        self.cur_topic_emails = []
+        #Find email indice that belong in selected topic
+        for i in range(len(e_x_sorted_topic)):
+            if topic_id in e_x_sorted_topic[i]:
+                self.cur_topic_emails.append(i)
+                
+        #Display email filenames in listbox
+        tag_dicts = pe.load_tags('./data/round3_full_tags.csv')
+        
+        email_subjects = []
+        print len(tag_dicts)
+        for mail_idx in self.cur_topic_emails:
+            email_subjects.append( tag_dicts[mail_idx]['From'].strip() + ' -- ' + tag_dicts[mail_idx]['Subject'].strip() )
+        self.listbox.delete(0,END)
+        
+        for subj in email_subjects:
+            self.listbox.insert(END, subj)
+
+
     def fetch_email(self, evt):
+        if self.view_is_topic:
+            return
+            
         w = evt.widget
         #load tags for all mails
-        tag_dicts = pe.load_tags('./data/round3_tags.csv')        
+        tag_dicts = pe.load_tags('./data/round3_full_tags.csv')        
         self.emailText.delete(1.0,END)
         
         try:
-            self.emailText.insert(1.0, open('./sarahs_inbox/parsed/msnbc/txt/' + tag_dicts[w.curselection()[0]]['filename']).read()) 
+            self.emailText.insert(1.0, open('./sarahs_inbox/parsed/msnbc/txt/' + tag_dicts[self.cur_topic_emails[w.curselection()[0]]]['filename']).read()) 
         except:
             print 'Error displaying email (probably none loaded or bad filename)'       
 
