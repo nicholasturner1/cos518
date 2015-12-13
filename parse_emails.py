@@ -35,6 +35,7 @@ import numpy as np
 import nltk
 from nltk import word_tokenize
 from nltk.corpus import stopwords
+import scipy as sp
 
 #=============================================
 stemmer = nltk.PorterStemmer() # also lancaster stemmer
@@ -147,6 +148,9 @@ def load_email_x_topic(filename, num_emails):
 
 def load_topic_x_word(filename, num_topics):
   return load_float64(filename, num_topics)
+  
+def load_social_results_as_dict(filename):
+  return sp.io.loadmat(filename)
 
 def load_vocab_as_list(filename):
   '''Loads a vocab file as a list of words'''

@@ -70,7 +70,6 @@ def extract_topic_word_dist(model_obj):
 
 def print_top_n_words( topic_x_word_matrix, vocab_filename, num_words=10 ):
     vocabulary = np.array( pe.load_vocab_as_list( vocab_filename ), dtype=object)
-
     num_topics = topic_x_word_matrix.shape[0]
 
     top_word_lists = []
@@ -80,10 +79,36 @@ def print_top_n_words( topic_x_word_matrix, vocab_filename, num_words=10 ):
         sort_indices = np.argsort( topic_dist )
 
         sorted_words = vocabulary[sort_indices]
-	sorted_words = sorted_words[::-1]
+        sorted_words = sorted_words[::-1]
         top_word_lists.append( sorted_words[:num_words] )
 
     return top_word_lists
+
+def print_top_n_people( social_x_sender_matrix, sender_name_array, num_people=10):
+    '''
+    Assumes sender_name_aray containing n names is a [n][0][0] array
+    '''
+    num_clusters = social_x_sender_matrix.shape[0]
+    top_sender_lists = []
+    
+    sender_name_list=[]
+    for i in range(len(sender_name_array)):
+        sender_name_list.append(str(sender_name_array[i][0][0]))
+  
+    sender_name_list = np.array(sender_name_list, dtype=object)   
+
+   
+    print "Finding the top %d people for %d groups" %(num_people, num_clusters) 
+    
+    for i in range(num_clusters):
+        cluster_dist = social_x_sender_matrix[i,:]
+        sort_indices = np.argsort( cluster_dist )
+        sorted_people = sender_name_list[sort_indices]
+    	sorted_people = sorted_people[::-1]
+        top_sender_lists.append( sorted_people[:num_people] )
+        #print "appending for cluster %d: %s" %(i, sorted_people[:num_people])
+            
+    return top_sender_lists
 
 def main( data_filename, num_emails, num_topics, num_passes, output_prefix ):
 
