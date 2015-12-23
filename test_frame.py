@@ -47,8 +47,12 @@ class inode:
         if not inode.children:
             return m.hexdigest()
         else:
+            child_hash = []
             for child in inode.children:
-                m.update(inode.hash(child))
+                child_hash.append(self.hash(child))
+            child_hash = sorted(child_hash, key=lambda x: x.lower(), reverse=True)
+            child_hash = "-".join(child_hash)
+            m.update(child_hash)
             return m.hexdigest()
 
 
