@@ -63,20 +63,19 @@ class test_frame(Frame):
         self.top_directory = top_directory_frame(self, event_handler, root.children)
         #top_directory = Frame(self, width=100, height=100)
         #top_directory.bind("<Button-1>", self.callback)
-        self.top_directory.grid(row = 5, column = 3, sticky = NW)
+        self.top_directory.grid(row = 5, column = 3, rowspan = 2, sticky = NW)
         #self.directories = top_directory.directory
         
         f = Frame(self, width = 1, bg = "black")
-        f.grid(row = 5, column = 4, sticky = NS)
+        f.grid(row = 5, column = 4, rowspan = 2, sticky = NS)
         
         f = Frame(self, width = 1, bg = "black")
-        f.grid(row = 5, column = 2, sticky = NS)
+        f.grid(row = 5, column = 2, rowspan = 2, sticky = NS)
         
         email_f = email_frame(self, event_handler)
         email_f.grid(row = 5, column = 5, columnspan = 4, sticky = N)
         self.email = email_f
-    
-    
+        self.keywords = email_f.keywords
     
         self.root = root
         self.directory = root
@@ -109,6 +108,9 @@ class test_frame(Frame):
         self.temp_frame = select_frame
         self.temp_frame.deep_color()
         self.temp_directory = select_directory
+        
+        if self.temp_directory.type == "directory":
+            change_text_field(self.keywords, self.temp_directory.description)
             #print self.temp_directory.type
     
 
@@ -495,7 +497,13 @@ class test_frame(Frame):
         pickle.dump(self.inode_set, f)
         f.close()
         tkMessageBox.showinfo("Save To File", "Saved")
-
+##########################################################################################
+#change textfield
+def change_text_field(text_field, new_text):
+    text_field.config(state = 'normal')
+    text_field.delete(1.0, END)
+    text_field.insert(END, new_text)
+    text_field.config(state = 'disabled')
 
 ################################################################################################################
 #pop ups
@@ -743,7 +751,8 @@ class left_option_frame(Frame):
 
         unsorted_view = Button(self, text = "Unsorted", command = event_handler.back_to_unsorted)
         unsorted_view.grid(row = 3, column = 1, sticky = N)
-
+#########################################################################################################
+#directory
 class top_directory_frame(Frame):
     #top = 0
     
@@ -752,7 +761,7 @@ class top_directory_frame(Frame):
         #print children
         #self.bind("<Enter>", self.callback)
         wid = 200
-        self.canvas = Canvas(self,width=wid,height=1000, scrollregion=(0, 0, 10000, 10000))
+        self.canvas = Canvas(self,width=wid,height=10, scrollregion=(0, 0, 1000, 5000))
         self.scroll_bar = Scrollbar(self, orient=VERTICAL)
         self.scroll_bar.pack(side=RIGHT,fill=Y)
         # scroll_bar.grid(row = 1, rowspan = 800, column = 2, sticky = NS)
@@ -769,13 +778,12 @@ class top_directory_frame(Frame):
         
 
         self.scroll_bar.config(command = self.canvas.yview)
-        self.canvas.config(width=wid,height=1000)
+        self.canvas.config(width=wid,height=800)
         self.canvas.config(yscrollcommand=self.scroll_bar.set)
         self.canvas.pack(side=LEFT,expand=True,fill=BOTH)
     
 
 
-#self.directory.insert
 
 class directory_frame(Frame):
     def __init__(self, master, child, event_handler):
@@ -823,6 +831,9 @@ class directory_frame(Frame):
     def callback(self, event):
         print "clicked at", event.x, event.y
 
+
+#########################################################################################################
+#email
 class email_frame(Frame):
     def __init__(self, master, event_handler):
         Frame.__init__(self, master)
@@ -873,20 +884,36 @@ class email_frame(Frame):
         self.title.configure(state = 'disable')
         
         f = Frame(self, height = 1, bg = "black")
-        f.grid(row = 2, column = 1, columnspan = 1, sticky = EW)
+        f.grid(row = 2, column = 1, columnspan = 2, sticky = EW)
 
         self.email_text = Text(self, height = 40)
         self.email_text.grid(row = 3, column = 1, sticky = EW)
         self.email_text.configure(state = 'disable')
+        
+        f = Frame(self, height = 1, bg = "black")
+        f.grid(row = 4, column = 1, columnspan = 2, sticky = EW)
 
-#class event_handler:
-#   def __init__(self, fields):
-#       self.fields = fields
-#
-#   def insert_entry(self):
-#       self.fields.current_location.insert(END, "GOOD")
-
-
+        keywords_fix = Text(self, height = 1,  width = 9)
+        keywords_fix.grid(row = 5, column = 1, sticky = W)
+        keywords_fix.insert(END, "Keywords: ")
+        keywords_fix.configure(state = 'disable')
+        self.keywords = Text(self, height = 1)
+        self.keywords.grid(row = 6, column = 1, sticky = W)
+        self.keywords.insert(END, " ")
+        self.keywords.configure(state = 'disable')
+#########################################################################################################
+#key words
+class keywords_frame(Frame):
+    def __init__(self, master):
+        Frame.__init__(self, master)
+        keywords_fix = Text(self, height = 1,  width = 9)
+        keywords_fix.grid(row = 1, column = 1, sticky = W)
+        keywords_fix.insert(END, "Keywords: ")
+        keywords_fix.configure(state = 'disable')
+        self.keywords = Text(self, height = 1)
+        self.keywords.grid(row = 1, column = 2, sticky = W)
+        self.keywords.insert(END, " ")
+        self.keywords.configure(state = 'disable')
 
 if __name__ == '__main__':
     tk = Tk()
