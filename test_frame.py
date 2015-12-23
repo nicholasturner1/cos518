@@ -13,10 +13,14 @@ from ttk import *
 from Tkinter import *
 import email as em
 import imaplib
-
+import pickle
+import os
+import tkMessageBox
+import os.path
 import email_lda
 
-TYPE = ["root", "email", "directory", "unknown", "unsorted_email_folder"]
+TYPE = ["root", "email", "directory", "unknown", "sub_root"]
+save_file = 'save_file'
 
 class inode:
     def __init__(self, parents = [], children = [], name = "New Entry", description = "" , type = "unknown", email_directory = "", email = []):
@@ -37,11 +41,11 @@ class test_frame(Frame):
         option_one = option_one_frame(self, event_handler)
         #option_one.pack()
         #option_one.place(height = 200, width = 500)
-        option_one.grid(row = 1, column = 1, columnspan = 8, sticky = W)
+        option_one.grid(row = 1, column = 1, columnspan = 8, sticky = EW)
         
         
         option_two = option_two_frame(self, event_handler)
-        option_two.grid(row = 2, column = 1, columnspan = 8)
+        option_two.grid(row = 2, column = 1, columnspan = 8, sticky = EW)
         
         
         current_location = current_location_frame(self, event_handler)
@@ -164,7 +168,7 @@ class test_frame(Frame):
     
     def load_directory(self):
         children = self.directory.children
-        children = self.sort_children(children)
+        #children = self.sort_children(children)
         #print children
         self.top_directory.forget()
         self.top_directory = top_directory_frame(self, self, children)
@@ -304,7 +308,7 @@ class test_frame(Frame):
             self.load_directory()
         
     def delete_entry(self):
-        if self.temp_directory.type == "unsorted_email_folder":
+        if self.temp_directory.type == "sub_root":
             return
         self._pop_up_delete = pop_up_delete(self.master)
         self.master.wait_window(self._pop_up_delete.top)
@@ -328,6 +332,21 @@ class test_frame(Frame):
                 self.temp_directory.children = []
 
             self.load_directory()
+    ##########################################################################################
+    #rename
+    def rename_entry(self):
+        if not (self.temp_directory.type == "directory" or self.temp_directory.type == "email"):
+            return
+        self._pop_up_rename = pop_up_rename(self.master)
+        self.master.wait_window(self._pop_up_rename.top)
+        new_name = self._pop_up_rename.name
+        
+        if new_name:
+            self.temp_frame.line_one.config(state = 'normal')
+            self.temp_frame.line_one.delete(1.0, END)
+            self.temp_frame.line_one.insert(END, new_name)
+            self.temp_frame.line_one.config(state = 'disabled')
+            self.temp_directory.name = new_name
     ##########################################################################################
     #add and move entry
     def move_entry(self):
@@ -444,6 +463,38 @@ class test_frame(Frame):
 
         email = body
         return [sender, to, title, date, body]
+    ##########################################################################################
+    #save
+    def save(self):
+        #go over inodes and write it to file.
+
+        directory_root = self.root
+        queue = [directory_root]
+        visited = set()
+        count = 0
+        self.inode_set = []
+        while queue:
+            temp_root = queue.pop(0)
+            #print temp_root.inode.name
+            #print temp_root.parent_tree_node
+            
+            
+            #tree.pack()
+            if temp_root not in visited:
+                self.inode_set.append(temp_root)
+                count = count + 1
+                visited.add(temp_root)
+                for child in temp_root.children:
+                    queue.append(child)
+
+        try:
+            os.remove(save_file)
+        except OSError:
+            x = 0
+        f = open(save_file, 'w')
+        pickle.dump(self.inode_set, f)
+        f.close()
+        tkMessageBox.showinfo("Save To File", "Saved")
 
 
 ################################################################################################################
@@ -520,6 +571,26 @@ class directory_visit:
         self.inode = _inode
         self.parent_inode = _parent_inode
         self.parent_tree_node = _parent_tree_node
+
+class pop_up_rename(Frame):
+    def __init__(self,master):
+        Frame.__init__(self, master)
+        top=self.top=Toplevel(master)
+        self.l=Label(top,text="Please Enter The New Name")
+        self.l.grid(row = 1, column = 1, columnspan = 2, sticky = EW)
+        self.e=Entry(top)
+        self.e.grid(row = 2, column = 1, columnspan = 2, sticky = EW)
+        self.b=Button(top,text='Ok',command=self.accept)
+        self.b.grid(row = 3, column = 1, sticky = EW)
+        self.c=Button(top,text='Cancel',command=self.cleanup)
+        self.c.grid(row = 3, column = 2, sticky = EW)
+        self.name = []
+    def accept(self):
+        self.name = self.e.get()
+        self.top.destroy()
+    def cleanup(self):
+        self.value=[]
+        self.top.destroy()
 
 class pop_up_add(Frame):
     def __init__(self, master, root):
@@ -606,17 +677,32 @@ class option_one_frame(Frame):
     def __init__(self, master, event_handler):
         Frame.__init__(self, master)
         option_1 = Button(self, text = "Insert", command = event_handler.insert_entry)
-        option_1.grid(row = 1, column = 1, sticky = W)
+        option_1.pack(side = LEFT)
         #option_one.place(bordermode=OUTSIDE, relheight = 1, relwidth = 1)
         option_2 = Button(self, text = "Delete", command = event_handler.delete_entry)
-        option_2.grid(row = 1, column = 2, sticky = W)
+        option_2.pack(side = LEFT)
+        option_2_5 = Button(self, text = "Rename", command = event_handler.rename_entry)
+        option_2_5.pack(side = LEFT)
         
         option_3 = Button(self, text = "Move", command = event_handler.move_entry)
-        option_3.grid(row = 1, column = 3, sticky = W)
+        option_3.pack(side = LEFT)
         option_3 = Button(self, text = "Add", command = event_handler.add_entry)
-        option_3.grid(row = 1, column = 4, sticky = W)
+        option_3.pack(side = LEFT)
         option_4 = Button(self, text = "Log In", command = event_handler.login_window)
-        option_4.grid(row = 1, column = 5, sticky = E)
+        option_4.pack(side = LEFT)
+
+#option_5 = Text(self, height = 1, width = 100, state = 'disabled')
+#option_5.grid(row = 1, column = 6, sticky = W)
+        #option_5.config(state = 'disabled')
+        
+        option_7 = Button(self, text = "Save", command = event_handler.save)
+        option_7.pack(side = LEFT)
+        
+        option_6 = Button(self, text = "Back")
+        option_6.bind("<Button-1>", event_handler.back)
+        option_6.pack(side = LEFT)
+
+
 #option_one.pack()
 #option_one.place(bordermode=OUTSIDE, height = 100, width = 100)
         #option_two = Button(self, text = "Delete")
@@ -628,9 +714,7 @@ class option_one_frame(Frame):
 class option_two_frame(Frame):
     def __init__(self, master, event_handler):
         Frame.__init__(self, master)
-        option_one = Button(self, text = "back")
-        option_one.bind("<Button-1>", event_handler.back)
-        option_one.pack()
+
 
 
 class current_location_frame(Frame):
@@ -679,7 +763,7 @@ class top_directory_frame(Frame):
                         #self.directory[i].grid(row = (2*i + 1), column = 1, sticky = NW)
             self.canvas.create_window(0, 45*i, anchor=NW, window=self.directory[i])
             #self.directory[i].pack(side = TOP)
-            self.f = Frame(self.canvas, width = wid, height = 1, bg = "black")
+            self.f = Frame(self.canvas, width = wid + 20, height = 1, bg = "black")
             self.canvas.create_window(0, 45*i, anchor=NW, window=self.f)
             i = i + 1
         
@@ -809,9 +893,9 @@ if __name__ == '__main__':
     #eh = event_handler(tk)
     root = inode( type = "root", name = "ROOT")
     children = []
-    topic_view = inode(parents = [root], children = children, type = "directory", name = "Topic Folder")
-    social_view = inode(parents = [root], type = "diectory", name = "Social Folder")
-    unsorted_email_folder = inode(parents = [root], children = [], type = "unsorted_email_folder", name = "Unsorted Folder")
+    topic_view = inode(parents = [root], children = children, type = "sub_root", name = "Topic Folder")
+    social_view = inode(parents = [root], type = "sub_root", name = "Social Folder")
+    unsorted_email_folder = inode(parents = [root], children = [], type = "sub_root", name = "Unsorted Folder")
     root.children = [topic_view, social_view, unsorted_email_folder]
 
 
@@ -847,7 +931,13 @@ if __name__ == '__main__':
         temp_directory.children = emails
 
     
-
+    #load
+    if os.path.isfile(save_file):
+        print "load from file"
+        f = open(save_file)
+        inode_set = pickle.load(f)
+        f.close()
+        root = inode_set[0]
     tf = test_frame(tk, root)
 #tf.login('setsee0000@gmail.com', 'B-Dap3ub')
     tf.pack()
