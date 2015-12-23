@@ -3,7 +3,7 @@ from nltk import word_tokenize
 from nltk.corpus import stopwords
 import parse_emails as pe
 import gensim
-import time
+import time as tttt
 import numpy as np
 import argparse
 import disp_interface as di
@@ -17,11 +17,15 @@ import pickle
 import os
 import tkMessageBox
 import os.path
+import glob
 import email_lda
+from time import gmtime, strftime
+import hashlib
 
 TYPE = ["root", "email", "directory", "unknown", "sub_root"]
-save_file = 'save_file'
-
+save_file = os.path.dirname(os.path.realpath(__file__)) + '/saved_file/saved_file'
+temp_save_file= os.path.dirname(os.path.realpath(__file__)) + '/saved_file/temp_saved_file'
+save_file_short = 'temp_saved_file'
 class inode:
     def __init__(self, parents = [], children = [], name = "New Entry", description = "" , type = "unknown", email_directory = "", email = []):
         self.parents = parents
@@ -31,6 +35,23 @@ class inode:
         self.description = description
         self.email_directory = email_directory
         self.email = email
+    def hash(self, inode):
+        #print inode
+        m = hashlib.md5()
+        m.update(inode.name)
+        m.update(inode.description)
+        m.update(inode.type)
+        m.update(inode.email_directory)
+        for entry in inode.email:
+            m.update(entry)
+        if not inode.children:
+            return m.hexdigest()
+        else:
+            for child in inode.children:
+                m.update(inode.hash(child))
+            return m.hexdigest()
+
+
 
 class test_frame(Frame):
     def __init__(self, master, root):
@@ -443,7 +464,7 @@ class test_frame(Frame):
     def parse_email_remote(self, raw_email):
         email_message = em.message_from_string(raw_email)
         to =  email_message['To']
-        sender = em.utils.parseaddr(email_message['From']) # for parsing "Yuji Tomita" <yuji@grovemade.com>
+        sender = em.utils.parseaddr(email_message['From'])
         title = email_message['Subject']
         date = email_message['Date']
         b = em.message_from_string(raw_email)
@@ -466,15 +487,16 @@ class test_frame(Frame):
         email = body
         return [sender, to, title, date, body]
     ##########################################################################################
-    #save
+    #save and load
     def save(self):
         #go over inodes and write it to file.
-
+        time = strftime("_%Y_%m_%d_%H_%M_%S", gmtime())
+        print time
         directory_root = self.root
         queue = [directory_root]
         visited = set()
         count = 0
-        self.inode_set = []
+        inode_set = []
         while queue:
             temp_root = queue.pop(0)
             #print temp_root.inode.name
@@ -483,20 +505,88 @@ class test_frame(Frame):
             
             #tree.pack()
             if temp_root not in visited:
-                self.inode_set.append(temp_root)
+                inode_set.append(temp_root)
                 count = count + 1
                 visited.add(temp_root)
                 for child in temp_root.children:
                     queue.append(child)
 
-        try:
-            os.remove(save_file)
-        except OSError:
-            x = 0
-        f = open(save_file, 'w')
-        pickle.dump(self.inode_set, f)
+
+
+
+
+        #remove history
+        all_files = glob.glob(save_file + '*')
+        all_files = sorted(all_files, key=lambda x: x.lower(), reverse=True)
+        
+        if len(all_files) >= 2:
+            for file in all_files[1:]:
+                try:
+                    os.remove(file)
+                except OSError:
+                    x = 0
+                    
+        #new history
+        temp_file_name = temp_save_file
+        file_name = save_file + time
+        f = open(temp_file_name, 'w')
+        pickle.dump(inode_set, f)
         f.close()
+        #tttt.sleep(5)
+        os.rename(temp_file_name, file_name)
         tkMessageBox.showinfo("Save To File", "Saved")
+    
+#load
+    def load(self):
+
+        all_files = glob.glob(save_file + '*')
+        all_files = sorted(all_files, key=lambda x: x.lower(), reverse=True)
+        #print all_files
+        if all_files:
+            #print "load from file: " + all_files[0]
+            f = open(all_files[0])
+            inode_set = pickle.load(f)
+            f.close()
+            root = inode_set[0]
+            self.root = root
+            self.directory = root
+            self.temp_directory = root
+            self.temp_frame = []
+            self.directory_stack = [root]
+            self.topic_folder = root.children[0]
+            self.social_folder = root.children[1]
+            self.unsorted_email_folder = root.children[2]
+        #root.children.append(self.unsorted_email_folder)
+            self.load_directory()
+
+    def consistent_load(self):
+        
+        all_files = glob.glob(save_file + '*')
+        all_files = sorted(all_files, key=lambda x: x.lower(), reverse=True)
+        #print all_files
+        if all_files:
+            #print "load from file: " + all_files[0]
+            f = open(all_files[0])
+            inode_set = pickle.load(f)
+            f.close()
+            root = inode_set[0]
+            if not consistency_check(root, self.root):
+                if not tkMessageBox.askokcancel("Conflict!", "Override or not?..."):
+                    return
+            self.root = root
+            self.directory = root
+            self.temp_directory = root
+            self.temp_frame = []
+            self.directory_stack = [root]
+            self.topic_folder = root.children[0]
+            self.social_folder = root.children[1]
+            self.unsorted_email_folder = root.children[2]
+            #root.children.append(self.unsorted_email_folder)
+        self.load_directory()
+##########################################################################################
+#check for consistency
+def consistency_check(root1, root2):
+    return (root1.hash(root1) == root2.hash(root2))
 ##########################################################################################
 #change textfield
 def change_text_field(text_field, new_text):
@@ -705,6 +795,8 @@ class option_one_frame(Frame):
         
         option_7 = Button(self, text = "Save", command = event_handler.save)
         option_7.pack(side = LEFT)
+        option_8 = Button(self, text = "Load", command = event_handler.consistent_load)
+        option_8.pack(side = LEFT)
         
         option_6 = Button(self, text = "Back")
         option_6.bind("<Button-1>", event_handler.back)
@@ -915,6 +1007,9 @@ class keywords_frame(Frame):
         self.keywords.insert(END, " ")
         self.keywords.configure(state = 'disable')
 
+
+
+
 if __name__ == '__main__':
     tk = Tk()
     #eh = event_handler(tk)
@@ -934,7 +1029,7 @@ if __name__ == '__main__':
     for i in range(len(word_lists)):
         name_name =  ', '.join(map(str,word_lists[i]))
         #print name_name
-        temp_directory = inode(parents = [topic_view], name =  'Topic: ' + str(i), description = name_name, type = "directory")
+        temp_directory = inode(parents = [topic_view], children = [], name =  'Topic: ' + str(i), description = name_name, type = "directory")
         children.append(temp_directory)
         
         #get emails
@@ -952,20 +1047,17 @@ if __name__ == '__main__':
                 name_name = tag_dicts[mail_idx]['filename']
                 email_directory = './sarahs_inbox/parsed/msnbc/txt/' + name_name
                 tag =  tag_dicts[mail_idx]['From'].strip() + ' -- ' + tag_dicts[mail_idx]['Subject'].strip()
-                email_subject = inode(parents = [temp_directory], name = name_name, description = tag, email_directory = email_directory, type = "email")
+                email_subject = inode(parents = [temp_directory], name = name_name, description = tag, email_directory = email_directory, type = "email", children = [])
                 emails.append(email_subject)
 
         temp_directory.children = emails
 
-    
-    #load
-    if os.path.isfile(save_file):
-        print "load from file"
-        f = open(save_file)
-        inode_set = pickle.load(f)
-        f.close()
-        root = inode_set[0]
+
+
     tf = test_frame(tk, root)
-#tf.login('setsee0000@gmail.com', 'B-Dap3ub')
+    #tf.login('setsee0000@gmail.com', 'B-Dap3ub')
     tf.pack()
+    tf.load()
+#print root.hash(root)
+
     tk.mainloop()
