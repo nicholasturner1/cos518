@@ -164,12 +164,31 @@ class test_frame(Frame):
     
     def load_directory(self):
         children = self.directory.children
+        children = self.sort_children(children)
         #print children
         self.top_directory.forget()
         self.top_directory = top_directory_frame(self, self, children)
         self.top_directory.grid(row = 5, column = 3, sticky = NW)
 
+    def sort_children(self, children):
+        if children[0].type != "email":
+            return children
+        
+        #load the email contents for sorting purposes
+        for child in children:
+            child.email = self.read_email_text(child.email_directory)
+        
+        dropdown = 1 
+        #sort emails based on dropdown
+        if dropdown == 0: #sort by sender
+            sorted_children = sorted(children, key=lambda x: x.email[1].lower(), reverse=False)
+        elif dropdown == 1: #sort by subject
+            sorted_children = sorted(children, key=lambda x: x.email[3].lower(), reverse=False)
+        else:
+            sorted_children = children
 
+        return sorted_children
+        
     ##########################################################################################
     #jumps
     def back(self, event):
@@ -228,7 +247,7 @@ class test_frame(Frame):
             for senders in sender_line:
                 if not sender:
                     ind = senders.find(fieldname)
-                    sender = senders[ind + 6:-1]
+                    sender = senders[ind + 6:-1].strip()
                     lines = [line for line in lines if senders not in line]
         #sender = sender.replace(" ", "")
         
@@ -238,7 +257,7 @@ class test_frame(Frame):
             for tos in to_line:
                 if not to:
                     ind = tos.find(fieldname)
-                    to = tos[ind + 4:-1]
+                    to = tos[ind + 4:-1].strip()
                     lines = [line for line in lines if tos not in line]
 
         title_fieldnames = ['Subject', 'subject']
@@ -247,7 +266,7 @@ class test_frame(Frame):
             for titles in title_line:
                 if not title:
                     ind = titles.find(fieldname)
-                    title = titles[ind + 9:-1]
+                    title = titles[ind + 9:-1].strip()
                     lines = [line for line in lines if titles not in line]
 
         date_fieldnames = ['Sent', 'sent']
@@ -256,7 +275,7 @@ class test_frame(Frame):
             for dates in date_line:
                 if not date:
                     ind = dates.find(fieldname)
-                    date = dates[ind + 5:-1]
+                    date = dates[ind + 5:-1].strip()
                     lines = [line for line in lines if dates not in line]
     
             #sender = sender_line[0]
@@ -691,7 +710,7 @@ class directory_frame(Frame):
         #self.bind("<Leave>", lambda event, select = child: self.normal_color(select))
         #self.bind("<Leave>", lambda event, select = child: self.normal_color(select))
         
-        self.line_two.bind("<Double-Button-1>", lambda event, select = child: event_handler.click_directory(select))
+        self.line_one.bind("<Double-Button-1>", lambda event, select = child: event_handler.click_directory(select))
         self.line_two.bind("<Double-Button-1>", lambda event, select = child: event_handler.click_directory(select))
     def deep_color(self):
         #
@@ -790,21 +809,12 @@ if __name__ == '__main__':
     #eh = event_handler(tk)
     root = inode( type = "root", name = "ROOT")
     children = []
-    topic_view = inode(parents = [root], children = children, type = "diectory", name = "Topic Folder")
+    topic_view = inode(parents = [root], children = children, type = "directory", name = "Topic Folder")
     social_view = inode(parents = [root], type = "diectory", name = "Social Folder")
     unsorted_email_folder = inode(parents = [root], children = [], type = "unsorted_email_folder", name = "Unsorted Folder")
     root.children = [topic_view, social_view, unsorted_email_folder]
 
 
-
-    #child1 = inode(parents = root, name = "1")
-    #child2 = inode(parents = root, name = "2")
-    #child11 = inode(parents = child1, name = "11")
-    #child12 = inode(parents = child1, name = "12")
-    #root.children = [child1, child2]
-    #child1.children = [child11, child12]
-    #child123 = inode(parents = child1, name = "123", type = "email")
-    #child12.children = [child123]
     topic_x_word = pe.load_topic_x_word('./model_results/round3_LDA_topic_x_word_30.npy', 30)
     word_lists = email_lda.print_top_n_words(topic_x_word, './data/round3_vocab.csv', 10)
     ext = pe.load_email_x_topic('./model_results/round3_LDA_email_x_topic_FULL_14453.npy', 14453)
@@ -815,11 +825,10 @@ if __name__ == '__main__':
         #print name_name
         temp_directory = inode(parents = [topic_view], name =  'Topic: ' + str(i), description = name_name, type = "directory")
         children.append(temp_directory)
+        
         #get emails
-        
-        
-        
         cur_topic_emails = []
+        
         #Find email indice that belong in selected topic
         for j in range(len(e_x_sorted_topic)):
             if i in e_x_sorted_topic[j]:
