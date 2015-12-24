@@ -11,6 +11,7 @@ import scipy as sp
 from scipy import io
 from ttk import *
 from Tkinter import *
+import Tkinter as ttttk
 import email as em
 import imaplib
 import pickle
@@ -21,8 +22,33 @@ import glob
 import email_lda
 from time import gmtime, strftime
 import hashlib
+import tkFont
+
+
+################################################################################################
+#font
+current_location_font = ('Apple Chancery', '13')
+email_font = ('Apple Causal', '12')
+email_title_font = ('Georgia', '15', 'bold')
+title_text_font = ('Zapfino', '10')
+title_info_font = ('Georgia', '15')
+title_date_font = ('pligy', '15')
+directory_font = ('Apple Causal', '12', 'bold')
+description_font = ('Apple Causal', '12')
+left_option_font = ('Krungthep', 15)
+option_one_font = ('Copperplate', 14)
+################################################################################################
+#color
+information_color = 'grey85'
+separator_color = 'light grey'
+separator_dark = 'grey40'
+separator_mid = 'grey60'
+side_color = 'grey93'
+separator_huge_height = 4
+#helv20 = tkFont.Font(family="Helvetica",size=20,weight="bold")
 
 TYPE = ["root", "email", "directory", "unknown", "sub_root"]
+real_path = os.path.dirname(os.path.realpath(__file__))
 save_file = os.path.dirname(os.path.realpath(__file__)) + '/saved_file/saved_file'
 temp_save_file= os.path.dirname(os.path.realpath(__file__)) + '/saved_file/temp_saved_file'
 save_file_short = 'temp_saved_file'
@@ -63,6 +89,14 @@ class test_frame(Frame):
         
         event_handler = self
         
+        ######################################################################################
+        #pic
+        
+        
+        ######################################################################################
+        #config
+        
+        
         option_one = option_one_frame(self, event_handler)
         #option_one.pack()
         #option_one.place(height = 200, width = 500)
@@ -74,14 +108,14 @@ class test_frame(Frame):
         
         
         current_location = current_location_frame(self, event_handler)
-        current_location.grid(row = 3, column = 1, columnspan = 8, sticky = W)
+        current_location.grid(row = 3, column = 1, columnspan = 8, sticky = EW)
         self.current_location = current_location.current_location;
         
-        f = Frame(self, height = 1, bg = "black")
+        f = Frame(self, height = 1, bg = separator_color)
         f.grid(row = 4, column = 1, columnspan = 8, sticky = EW)
         
         left_option = left_option_frame(self, event_handler)
-        left_option.grid(row = 5, column = 1, sticky = NW)
+        left_option.grid(row = 5, column = 1, rowspan = 10, sticky = NS)
         
         
         
@@ -91,14 +125,26 @@ class test_frame(Frame):
         self.top_directory.grid(row = 5, column = 3, rowspan = 2, sticky = NW)
         #self.directories = top_directory.directory
         
-        f = Frame(self, width = 1, bg = "black")
+        f = Frame(self, width = 1, bg = separator_color)
         f.grid(row = 5, column = 4, rowspan = 2, sticky = NS)
         
-        f = Frame(self, width = 1, bg = "black")
+        f = Frame(self, width = 1, bg = separator_color)
         f.grid(row = 5, column = 2, rowspan = 2, sticky = NS)
         
         email_f = email_frame(self, event_handler)
         email_f.grid(row = 5, column = 5, columnspan = 4, sticky = N)
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        ######################################################################################
+        #config
         self.email = email_f
         self.keywords = email_f.keywords
     
@@ -233,7 +279,7 @@ class test_frame(Frame):
             self.change_current_location()
             self.load_directory()
 
-    def back_to_unsorted(self):
+    def back_to_unsorted(self, event):
         new_directory  = self.unsorted_email_folder
         self.directory_stack = [self.root, new_directory]
         self.directory = new_directory
@@ -241,7 +287,7 @@ class test_frame(Frame):
         self.change_current_location()
         self.load_directory()
 
-    def back_to_social(self):
+    def back_to_social(self, event):
         new_directory  = self.social_folder
         self.directory_stack = [self.root, new_directory]
         self.directory = new_directory
@@ -249,7 +295,7 @@ class test_frame(Frame):
         self.change_current_location()
         self.load_directory()
         
-    def back_to_topic(self):
+    def back_to_topic(self, event):
         new_directory  = self.topic_folder
         self.directory_stack = [self.root, new_directory]
         self.directory = new_directory
@@ -325,7 +371,7 @@ class test_frame(Frame):
     ##########################################################################################
     #insertion and deletion
     
-    def insert_entry(self):
+    def insert_entry(self, event):
         self._pop_up_insert = pop_up_insert(self.master)
         self.master.wait_window(self._pop_up_insert.top)
         if self._pop_up_insert.value:
@@ -334,8 +380,8 @@ class test_frame(Frame):
             #self.temp_directory.name = self._pop_up_insert.value;
             self.load_directory()
         
-    def delete_entry(self):
-        if self.temp_directory.type == "sub_root":
+    def delete_entry(self, event):
+        if self.temp_directory.type == "sub_root" or self.temp_directory.type == "root":
             return
         self._pop_up_delete = pop_up_delete(self.master)
         self.master.wait_window(self._pop_up_delete.top)
@@ -361,7 +407,7 @@ class test_frame(Frame):
             self.load_directory()
     ##########################################################################################
     #rename
-    def rename_entry(self):
+    def rename_entry(self, event):
         if not (self.temp_directory.type == "directory" or self.temp_directory.type == "email"):
             return
         self._pop_up_rename = pop_up_rename(self.master)
@@ -376,7 +422,7 @@ class test_frame(Frame):
             self.temp_directory.name = new_name
     ##########################################################################################
     #add and move entry
-    def move_entry(self):
+    def move_entry(self, event):
         if not self.temp_directory.type == "email":
             return
         
@@ -392,7 +438,7 @@ class test_frame(Frame):
             self._add(child, self._pop_up_move.select_inode)
             
             self.load_directory()
-    def add_entry(self):
+    def add_entry(self, event):
         if not self.temp_directory.type == "email":
             return
         
@@ -433,7 +479,7 @@ class test_frame(Frame):
 
     ##########################################################################################
     #log in, load new emails
-    def login_window(self):
+    def login_window(self, event):
         self._pop_up_log_in = pop_up_log_in(self.master)
         self.master.wait_window(self._pop_up_log_in.top)
         if self._pop_up_log_in.username:
@@ -492,7 +538,7 @@ class test_frame(Frame):
         return [sender, to, title, date, body]
     ##########################################################################################
     #save and load
-    def save(self):
+    def save(self, event):
         #go over inodes and write it to file.
         time = strftime("_%Y_%m_%d_%H_%M_%S", gmtime())
         print time
@@ -563,7 +609,7 @@ class test_frame(Frame):
         #root.children.append(self.unsorted_email_folder)
             self.load_directory()
 
-    def consistent_load(self):
+    def consistent_load(self, event):
         
         all_files = glob.glob(save_file + '*')
         all_files = sorted(all_files, key=lambda x: x.lower(), reverse=True)
@@ -777,36 +823,51 @@ class pop_up_move(Frame):
 
 class option_one_frame(Frame):
     def __init__(self, master, event_handler):
-        Frame.__init__(self, master)
-        option_1 = Button(self, text = "Insert", command = event_handler.insert_entry)
-        option_1.pack(side = LEFT)
-        #option_one.place(bordermode=OUTSIDE, relheight = 1, relwidth = 1)
-        option_2 = Button(self, text = "Delete", command = event_handler.delete_entry)
-        option_2.pack(side = LEFT)
-        option_2_5 = Button(self, text = "Rename", command = event_handler.rename_entry)
-        option_2_5.pack(side = LEFT)
+        pad_x = 20
+        pad_y = 20
+        Frame.__init__(self, master, bg = information_color, height = 30)
+        insert_photo = PhotoImage(file = real_path + '/icons/insert.gif')
         
-        option_3 = Button(self, text = "Move", command = event_handler.move_entry)
-        option_3.pack(side = LEFT)
-        option_3 = Button(self, text = "Add", command = event_handler.add_entry)
-        option_3.pack(side = LEFT)
-        option_4 = Button(self, text = "Log In", command = event_handler.login_window)
-        option_4.pack(side = LEFT)
+        option_1 = Label(self, text = "Insert", bd = 0, bg = information_color, font = option_one_font)
+        option_1.bind("<Button-1>", event_handler.insert_entry)
+        #option_1.image = insert_photo
+        option_1.grid(row = 1, column = 1, padx = pad_x, pady = pad_y)
+        #option_one.place(bordermode=OUTSIDE, relheight = 1, relwidth = 1)
+        delete_photo = PhotoImage(file = real_path + '/icons/delete.gif')
+        option_2 = Label(self, text = "Delete", bd = 0, bg = information_color, font = option_one_font)
+        option_2.bind("<Button-1>", event_handler.delete_entry)
+        #option_2.image = delete_photo
+        option_2.grid(row = 1, column = 2, padx = pad_x, pady = pad_y)
+        option_2_5 = Label(self, text = "Rename", bd = 0, bg = information_color, font = option_one_font)
+        option_2_5.bind("<Button-1>", event_handler.rename_entry)
+        option_2_5.grid(row = 1, column = 3, padx = pad_x, pady = pad_y)
+        
+        option_3 = Label(self, text = "Move", bd = 0, bg = information_color, font = option_one_font)
+        option_3.bind("<Button-1>", event_handler.move_entry)
+        option_3.grid(row = 1, column = 4, padx = pad_x, pady = pad_y)
+        option_3_5 = Label(self, text = "Add", bd = 0, bg = information_color, font = option_one_font)
+        option_3_5.bind("<Button-1>", event_handler.add_entry)
+        option_3_5.grid(row = 1, column = 5, padx = pad_x, pady = pad_y)
+        option_4 = Label(self, text = "Log In", bd = 0, bg = information_color, font = option_one_font)
+        option_4.bind("<Button-1>", event_handler.login_window)
+        option_4.grid(row = 1, column = 6, padx = pad_x, pady = pad_y)
 
 #option_5 = Text(self, height = 1, width = 100, state = 'disabled')
 #option_5.grid(row = 1, column = 6, sticky = W)
         #option_5.config(state = 'disabled')
         
-        option_7 = Button(self, text = "Save", command = event_handler.save)
-        option_7.pack(side = LEFT)
-        option_8 = Button(self, text = "Load", command = event_handler.consistent_load)
-        option_8.pack(side = LEFT)
+        option_7 = Label(self, text = "Save", bd = 0, bg = information_color, font = option_one_font)
+        option_7.bind("<Button-1>", event_handler.save)
+        option_7.grid(row = 1, column = 7, padx = pad_x, pady = pad_y)
+        option_8 = Label(self, text = "Load", bd = 0, bg = information_color, font = option_one_font)
+        option_8.bind("<Button-1>", event_handler.consistent_load)
+        option_8.grid(row = 1, column = 8, padx = pad_x, pady = pad_y)
         
-        option_6 = Button(self, text = "Back")
+        option_6 = Label(self, text = "Back", bd = 0, bg = information_color, font = option_one_font)
         option_6.bind("<Button-1>", event_handler.back)
-        option_6.pack(side = LEFT)
+        option_6.grid(row = 1, column = 9, padx = pad_x, pady = pad_y)
 
-
+#self.config(height = 50)
 #option_one.pack()
 #option_one.place(bordermode=OUTSIDE, height = 100, width = 100)
         #option_two = Button(self, text = "Delete")
@@ -823,29 +884,35 @@ class option_two_frame(Frame):
 
 class current_location_frame(Frame):
     def __init__(self, master, event_handler):
-        Frame.__init__(self, master)
-        current_location_title = Text(self, height = 1, width = 20)
+        Frame.__init__(self, master, bg = information_color)
+        
+        current_location_title = Text(self, height = 1, width = 20, insertwidth = 0, font = current_location_font, bg = information_color, highlightbackground = information_color, bd = 0)
         current_location_title.insert(END, "Current Location:")
         current_location_title.configure(state='disabled')
-        current_location_title.grid(row = 1, column = 1)
-        self.current_location = Text(self, height = 1)
+        current_location_title.grid(row = 1, column = 1, stick = NS)
+        self.current_location = Text(self, height = 1, font = current_location_font, bg = information_color, highlightbackground = information_color, bd = 0)
         
         self.current_location.insert(END, "")
         self.current_location.configure(state='disabled')
         #current_location.
-        self.current_location.grid(row = 1, column = 2)
+        self.current_location.grid(row = 1, column = 2, stick = NS)
 
 
 class left_option_frame(Frame):
     def __init__(self, master, event_handler):
-        Frame.__init__(self, master)
-        topic_view = Button(self, text = "Topic View", command = event_handler.back_to_topic)
+        Frame.__init__(self, master, bg = side_color, bd = 0)
+        pad_y = 12
+        pad_x = 10
+        topic_view = Label(self, text = "Topic", font = left_option_font , bg = side_color, bd = 0 , pady = pad_y, padx = pad_x)
+        topic_view.bind("<Button-1>", event_handler.back_to_topic)
         topic_view.grid(row = 1, column = 1, sticky = N)
         
-        social_view = Button(self, text = "Social View", command = event_handler.back_to_social)
+        social_view = Label(self, text = "Social", font = left_option_font , bg = side_color, bd = 0, padx = pad_x, pady = pad_y)
+        social_view.bind("<Button-1>", event_handler.back_to_social)
         social_view.grid(row = 2, column = 1, sticky = N)
 
-        unsorted_view = Button(self, text = "Unsorted", command = event_handler.back_to_unsorted)
+        unsorted_view = Label(self, text = "Unsort", font = left_option_font , bg = side_color, bd = 0, padx = pad_x, pady = pad_y)
+        unsorted_view.bind("<Button-1>", event_handler.back_to_unsorted)
         unsorted_view.grid(row = 3, column = 1, sticky = N)
 #########################################################################################################
 #directory
@@ -857,7 +924,7 @@ class top_directory_frame(Frame):
         #print children
         #self.bind("<Enter>", self.callback)
         wid = 200
-        self.canvas = Canvas(self,width=wid,height=10, scrollregion=(0, 0, 1000, 5000))
+        self.canvas = Canvas(self,width=wid,height=10, scrollregion=(0, 0, 1000, (len(children))*47))
         self.scroll_bar = Scrollbar(self, orient=VERTICAL)
         self.scroll_bar.pack(side=RIGHT,fill=Y)
         # scroll_bar.grid(row = 1, rowspan = 800, column = 2, sticky = NS)
@@ -868,8 +935,8 @@ class top_directory_frame(Frame):
                         #self.directory[i].grid(row = (2*i + 1), column = 1, sticky = NW)
             self.canvas.create_window(0, 45*i, anchor=NW, window=self.directory[i])
             #self.directory[i].pack(side = TOP)
-            self.f = Frame(self.canvas, width = wid + 20, height = 1, bg = "black")
-            self.canvas.create_window(0, 45*i, anchor=NW, window=self.f)
+            self.f = Frame(self.canvas, width = wid + 20, height = 1, bg = separator_mid)
+            self.canvas.create_window(0, 45*(i + 1) - 1, anchor=NW, window=self.f)
             i = i + 1
         
 
@@ -884,12 +951,12 @@ class top_directory_frame(Frame):
 class directory_frame(Frame):
     def __init__(self, master, child, event_handler):
         Frame.__init__(self, master, highlightcolor = "grey")
-        self.line_one = Text(self, height = 1, width  = 30)
+        self.line_one = Text(self, height = 1, width  = 30, font = directory_font)
         self.line_one.insert(END, child.name)
         self.line_one.configure(state='disabled')
         self.line_one.pack(expand = True)
 
-        self.line_two = Text(self, height = 1, width  = 30)
+        self.line_two = Text(self, height = 1, width  = 30, font = description_font)
         self.line_two.insert(END,  child.description)
         self.line_two.configure(state='disabled')
         self.line_two.pack(expand = True)
@@ -934,13 +1001,14 @@ class email_frame(Frame):
     def __init__(self, master, event_handler):
         Frame.__init__(self, master)
         
-        
         top_section = Frame(self);
         top_section.grid(row = 1, column = 1, sticky = EW)
 
-        self.date = Text(top_section, height = 1, width = 50)
+        self.date = Text(top_section, height = 1, width = 100, font = title_date_font)
         self.date.grid(row = 1, column = 2, sticky = NE)
         self.date.insert(END, "xx-xx-xxxx")
+        
+     
         
         
         information_section = Frame(top_section)
@@ -948,52 +1016,52 @@ class email_frame(Frame):
         
         sender_section = Frame(information_section)
         sender_section.grid(row = 1, column = 1, sticky = EW)
-        sender_fix = Text(sender_section, height = 1,  width = 9)
-        sender_fix.grid(row = 1, column = 1, sticky = W)
+        sender_fix = Text(sender_section, height = 1,  width = 9, font = email_title_font)
+        sender_fix.grid(row = 1, column = 1, sticky = NW)
         sender_fix.insert(END, "Sender: ")
         sender_fix.configure(state = 'disable')
-        self.sender = Text(sender_section, height = 1)
-        self.sender.grid(row = 1, column = 2, sticky = W)
+        self.sender = Text(sender_section, height = 1, width = 50, font = title_info_font)
+        self.sender.grid(row = 1, column = 2, sticky = NW)
         self.sender.insert(END, " ")
         self.sender.configure(state = 'disable')
         
         to_section = Frame(information_section)
         to_section.grid(row = 2, column = 1, sticky = EW)
-        to_fix = Text(to_section, height = 1, width = 5)
-        to_fix.grid(row = 1, column = 1, sticky = W)
+        to_fix = Text(to_section, height = 1, width = 5, font = email_title_font)
+        to_fix.grid(row = 1, column = 1, sticky = NW)
         to_fix.insert(END, "To: ")
         to_fix.configure(state = 'disable')
-        self.to = Text(to_section, height = 1)
-        self.to.grid(row = 1, column = 2, sticky = W)
+        self.to = Text(to_section, height = 1,  width = 50, font = title_info_font)
+        self.to.grid(row = 1, column = 2, sticky = NW)
         self.to.insert(END, " ")
         self.to.configure(state = 'disable')
         
         title_section = Frame(information_section)
         title_section.grid(row = 3, column = 1, sticky = EW)
-        title_fix = Text(title_section, width = 7, height = 1)
-        title_fix.grid(row = 1, column = 1, sticky = W)
+        title_fix = Text(title_section, width = 7, height = 1, font = email_title_font)
+        title_fix.grid(row = 1, column = 1, sticky = NW)
         title_fix.insert(END, "Title: ")
         title_fix.configure(state = 'disable')
-        self.title = Text(title_section, height = 1)
-        self.title.grid(row = 1, column = 2, sticky = W)
+        self.title = Text(title_section, height = 1,  width = 50, font = title_text_font)
+        self.title.grid(row = 1, column = 2, sticky = NW)
         self.title.insert(END, " ")
         self.title.configure(state = 'disable')
         
-        f = Frame(self, height = 1, bg = "black")
+        f = Frame(self, height = separator_huge_height, bg = separator_dark)
         f.grid(row = 2, column = 1, columnspan = 2, sticky = EW)
 
-        self.email_text = Text(self, height = 40)
+        self.email_text = Text(self, height = 40, width = 200, font = email_font)
         self.email_text.grid(row = 3, column = 1, sticky = EW)
         self.email_text.configure(state = 'disable')
         
-        f = Frame(self, height = 1, bg = "black")
+        f = Frame(self, height = separator_huge_height, bg = separator_dark)
         f.grid(row = 4, column = 1, columnspan = 2, sticky = EW)
 
-        keywords_fix = Text(self, height = 1,  width = 9)
+        keywords_fix = Text(self, height = 1,  width = 9,  font = email_title_font)
         keywords_fix.grid(row = 5, column = 1, sticky = W)
         keywords_fix.insert(END, "Keywords: ")
         keywords_fix.configure(state = 'disable')
-        self.keywords = Text(self, height = 1)
+        self.keywords = Text(self,   font = title_info_font)
         self.keywords.grid(row = 6, column = 1, sticky = W)
         self.keywords.insert(END, " ")
         self.keywords.configure(state = 'disable')
@@ -1047,7 +1115,7 @@ if __name__ == '__main__':
         #get emails
         emails = []
         for mail_idx in cur_topic_emails:
-            if mail_idx < 100:
+            if mail_idx < 10000:
                 name_name = tag_dicts[mail_idx]['filename']
                 email_directory = './sarahs_inbox/parsed/msnbc/txt/' + name_name
                 tag =  tag_dicts[mail_idx]['From'].strip() + ' -- ' + tag_dicts[mail_idx]['Subject'].strip()
@@ -1060,8 +1128,10 @@ if __name__ == '__main__':
 
     tf = test_frame(tk, root)
     #tf.login('setsee0000@gmail.com', 'B-Dap3ub')
+
     tf.pack()
-    tf.load()
+#tf.load()
+
 #print root.hash(root)
 
     tk.mainloop()
