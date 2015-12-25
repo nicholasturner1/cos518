@@ -1,4 +1,6 @@
+from dateutil.parser import parse as date_parser
 import nltk
+import thread
 from nltk import word_tokenize
 from nltk.corpus import stopwords
 import parse_emails as pe
@@ -11,6 +13,8 @@ import scipy as sp
 from scipy import io
 from ttk import *
 from Tkinter import *
+import tkFont
+import ttk
 import Tkinter as ttttk
 import email as em
 import imaplib
@@ -23,8 +27,19 @@ import email_lda
 from time import gmtime, strftime
 import hashlib
 import tkFont
+from PIL import Image, ImageDraw
 
 
+tk = Tk()
+
+
+################################################################################################
+#route
+TYPE = ["root", "email", "directory", "unknown", "sub_root"]
+real_path = os.path.dirname(os.path.realpath(__file__))
+save_file = os.path.dirname(os.path.realpath(__file__)) + '/saved_file/saved_file'
+temp_save_file= os.path.dirname(os.path.realpath(__file__)) + '/saved_file/temp_saved_file'
+                                
 ################################################################################################
 #font
 current_location_font = ('Apple Chancery', '13')
@@ -37,8 +52,15 @@ directory_font = ('Apple Causal', '12', 'bold')
 description_font = ('Apple Causal', '12')
 left_option_font = ('Krungthep', 15)
 option_one_font = ('Copperplate', 14)
+search_font = ('Futura', '14')
+
+font = tkFont.Font(family=directory_font[0], size=directory_font[1])
+(real_wid,real_height) = (font.measure("a"),font.metrics("linespace"))
+#print real_wid,real_height
 ################################################################################################
 #color
+
+
 information_color = 'grey85'
 separator_color = 'light grey'
 separator_dark = 'grey40'
@@ -47,10 +69,6 @@ side_color = 'grey93'
 separator_huge_height = 4
 #helv20 = tkFont.Font(family="Helvetica",size=20,weight="bold")
 
-TYPE = ["root", "email", "directory", "unknown", "sub_root"]
-real_path = os.path.dirname(os.path.realpath(__file__))
-save_file = os.path.dirname(os.path.realpath(__file__)) + '/saved_file/saved_file'
-temp_save_file= os.path.dirname(os.path.realpath(__file__)) + '/saved_file/temp_saved_file'
 save_file_short = 'temp_saved_file'
 class inode:
     def __init__(self, parents = [], children = [], name = "New Entry", description = "" , type = "unknown", email_directory = "", email = []):
@@ -69,7 +87,8 @@ class inode:
         m.update(inode.type)
         m.update(inode.email_directory)
         for entry in inode.email:
-            m.update(entry)
+            for item in entry:
+                m.update(item)
         if not inode.children:
             return m.hexdigest()
         else:
@@ -90,7 +109,8 @@ class test_frame(Frame):
         event_handler = self
         
         ######################################################################################
-        #pic
+        #key
+        master.bind("<Key>", self.detect_key)
         
         
         ######################################################################################
@@ -110,6 +130,8 @@ class test_frame(Frame):
         current_location = current_location_frame(self, event_handler)
         current_location.grid(row = 3, column = 1, columnspan = 8, sticky = EW)
         self.current_location = current_location.current_location;
+        _search_frame = search_frame(self, event_handler)
+        _search_frame.grid(row = 3, column = 7, columnspan = 4, sticky = EW)
         
         f = Frame(self, height = 1, bg = separator_color)
         f.grid(row = 4, column = 1, columnspan = 8, sticky = EW)
@@ -145,12 +167,14 @@ class test_frame(Frame):
         
         ######################################################################################
         #config
+        self.shift_down = False
         self.email = email_f
         self.keywords = email_f.keywords
     
         self.root = root
         self.directory = root
-        self.temp_directory = root
+        self.directory_back_up = self.directory
+        self.temp_directory = []
         self.temp_frame = []
         self.directory_stack = [root]
         self.topic_folder = root.children[0]
@@ -158,6 +182,20 @@ class test_frame(Frame):
         self.unsorted_email_folder = root.children[2]
         #root.children.append(self.unsorted_email_folder)
         self.load_directory()
+        self.search_directory = inode(parents = [root], children = [], type = "sub_root", name = "Search Results")
+    
+    ##########################################################################################
+    #key event
+    def detect_key(self, event):
+        x = 0
+        #print "gg"
+        #if (event.keycode == 131330 or event.keycode == 131074) and event.state == 1:
+        #    self.shift_down = True
+        # print "here"
+        # if event.keycode == 1048584 and event.state == 8:
+        #     self.shift_down = False
+        
+        #print "Keycode:", event.keycode, "State:", event.state
     ##########################################################################################
         
     def change_current_location(self):
@@ -171,19 +209,31 @@ class test_frame(Frame):
    
     ##########################################################################################
     #selection
-    def select_directory(self, select_frame, select_directory):
+    def select_directory(self, select_frame, select_directory, shift_down):
+
+        if not shift_down:
+
+            if self.temp_frame:
+                for frame in self.temp_frame:
+                    frame.normal_color()
         
-        if self.temp_frame:
-            self.temp_frame.normal_color()
+            select_frame.deep_color()
+            self.temp_frame = [select_frame]
+            self.temp_directory = [select_directory]
+
+        else:
+            select_frame.deep_color()
+            self.temp_frame.append(select_frame)
+            self.temp_directory.append(select_directory)
         
-        self.temp_frame = select_frame
-        self.temp_frame.deep_color()
-        self.temp_directory = select_directory
         
-        if self.temp_directory.type == "directory":
-            change_text_field(self.keywords, self.temp_directory.description)
+        
+        
+        if len(self.temp_directory) == 1 and self.temp_directory[0].type == "directory":
+            change_text_field(self.keywords, self.temp_directory[0].description)
             #print self.temp_directory.type
-    
+
+
 
     def click_directory(self, select):
     
@@ -201,52 +251,34 @@ class test_frame(Frame):
             self.current_location.configure(state='disabled')
             self.change_current_location()
     ##########################################################################################
-
+    #load and sort
 
     def load_email(self, inode):
-        self.email.sender.configure(state = 'normal')
-        #self.email.sender.delete(1.0, END)
-        #self.email.sender.insert(END, "ggbba")
-        self.email.sender.configure(state = 'disabled')
-        #print inode.email_directory
+        
         _email = inode.email
         if not _email:
             _email = self.read_email_text(inode.email_directory)
         #print email_text
-        self.email.email_text.configure(state = 'normal')
-        self.email.email_text.delete(1.0, END)
-        self.email.email_text.insert(INSERT, _email[0])
-        self.email.email_text.configure(state = 'disabled')
-        
-        self.email.sender.configure(state = 'normal')
-        self.email.sender.delete(0.0, END)
-        self.email.sender.insert(INSERT, _email[1])
-        self.email.sender.configure(state = 'disabled')
-        
-        self.email.to.configure(state = 'normal')
-        self.email.to.delete(0.0, END)
-        self.email.to.insert(INSERT, _email[2])
-        self.email.to.configure(state = 'disabled')
-        
-        self.email.title.configure(state = 'normal')
-        self.email.title.delete(0.0, END)
-        self.email.title.insert(INSERT, _email[3])
-        self.email.title.configure(state = 'disabled')
-        
-        self.email.date.configure(state = 'normal')
-        self.email.date.delete(0.0, END)
-        self.email.date.insert(INSERT, _email[4])
-        self.email.date.configure(state = 'disabled')
-    
+        change_text_field(self.email.email_text, _email['email'])
+        change_text_field(self.email.sender, _email['sender'])
+        change_text_field(self.email.to, _email['to'])
+        change_text_field(self.email.title, _email['title'])
+        change_text_field(self.email.date, _email['date'])
     
     def load_directory(self):
+        
         children = self.directory.children
-        #children = self.sort_children(children)
-        #print children
         self.top_directory.forget()
         self.top_directory = top_directory_frame(self, self, children)
         self.top_directory.grid(row = 5, column = 3, sticky = NW)
 
+    def sort(self, event):
+        children = self.directory.children
+        children = self.sort_children(children)
+        self.top_directory.forget()
+        self.top_directory = top_directory_frame(self, self, children)
+        self.top_directory.grid(row = 5, column = 3, sticky = NW)
+    
     def sort_children(self, children):
         if children[0].type != "email":
             return children
@@ -255,12 +287,12 @@ class test_frame(Frame):
         for child in children:
             child.email = self.read_email_text(child.email_directory)
         
-        dropdown = 1 
+        dropdown = 0
         #sort emails based on dropdown
-        if dropdown == 0: #sort by sender
-            sorted_children = sorted(children, key=lambda x: x.email[1].lower(), reverse=False)
+        if dropdown == 0: #sort by date
+            sorted_children = sorted(children, key=lambda x: str(x.email['date']).lower(), reverse=True)
         elif dropdown == 1: #sort by subject
-            sorted_children = sorted(children, key=lambda x: x.email[3].lower(), reverse=False)
+            sorted_children = sorted(children, key=lambda x: x.email['title'].lower(), reverse=False)
         else:
             sorted_children = children
 
@@ -304,7 +336,8 @@ class test_frame(Frame):
         self.load_directory()
 
 
-
+    ##########################################################################################
+    #read email
     def read_email_text(self, filename):
         with open(filename) as f:
             #print f
@@ -367,11 +400,94 @@ class test_frame(Frame):
             else:
                 _email = _email + line + '\n'
                 start = True
-        return [_email, sender, to, title, date]
+                    #date.strip()
+    
+        if not date:
+            return {'email': _email, 'sender': sender, 'to': to, 'title': title, 'date': date}
+        if len(date) < 8:
+            return {'email': _email, 'sender': sender, 'to': to, 'title': title, 'date': date}
+
+        date = date.replace(":", "")
+        date = date.replace(";", "")
+        date = date.replace("_", "")
+        date = date.replace("PM", "P")
+        date = date.replace("AM", "A")
+        date = date.replace(".A", " A")
+        date = date.replace(".P", "P ")
+        date = date.replace(". P", " P")
+        date = date.lstrip()
+        try:
+            date = date_parser(date)
+        except:
+            date = date[:-4] + ':' + date[-4:]
+        
+            try:
+                date = date_parser(date)
+            except:
+               
+                date1 = date[:-7] + ' ' + date[-7:]
+                try:
+                    date = date_parser(date1)
+                except:
+                    try:
+                        date = date[:-6] + ' ' + date[-6:]
+                        date = date_parser(date)
+                    except:
+                        print date
+                        date = "0000-00-00 00:00:00"
+
+
+
+        return {'email': _email, 'sender': sender, 'to': to, 'title': title, 'date': date}
+    ##########################################################################################
+    #search
+    def all_emails(self, root):
+        directory_root = root
+        queue = [directory_root]
+        visited = set()
+        count = 0
+        inode_set = []
+        while queue:
+            temp_root = queue.pop(0)
+            if temp_root not in visited:
+                inode_set.append(temp_root)
+                count = count + 1
+                visited.add(temp_root)
+                for child in temp_root.children:
+                    queue.append(child)
+    
+        for item in inode_set:
+            if not (item.type == "email" and len(item.email) > 0):
+                inode_set.remove(item)
+        
+        return inode_set
+                    
+    def search(self, keywords):
+        if self.directory == self.search_directory:
+            self.directory = self.directory_back_up
+            self.directory_stack.pop()
+        emails = self.all_emails(self.directory)
+        #print emails
+        self.search_directory.children = []
+        self.directory_back_up = self.directory
+        self.directory = self.search_directory
+        for email in emails:
+            if not len(email.email) == 0:
+                position  = email.email['email'].find(keywords)
+                if not position == -1:
+                    print position, email
+                    self.directory.children.append(email)
+        self.load_directory()
+        self.directory_stack.append(self.search_directory)
+        self.change_current_location()
+    
+    
     ##########################################################################################
     #insertion and deletion
     
     def insert_entry(self, event):
+        if self.directory == self.search_directory:
+            return
         self._pop_up_insert = pop_up_insert(self.master)
         self.master.wait_window(self._pop_up_insert.top)
         if self._pop_up_insert.value:
@@ -381,49 +497,60 @@ class test_frame(Frame):
             self.load_directory()
         
     def delete_entry(self, event):
-        if self.temp_directory.type == "sub_root" or self.temp_directory.type == "root":
+        if self.directory == self.search_directory:
+            directory = self.directory_back_up
+        else:
+            directory = self.directory
+        if not self.temp_directory:
+            return
+        if self.temp_directory[0].type == "sub_root" or self.temp_directory[0].type == "root":
             return
         self._pop_up_delete = pop_up_delete(self.master)
         self.master.wait_window(self._pop_up_delete.top)
         
         if self._pop_up_delete.delete:
-            for child in self.temp_directory.children:
-                self._remove(child, self.temp_directory)
-                if child.type == "email" and (not child.parents):
-                    self._add(child, self.unsorted_email_folder)
+            for temp_directory in self.temp_directory:
+                for child in temp_directory.children:
+                    self._remove(child, temp_directory)
+                    if child.type == "email" and (not child.parents):
+                        self._add(child, self.unsorted_email_folder)
         
-            for parent in self.temp_directory.parents:
-                self._remove(self.temp_directory, parent)
-
+        #for parent in temp_directory.parents:
+                self._remove(temp_directory, directory)
+                self._remove(temp_directory, self.search_directory)
 
             #check if email
             
             #print self.temp_directory.parents
-            if self.temp_directory.type == "email" and (not self.temp_directory.parents):
-             
-                self._add(self.temp_directory, self.unsorted_email_folder)
-                self.temp_directory.children = []
+                if temp_directory.type == "email" and (not temp_directory.parents):
+                    self._add(temp_directory, self.unsorted_email_folder)
+                    temp_directory.children = []
 
             self.load_directory()
     ##########################################################################################
     #rename
     def rename_entry(self, event):
-        if not (self.temp_directory.type == "directory" or self.temp_directory.type == "email"):
+        if not (len(self.temp_directory) == 1 and len(self.temp_frame) == 1):
+            return
+        
+        temp_directory = self.temp_directory[0]
+        temp_frame = self.temp_frame[0]
+        if not (temp_directory.type == "directory" or temp_directory.type == "email"):
             return
         self._pop_up_rename = pop_up_rename(self.master)
         self.master.wait_window(self._pop_up_rename.top)
         new_name = self._pop_up_rename.name
         
         if new_name:
-            self.temp_frame.line_one.config(state = 'normal')
-            self.temp_frame.line_one.delete(1.0, END)
-            self.temp_frame.line_one.insert(END, new_name)
-            self.temp_frame.line_one.config(state = 'disabled')
-            self.temp_directory.name = new_name
+            change_text_field(temp_frame.line_one, new_name)
+            temp_directory.name = new_name
     ##########################################################################################
     #add and move entry
     def move_entry(self, event):
-        if not self.temp_directory.type == "email":
+        
+        if not self.temp_directory:
+            return
+        if not self.temp_directory[0].type == "email":
             return
         
         self._pop_up_move = pop_up_move(self.master, self.root)
@@ -431,15 +558,20 @@ class test_frame(Frame):
         if self._pop_up_move.select_inode:
         #print "here"
             parent = self.directory
-            child = self.temp_directory
-            child.children = []
-        #self.directory.children.remove(child)
-            self._remove(child, parent)
-            self._add(child, self._pop_up_move.select_inode)
+            if parent == self.search_directory:
+                parent = self.directory_back_up
+        
+            for temp_directory in self.temp_directory:
+                print temp_directory
+                temp_directory.children = []
+                self._remove(temp_directory, parent)
+                self._add(temp_directory, self._pop_up_move.select_inode)
             
             self.load_directory()
     def add_entry(self, event):
-        if not self.temp_directory.type == "email":
+        if not self.temp_directory:
+            return
+        if not self.temp_directory[0].type == "email":
             return
         
         self._pop_up_move = pop_up_move(self.master, self.root)
@@ -447,11 +579,13 @@ class test_frame(Frame):
         if self._pop_up_move.select_inode:
             #print "here"
             parent = self.directory
-            child = self.temp_directory
-            child.children = []
-            #self.directory.children.remove(child)
-            #self._remove(child, parent)
-            self._add(child, self._pop_up_move.select_inode)
+            if parent == self.search_directory:
+                parent = self.directory_back_up
+            for temp_directory in self.temp_directory:
+                temp_directory.children = []
+   
+                self._add(temp_directory, self._pop_up_move.select_inode)
+
             
             self.load_directory()
     ##########################################################################################
@@ -529,7 +663,6 @@ class test_frame(Frame):
                 if ctype == 'text/plain' and 'attachment' not in cdispo:
                     body = part.get_payload(decode=True)  # decode
                     break
-# not multipart - i.e. plain text, no attachments, keeping fingers crossed
         else:
             body = b.get_payload(decode=True)
 
@@ -600,7 +733,7 @@ class test_frame(Frame):
             root = inode_set[0]
             self.root = root
             self.directory = root
-            self.temp_directory = root
+            self.temp_directory = []
             self.temp_frame = []
             self.directory_stack = [root]
             self.topic_folder = root.children[0]
@@ -647,6 +780,8 @@ def change_text_field(text_field, new_text):
 
 ################################################################################################################
 #pop ups
+
+
 class pop_up_log_in(Frame):
     def __init__(self,master):
         Frame.__init__(self, master)
@@ -669,6 +804,7 @@ class pop_up_log_in(Frame):
         self.c.grid(row = 4, column = 2, sticky = EW)
         self.username = []
         self.password = []
+        center(top)
     def accept(self):
         self.username = self.u.get()
         self.password = self.p.get()
@@ -690,6 +826,7 @@ class pop_up_insert(Frame):
         self.c=Button(top,text='Cancel',command=self.cleanup)
         self.c.grid(row = 3, column = 2, sticky = EW)
         self.value = []
+        center(top)
     def accept(self):
         self.value=self.e.get()
         self.top.destroy()
@@ -708,6 +845,7 @@ class pop_up_delete(Frame):
         self.c=Button(top,text='No',command=self.cleanup)
         self.c.grid(row = 2, column = 2, sticky = EW)
         self.delete = False
+        center(top)
     def accept(self):
         self.delete = True
         self.top.destroy()
@@ -733,6 +871,7 @@ class pop_up_rename(Frame):
         self.c=Button(top,text='Cancel',command=self.cleanup)
         self.c.grid(row = 3, column = 2, sticky = EW)
         self.name = []
+        center(top)
     def accept(self):
         self.name = self.e.get()
         self.top.destroy()
@@ -745,7 +884,14 @@ class pop_up_add(Frame):
         Frame.__init__(self, master)
         top = self.top = Toplevel(master)
         self.tree = Treeview(self.top, selectmode="extended", height = 20)
-        
+        self.l=Label(top,text="Please select location to add")
+        self.l.grid(row = 1, column = 1, columnspan = 2, sticky = EW)
+        self.tree.grid(row = 2, column = 1, columnspan = 2, sticky = EW)
+        self.b=Button(top,text='Yes',command=self.accept)
+        self.b.grid(row = 3, column = 1, sticky = EW)
+        self.c=Button(top,text='No',command=self.cleanup)
+        self.c.grid(row = 3, column = 2, sticky = EW)
+        center(top)
         directory_root = directory_visit(_inode = root, _parent_tree_node = "")
         queue = [directory_root]
         visited = set()
@@ -767,20 +913,22 @@ class pop_up_add(Frame):
                     directory_child = directory_visit(_inode = child, _parent_inode = temp_root.inode, _parent_tree_node = temp_id)
                     queue.append(directory_child)
 
-        self.l=Label(top,text="Please select location to add")
-        self.l.grid(row = 1, column = 1, columnspan = 2, sticky = EW)
-        self.tree.grid(row = 2, column = 1, columnspan = 2, sticky = EW)
-        self.b=Button(top,text='Yes',command=self.accept)
-        self.b.grid(row = 3, column = 1, sticky = EW)
-        self.c=Button(top,text='No',command=self.cleanup)
-        self.c.grid(row = 3, column = 2, sticky = EW)
+
+
 
 class pop_up_move(Frame):
     def __init__(self, master, root):
         Frame.__init__(self, master)
         top = self.top = Toplevel(master)
         self.tree = Treeview(self.top, selectmode="extended", height = 20)
-
+        self.l=Label(top,text="Please select location to move")
+        self.l.grid(row = 1, column = 1, columnspan = 2, sticky = EW)
+        self.tree.grid(row = 2, column = 1, columnspan = 2, sticky = EW)
+        self.b=Button(top,text='Yes',command=self.accept)
+        self.b.grid(row = 3, column = 1, sticky = EW)
+        self.c=Button(top,text='No',command=self.cleanup)
+        self.c.grid(row = 3, column = 2, sticky = EW)
+        center(top)
         directory_root = directory_visit(_inode = root, _parent_tree_node = "")
         queue = [directory_root]
         visited = set()
@@ -802,13 +950,8 @@ class pop_up_move(Frame):
                     directory_child = directory_visit(_inode = child, _parent_inode = temp_root.inode, _parent_tree_node = temp_id)
                     queue.append(directory_child)
     
-        self.l=Label(top,text="Please select location to move")
-        self.l.grid(row = 1, column = 1, columnspan = 2, sticky = EW)
-        self.tree.grid(row = 2, column = 1, columnspan = 2, sticky = EW)
-        self.b=Button(top,text='Yes',command=self.accept)
-        self.b.grid(row = 3, column = 1, sticky = EW)
-        self.c=Button(top,text='No',command=self.cleanup)
-        self.c.grid(row = 3, column = 2, sticky = EW)
+
+        
         
     def accept(self):
         
@@ -820,6 +963,19 @@ class pop_up_move(Frame):
     def cleanup(self):
         self.top.destroy()
 ################################################################################################################
+class search_frame(Frame):
+    def __init__(self, master, event_handler):
+        Frame.__init__(self, master, bg = information_color)
+        self.search_fix = Label(self, width = 8, bg = information_color, bd = 0, text = "Search: ", font = search_font)
+        self.search_fix.pack(side = LEFT)
+        self.search_text = Entry(self, width = 20, bd = 0, bg = information_color, highlightbackground = information_color, highlightcolor = information_color, font = search_font)
+        
+        self.search_text.pack(side = LEFT)
+        self.event_handler = event_handler
+        self.search_text.bind("<Return>", self.search)
+    
+    def search(self, event):
+        self.event_handler.search(self.search_text.get())
 
 class option_one_frame(Frame):
     def __init__(self, master, event_handler):
@@ -862,10 +1018,13 @@ class option_one_frame(Frame):
         option_8 = Label(self, text = "Load", bd = 0, bg = information_color, font = option_one_font)
         option_8.bind("<Button-1>", event_handler.consistent_load)
         option_8.grid(row = 1, column = 8, padx = pad_x, pady = pad_y)
+        option_9 = Label(self, text = "Sort", bd = 0, bg = information_color, font = option_one_font)
+        option_9.bind("<Button-1>", event_handler.sort)
+        option_9.grid(row = 1, column = 9, padx = pad_x, pady = pad_y)
         
         option_6 = Label(self, text = "Back", bd = 0, bg = information_color, font = option_one_font)
         option_6.bind("<Button-1>", event_handler.back)
-        option_6.grid(row = 1, column = 9, padx = pad_x, pady = pad_y)
+        option_6.grid(row = 1, column = 10, padx = pad_x, pady = pad_y)
 
 #self.config(height = 50)
 #option_one.pack()
@@ -915,36 +1074,88 @@ class left_option_frame(Frame):
         unsorted_view.bind("<Button-1>", event_handler.back_to_unsorted)
         unsorted_view.grid(row = 3, column = 1, sticky = N)
 #########################################################################################################
+def center(win):
+    """
+        centers a tkinter window
+        :param win: the root or Toplevel window to center
+        """
+    win.update_idletasks()
+    width = win.winfo_width()
+    frm_width = win.winfo_rootx() - win.winfo_x()
+    win_width = width + 2 * frm_width
+    height = win.winfo_height()
+    titlebar_height = win.winfo_rooty() - win.winfo_y()
+    win_height = height + titlebar_height + frm_width
+    x = win.winfo_screenwidth() // 2 - win_width // 2
+    y = win.winfo_screenheight() // 2 - win_height // 2
+    win.geometry('{}x{}+{}+{}'.format(width, height, x, y))
+    win.deiconify()
+#########################################################################################################
 #directory
+
+
 class top_directory_frame(Frame):
     #top = 0
     
     def __init__(self, master, event_handler, children):
         Frame.__init__(self, master)
-        #print children
-        #self.bind("<Enter>", self.callback)
-        wid = 200
-        self.canvas = Canvas(self,width=wid,height=10, scrollregion=(0, 0, 1000, (len(children))*47))
+
+        ################################################################################################
+        #progress bar
+        
+        self.top = Toplevel(master)
+        self.l = Label(self.top, text = "Loading ...")
+        self.l.pack(side = TOP)
+        self.pb_hD = ttk.Progressbar(self.top, orient='horizontal', mode='determinate', length = real_wid*40)
+        self.pb_hD.pack(side = BOTTOM)
+        center(self.top)
+        #pb_hD.update_idletasks()
+
+        ################################################################################################
+        self._frame_height = real_height * 3
+        self._wid = real_wid * 25
+        self._height = real_height * 60
+        self.canvas = Canvas(self,width = self._wid,height = self._height, scrollregion = (0, 0, self._wid * 2, (len(children))*(self._frame_height + 8)))
         self.scroll_bar = Scrollbar(self, orient=VERTICAL)
         self.scroll_bar.pack(side=RIGHT,fill=Y)
         # scroll_bar.grid(row = 1, rowspan = 800, column = 2, sticky = NS)
         self.directory = []
-        i = 0
-        for child in children:
-            self.directory.append(directory_frame(self.canvas, child, event_handler))
-                        #self.directory[i].grid(row = (2*i + 1), column = 1, sticky = NW)
-            self.canvas.create_window(0, 45*i, anchor=NW, window=self.directory[i])
-            #self.directory[i].pack(side = TOP)
-            self.f = Frame(self.canvas, width = wid + 20, height = 1, bg = separator_mid)
-            self.canvas.create_window(0, 45*(i + 1) - 1, anchor=NW, window=self.f)
-            i = i + 1
         
-
+        ################################################################################################
+        #load
+        thread.start_new_thread ( self.load, (children, event_handler ) )
+        ################################################################################################
+       
         self.scroll_bar.config(command = self.canvas.yview)
-        self.canvas.config(width=wid,height=800)
+        #self.canvas.config(width=wid,height=800)
         self.canvas.config(yscrollcommand=self.scroll_bar.set)
         self.canvas.pack(side=LEFT,expand=True,fill=BOTH)
     
+    def load(self, children, event_handler):
+        if len(children) == 0:
+            self.top.destroy()
+            return
+        i = 0
+        step = 100/len(children)
+        if step  == 0:
+            step = 1
+        count = 0
+        for child in children:
+            self.directory.append(directory_frame(self.canvas, child, event_handler))
+            #self.directory[i].grid(row = (2*i + 1), column = 1, sticky = NW)
+            self.canvas.create_window(0, self._frame_height*i, anchor=NW, window=self.directory[i])
+            #self.directory[i].pack(side = TOP)
+            self.f = Frame(self.canvas, width = self._wid * 2, height = 1, bg = separator_mid)
+            self.canvas.create_window(0, self._frame_height*(i + 1) - 1, anchor=NW, window=self.f)
+            i = i + 1
+            if (i*100)/len(children) > count:
+                self.pb_hD.value = 10
+                self.pb_hD.step(step)
+                self.pb_hD.update_idletasks()
+                self.l.configure(text = "Loading ..." + str(count) + "%")
+                count = count + step
+        self.top.destroy()
+#progress_bar.top.destroy()
 
 
 
@@ -960,8 +1171,11 @@ class directory_frame(Frame):
         self.line_two.insert(END,  child.description)
         self.line_two.configure(state='disabled')
         self.line_two.pack(expand = True)
-        self.line_one.bind("<Button-1>", lambda event, select_frame = self, select_directory = child: event_handler.select_directory(select_frame, select_directory))
-        self.line_two.bind("<Button-1>", lambda event, select_frame = self, select_directory = child: event_handler.select_directory(select_frame, select_directory))
+        
+        self.line_one.bind("<Shift-Button-1>", lambda event, select_frame = self, select_directory = child, shift_down = True: event_handler.select_directory(select_frame, select_directory, shift_down))
+        self.line_two.bind("<Shift-Button-1>", lambda event, select_frame = self, select_directory = child, shift_down = True: event_handler.select_directory(select_frame, select_directory, shift_down))
+        self.line_one.bind("<Button-1>", lambda event, select_frame = self, select_directory = child, shift_down = False: event_handler.select_directory(select_frame, select_directory, shift_down))
+        self.line_two.bind("<Button-1>", lambda event, select_frame = self, select_directory = child, shift_down = False: event_handler.select_directory(select_frame, select_directory, shift_down))
         #self.bind("<Leave>", lambda event, select = child: self.normal_color(select))
         #self.bind("<Leave>", lambda event, select = child: self.normal_color(select))
         
@@ -1027,7 +1241,7 @@ class email_frame(Frame):
         
         to_section = Frame(information_section)
         to_section.grid(row = 2, column = 1, sticky = EW)
-        to_fix = Text(to_section, height = 1, width = 5, font = email_title_font)
+        to_fix = Text(to_section, height = 1, width = 9, font = email_title_font)
         to_fix.grid(row = 1, column = 1, sticky = NW)
         to_fix.insert(END, "To: ")
         to_fix.configure(state = 'disable')
@@ -1080,19 +1294,7 @@ class keywords_frame(Frame):
         self.keywords.configure(state = 'disable')
 
 
-
-
-if __name__ == '__main__':
-    tk = Tk()
-    #eh = event_handler(tk)
-    root = inode( type = "root", name = "ROOT")
-    children = []
-    topic_view = inode(parents = [root], children = children, type = "sub_root", name = "Topic Folder")
-    social_view = inode(parents = [root], type = "sub_root", name = "Social Folder")
-    unsorted_email_folder = inode(parents = [root], children = [], type = "sub_root", name = "Unsorted Folder")
-    root.children = [topic_view, social_view, unsorted_email_folder]
-
-
+def load_email_thread(tf, root, children):
     topic_x_word = pe.load_topic_x_word('./model_results/round3_LDA_topic_x_word_30.npy', 30)
     word_lists = email_lda.print_top_n_words(topic_x_word, './data/round3_vocab.csv', 10)
     ext = pe.load_email_x_topic('./model_results/round3_LDA_email_x_topic_FULL_14453.npy', 14453)
@@ -1101,7 +1303,7 @@ if __name__ == '__main__':
     for i in range(len(word_lists)):
         name_name =  ', '.join(map(str,word_lists[i]))
         #print name_name
-        temp_directory = inode(parents = [topic_view], children = [], name =  'Topic: ' + str(i), description = name_name, type = "directory")
+        temp_directory = inode(parents = [root], children = [], name =  'Topic: ' + str(i), description = name_name, type = "directory")
         children.append(temp_directory)
         
         #get emails
@@ -1117,21 +1319,37 @@ if __name__ == '__main__':
         for mail_idx in cur_topic_emails:
             if mail_idx < 10000:
                 name_name = tag_dicts[mail_idx]['filename']
+                name_name = name_name.replace(";", "")
                 email_directory = './sarahs_inbox/parsed/msnbc/txt/' + name_name
                 tag =  tag_dicts[mail_idx]['From'].strip() + ' -- ' + tag_dicts[mail_idx]['Subject'].strip()
-                email_subject = inode(parents = [temp_directory], name = name_name, description = tag, email_directory = email_directory, type = "email", children = [])
+                _email = tf.read_email_text(email_directory)
+                email_subject = inode(parents = [temp_directory], name = name_name, description = tag, email_directory = email_directory, type = "email", children = [], email = _email)
                 emails.append(email_subject)
-
         temp_directory.children = emails
+    children.append(temp_directory)
 
+if __name__ == '__main__':
 
-
+    #eh = event_handler(tk)
+    root = inode( type = "root", name = "ROOT")
+    children = []
+    topic_view = inode(parents = [root], children = children, type = "sub_root", name = "Topic Folder")
+    social_view = inode(parents = [root], type = "sub_root", name = "Social Folder", children = [])
+    unsorted_email_folder = inode(parents = [root], children = [], type = "sub_root", name = "Unsorted Folder")
+    root.children = [topic_view, social_view, unsorted_email_folder]
+    
+    
     tf = test_frame(tk, root)
+    tf.pack()
+    
+    #satf.search('s')
+    thread.start_new_thread(load_email_thread, (tf, topic_view, children))
+    tk.mainloop()
+
+
+
+
+
     #tf.login('setsee0000@gmail.com', 'B-Dap3ub')
 
-    tf.pack()
-#tf.load()
 
-#print root.hash(root)
-
-    tk.mainloop()
