@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import parse_emails as pe
+import email_io as eio
 import gensim
 import numpy as np
 import argparse
@@ -9,7 +9,7 @@ def train_model(data_filename, num_emails, num_topics=10, num_passes=1,
     topic_x_word=True, email_x_topic=True, binarize=False):
 
     print "Loading data..."
-    data = pe.load_bow_as_dense(data_filename, num_emails)
+    data = eio.load_bow_as_dense(data_filename, num_emails)
 
     if binarize:
         data[np.nonzero(data)] = 1
@@ -40,7 +40,7 @@ def train_model(data_filename, num_emails, num_topics=10, num_passes=1,
 def run_inference_over_file(data_filename, num_emails, model_filename):
 
     print "Loading data..."
-    data = pe.load_bow_as_dense(data_filename, num_emails)
+    data = eio.load_bow_as_dense(data_filename, num_emails)
 
     #Converting to gensim corpus
     corpus = gensim.matutils.Dense2Corpus(data, documents_columns=False)
@@ -69,7 +69,7 @@ def extract_topic_word_dist(model_obj):
     return topic_x_word
 
 def print_top_n_words( topic_x_word_matrix, vocab_filename, num_words=10 ):
-    vocabulary = np.array( pe.load_vocab_as_list( vocab_filename ), dtype=object)
+    vocabulary = np.array( eio.load_vocab_as_list( vocab_filename ), dtype=object)
     num_topics = topic_x_word_matrix.shape[0]
 
     top_word_lists = []
