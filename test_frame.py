@@ -79,6 +79,11 @@ class inode:
         self.description = description
         self.email_directory = email_directory
         self.email = email
+        
+        #ML Result Matrices for sub_root inodes
+        self.email_x_group = []      #group = topic or social cluster
+        self.group_x_individual = [] #individual = word or person
+        
     def hash(self, inode):
         #print inode
         m = hashlib.md5()
@@ -156,13 +161,7 @@ class test_frame(Frame):
         email_f = email_frame(self, event_handler)
         email_f.grid(row = 5, column = 5, columnspan = 4, sticky = N)
         
-        
-        
-        
-        
-        
-        
-        
+            
         
         
         ######################################################################################
@@ -285,7 +284,8 @@ class test_frame(Frame):
         
         #load the email contents for sorting purposes
         for child in children:
-            child.email = self.read_email_text(child.email_directory)
+            if not child.email:
+                child.email = self.read_email_text(child.email_directory)
         
         dropdown = 0
         #sort emails based on dropdown
@@ -620,6 +620,7 @@ class test_frame(Frame):
             self.login(self._pop_up_log_in.username, self._pop_up_log_in.password)
     
     def login(self, username, password):
+        '''Logs user into gmail, loads emails into unsorted email folder'''
         mail = imaplib.IMAP4_SSL('imap.gmail.com')
         mail.login(username, password)
         mail.list()
@@ -632,9 +633,7 @@ class test_frame(Frame):
         self.topic_folder.children = [];
         self.social_folder.children = [];
         self.unsorted_email_folder.children = [];
-        
-        
-        
+       
         #get emails
         for id in id_list:
             result, data = mail.fetch(id, "(RFC822)")
@@ -646,6 +645,7 @@ class test_frame(Frame):
 
 
     def parse_email_remote(self, raw_email):
+        '''Parses data from remote gmail email'''
         email_message = em.message_from_string(raw_email)
         to =  email_message['To']
         sender = em.utils.parseaddr(email_message['From'])
@@ -672,6 +672,7 @@ class test_frame(Frame):
     ##########################################################################################
     #save and load
     def save(self, event):
+        '''Saves tree starting from root into timestamped file'''
         #go over inodes and write it to file.
         time = strftime("_%Y_%m_%d_%H_%M_%S", gmtime())
         print time
@@ -683,9 +684,7 @@ class test_frame(Frame):
         while queue:
             temp_root = queue.pop(0)
             #print temp_root.inode.name
-            #print temp_root.parent_tree_node
-            
-            
+            #print temp_root.parent_tree_node         
             #tree.pack()
             if temp_root not in visited:
                 inode_set.append(temp_root)
@@ -693,10 +692,6 @@ class test_frame(Frame):
                 visited.add(temp_root)
                 for child in temp_root.children:
                     queue.append(child)
-
-
-
-
 
         #remove history
         all_files = glob.glob(save_file + '*')
@@ -719,9 +714,9 @@ class test_frame(Frame):
         os.rename(temp_file_name, file_name)
         tkMessageBox.showinfo("Save To File", "Saved")
     
-#load
+    #load
     def load(self):
-
+        '''Loads most recent save file'''
         all_files = glob.glob(save_file + '*')
         all_files = sorted(all_files, key=lambda x: x.lower(), reverse=True)
         #print all_files
@@ -743,7 +738,7 @@ class test_frame(Frame):
             self.load_directory()
 
     def consistent_load(self, event):
-        
+        '''Loads most recent save file. Compares root hash with save root hash to check for conflicts.'''
         all_files = glob.glob(save_file + '*')
         all_files = sorted(all_files, key=lambda x: x.lower(), reverse=True)
         #print all_files
@@ -766,6 +761,64 @@ class test_frame(Frame):
             self.unsorted_email_folder = root.children[2]
             #root.children.append(self.unsorted_email_folder)
         self.load_directory()
+        
+    ##########################################################################################
+    def load_gmail_inbox(self, event):
+        '''Loads a gmail inbox and initializes the sub_root folders with ML results'''
+        children = []
+        topic_view = inode(parents = [root], children = children, type = "sub_root", name = "Topic Folder")
+        social_view = inode(parents = [root], type = "sub_root", name = "Social Folder", children = [])
+        unsorted_email_folder = inode(parents = [root], children = [], type = "sub_root", name = "Unsorted Folder")
+        root.children = [topic_view, social_view, unsorted_email_folder]
+        
+        #run the processing on given gmail inbox
+        #os.system("./parse_gmails.py -input_filename ./gmail1_dummy.mbox -min_word_count 10 ./model_results/gmail_test_")
+        
+        #load matrices and vocab from files
+        topic_x_word = pe.load_topic_x_word('./model_results/gmail1_LDA_topic_x_word_30.npy', 30)
+        ext = pe.load_email_x_topic('./model_results/gmail1_LDA_email_x_topic_49590.npy', 49590)
+        
+        #initialize sub_root node data
+        topic_view.email_x_group = ext
+        topic_view.group_x_individual = topic_x_word
+        
+        word_lists = email_lda.print_top_n_words(topic_x_word, './data/gmail1_vocab.csv', 10)
+        tag_dicts = pe.load_tags('./data/gmail1_dummy_tags.csv')
+        e_x_sorted_topic = di.assign_emails(ext, 3)
+        
+        print 'data acquired! Now creating groups'
+                
+        for i in range(len(word_lists)):
+            print 'creating group', i
+            name_name =  ', '.join(map(str,word_lists[i]))
+            #print name_name
+            temp_directory = inode(parents = [root], children = [], name =  'Topic: ' + str(i), description = name_name, type = "directory")
+            children.append(temp_directory)
+        
+            #get emails
+            cur_topic_emails = []
+            
+            #Find email indice that belong in selected topic
+            for j in range(len(e_x_sorted_topic)):
+                if i in e_x_sorted_topic[j]:
+                    cur_topic_emails.append(j)
+        
+            #get emails
+            emails = []
+            for mail_idx in cur_topic_emails:
+                if mail_idx < 10000:
+                    name_name = tag_dicts[mail_idx]['Subject'].strip()
+                    name_name = name_name.replace(";", "")
+                    email_directory = ''
+                    tag =  tag_dicts[mail_idx]['From'].strip() + ' -- ' + tag_dicts[mail_idx]['Subject'].strip()
+                    _email = 'Temporary email text' #tag_dicts['email']
+                    email_subject = inode(parents = [temp_directory], name = name_name, description = tag, email_directory = email_directory, type = "email", children = [], email = _email)
+                    emails.append(email_subject)
+            temp_directory.children = emails
+            print 'appending!'
+            self.directory.children.append(temp_directory)
+        self.load_directory()
+        
 ##########################################################################################
 #check for consistency
 def consistency_check(root1, root2):
@@ -982,14 +1035,14 @@ class option_one_frame(Frame):
         pad_x = 20
         pad_y = 20
         Frame.__init__(self, master, bg = information_color, height = 30)
-        insert_photo = PhotoImage(file = real_path + '/icons/insert.gif')
+        #insert_photo = PhotoImage(file = real_path + '/icons/insert.gif')
         
         option_1 = Label(self, text = "Insert", bd = 0, bg = information_color, font = option_one_font)
         option_1.bind("<Button-1>", event_handler.insert_entry)
         #option_1.image = insert_photo
         option_1.grid(row = 1, column = 1, padx = pad_x, pady = pad_y)
         #option_one.place(bordermode=OUTSIDE, relheight = 1, relwidth = 1)
-        delete_photo = PhotoImage(file = real_path + '/icons/delete.gif')
+        #delete_photo = PhotoImage(file = real_path + '/icons/delete.gif')
         option_2 = Label(self, text = "Delete", bd = 0, bg = information_color, font = option_one_font)
         option_2.bind("<Button-1>", event_handler.delete_entry)
         #option_2.image = delete_photo
@@ -1025,6 +1078,10 @@ class option_one_frame(Frame):
         option_6 = Label(self, text = "Back", bd = 0, bg = information_color, font = option_one_font)
         option_6.bind("<Button-1>", event_handler.back)
         option_6.grid(row = 1, column = 10, padx = pad_x, pady = pad_y)
+
+        option_10 = Label(self, text = "LoadGmail", bd = 0, bg = information_color, font = option_one_font)
+        option_10.bind("<Button-1>", event_handler.load_gmail_inbox)
+        option_10.grid(row = 1, column = 11, padx = pad_x, pady = pad_y)
 
 #self.config(height = 50)
 #option_one.pack()
