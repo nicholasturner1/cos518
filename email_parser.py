@@ -2,8 +2,6 @@
 __doc__ = '''
 Email Parsing Script for COS518
 
-Primarily used for Sarah Palin Inbox thus far
-
 ORDER OF OPERATIONS
 -Removing junk characters (defined below)
 -Converting to lowercase
@@ -40,12 +38,12 @@ stopWords = stopwords.words("english")
 #Fields wh
 tags = ['From','To','Sent','Subject']
 
-#Filtered out of all email texts within create_vocabulary
+#Filtered out of all email texts within process_tokens
 junk_chars = ['{','}','#','%','&','\(','\)','\[','\]','<','>',',', '!', '.', ';', 
 '?', '*', '\\', '\/', '~', '_','|','=','+','^',':','\"','\'','@','-']
 
-#NOT currently filtered
-junk_words = ['re','subject','sent','cc','bcc','com','http','mailto','edu']
+#filtering URL tokens
+junk_words = ['com','http','edu','www','gov','biz']
 
 #=============================================
 #Helper functions
@@ -60,17 +58,16 @@ def contains_num(word):
 
 #=============================================
 #Main functionality
-def create_corpus_vocabulary(emails):
+def tokenize_and_count(emails):
     '''
     Preprocesses the words in all emails, forms
     a dictionary mapping a vocabulary of words
     to the number of occurrences of that word within
     the corpus
     '''
-    print "Importing nltk dependencies (can take a bit)"
     print "Processing documents"
 
-    vocab = {}
+    word_counts = {}
     res_emails = []
 
     for i in range(len(emails)):
@@ -78,23 +75,22 @@ def create_corpus_vocabulary(emails):
 
       tokens = process_email_tokens( emails[i] )
 
-      vocab = add_tokens_to_vocab( vocab, tokens )
+      word_counts = add_tokens_to_counts( word_counts, tokens )
 
       res_emails.append(tokens)
 
-    return(vocab, res_emails)
+    return(word_counts, res_emails)
 
 def process_email_tokens( email ):
     '''
     Takes an individual email, splits it into tokens,
     and filters that list of tokens for various issues
     '''
-    #Collapsing across lines
-    email_text = ' '.join( email )
-    email_text = email_text.decode('ascii',errors='ignore')
 
     # remove noisy characters
-    junk_removed = re.sub('[%s]' % ''.join(junk_chars), ' ', email_text)
+    email = email.decode('ascii',errors='ignore')
+    email = email.replace('\n','').replace('\r','')
+    junk_removed = re.sub('[%s]' % ''.join(junk_chars), ' ', email)
 
     #Splitting document into words
     tokens = word_tokenize(junk_removed)
@@ -111,7 +107,7 @@ def process_email_tokens( email ):
     #Removes words containing a number (filtering dates, prices, etc.)
     tokens = [w for w in tokens if not contains_num(w)]
 
-    #Removes urls
+    #Removes urls and html tags (not ready yet)
     #tokens = [w for w in tokens if not contains_url(w)]
 
     #Removes short terms
@@ -125,7 +121,7 @@ def process_email_tokens( email ):
 
     return tokens
 
-def add_tokens_to_vocab( vocab, tokens ):
+def add_tokens_to_counts( word_counts, tokens ):
     '''
     Takes a dictionary which tracks the total corpus
     bag of word count so far, and adds new tokens to the record
@@ -135,48 +131,65 @@ def add_tokens_to_vocab( vocab, tokens ):
     # this is a hack but much faster than lookup each
     # word within many dict keys
       try:
-        vocab[t] = vocab[t]+1
+        word_counts[t] = word_counts[t]+1
       except:
-        vocab[t] = 1
+        word_counts[t] = 1
 
-    return vocab
+    return word_counts
 
-def wordcount_filter(words, num=5):
+def wordcount_filter(word_counts, thr=5):
     '''
     Filters the dictionary above for words which
     occur more than ${num} times
     '''
-    res_words = {}
+    res = {}
 
-    for k in words.keys():
+    for word, count in word_counts.iteritems():
 
-        if(words[k] > num):
-            res_words[k] = words[k]
+        if(count > thr):
+            res[word] = count
 
-    return res_words
+    return res
 
-def find_wordcounts(docs, vocab):
+def vocab_index_from_list(vocab_list):
+    '''Creates a dict mapping words to indices'''
+    return { vocab_list[i] : i for i in range(len(vocab_list)) }
+
+def map_text_to_bow(email_text, vocab_list=None, vocab_index=None):
+    '''
+    Maps a single email's text to a bow vector as specified by
+    the vocabulary
+    '''
+    return map_text_list_to_bow([email_text], vocab_list, vocab_index)
+
+def map_text_list_to_bow(email_list, vocab_list=None, vocab_index=None):
+
+    email_tokens = [process_email_tokens(email) for email in email_list]
+
+    return map_tokens_to_bow(email_tokens, vocab_list, vocab_index)
+
+def map_tokens_to_bow(docs, vocab_list=None, vocab_index=None):
     '''
     Forms the document-term matrix over preprocessed
     line-lists and vocabulary
     '''
 
-    bagofwords = np.zeros(shape=(len(docs),len(vocab)), dtype=np.uint8)
-    vocabIndex={}
-    vocab = sorted(vocab.keys())
+    assert( (vocab_list is not None) or (vocab_index is not None) )
 
-    for i in range(len(vocab)):
-       vocabIndex[vocab[i]]=i
+    if vocab_index is None:
+      vocab_index = vocab_index_from_list( sorted(vocab_list) )
+
+    bagofwords = np.zeros(shape=(len(docs),len(vocab_index)), dtype=np.uint8)
 
     for i in range(len(docs)):
         doc = docs[i]
 
-        for t in doc:
-           index_t=vocabIndex.get(t)
-           if index_t>=0:
-              bagofwords[i,index_t]=bagofwords[i,index_t]+1
+        for word in doc:
+           index = vocab_index.get(word)
+           if (index >= 0) and (bagofwords[i,index] < 255):
+              bagofwords[i,index] = bagofwords[i,index]+1
 
-    return bow, vocab
+    return bagofwords
 
 def remove_indices_from_bow(bow, aux, to_remove, axis):
     '''
@@ -211,8 +224,8 @@ def term_min_doc_filter(bow, vocab, threshold):
     documents
     '''
 
-    #binarize
     #i, j, d = sp.find(bow)
+    #binarize
     #d = np.ones(d.shape)
     #bow_copy = coo_matrix((d,(i,j)),shape=bow.shape)
     print "copying..."
@@ -240,27 +253,30 @@ def document_min_length_filter(bow, tags, threshold):
 #=============================================
 #Main interface functions
 
-def parse(email_text_lines, email_tags,
+def parse(email_list, email_tags,
    min_word_count=-1, dynamic_stopword_thr=-1, term_min_doc_thr=-1, doc_min_len_thr=-1):
 
   print "Generating word counts..."
-  vocabulary, cleaned_emails = create_corpus_vocabulary(email_text_lines)
+  word_counts, cleaned_emails = tokenize_and_count(email_list)
 
   if min_word_count > 0:
     print "Filtering word counts to those > %d..." % (min_word_count)
-    vocabulary = wordcount_filter(vocabulary, min_word_count)
+    word_counts = wordcount_filter(word_counts, min_word_count)
+
+  #Only needed the counts for the filter above
+  vocab = sorted( word_counts.keys() )
 
   print "Generating data matrix..."
-  bow, vocab_list = find_wordcounts(cleaned_emails, vocabulary)
+  bow = map_tokens_to_bow(cleaned_emails, vocab)
 
   if dynamic_stopword_thr > 0:
     print "Filtering out common terms..."
-    bow, vocab_list = dynamic_stopword_filter(bow, vocab_list,
+    bow, vocab = dynamic_stopword_filter(bow, vocab,
                       dynamic_stopword_thr)
 
   if term_min_doc_thr > 0:
     print "Filtering out uncommon terms..."  
-    bow, vocab_list = term_min_doc_filter(bow, vocab_list, 
+    bow, vocab = term_min_doc_filter(bow, vocab, 
                       term_min_doc_thr)
 
   if doc_min_len_thr > 0:
@@ -271,7 +287,7 @@ def parse(email_text_lines, email_tags,
   print "FINAL Bag-of-Words Matrix Dimensions:" 
   print filtered_bow.shape
 
-  return bow, filtered_bow, email_tags, filtered_email_tags, vocab_list
+  return bow, filtered_bow, email_tags, filtered_email_tags, vocab
 
 def save_all(bow_matrix, email_tags, vocabulary, output_prefix,
    filtered_email_tags=None, filtered_bow=None):

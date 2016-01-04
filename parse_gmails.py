@@ -14,12 +14,11 @@ import email_io
 
 #Python dependencies
 import mailbox
-import dateutil.parser
 import base64
 import argparse
 
 email_tags = ["From","To","Date","Subject"]
-
+#=====================================================================
 #HTML removal solution from StackOverflow (fingers crossed...)
 from HTMLParser import HTMLParser
 
@@ -42,11 +41,14 @@ def strip_tags(html):
     except:
         return html
     return s.get_data()
-#/HTML removal solution
+
+#=====================================================================
+#Gmail mbox Preprocessing Functions
 
 def open_mbox(input_filename):
     '''Serves both reading and writing'''
     return mailbox.mbox(input_filename)
+
 
 def filter_sensitive_emails(mbox):
     '''
@@ -90,13 +92,18 @@ def filter_sensitive_emails(mbox):
         if in_field("POF",'From',message):
             continue
 
+        if in_field("html",'Content-Type',message):
+            continue
+
         new_mbox.append( message )
 
     return new_mbox
+
         
 def in_field(text, field, message):
     '''Extracts a field and avoids errors'''
     return (message.has_key(field) and text in message[field])
+
 
 def read_main_mail(message):
     '''Extracts the message body from an email message'''
@@ -112,6 +119,7 @@ def read_main_mail(message):
 
     return result
 
+
 def pretty_print(message):
     '''Useful for debugging'''
 
@@ -119,6 +127,7 @@ def pretty_print(message):
     print message['Date']
 
     print strip_tags(str(read_main_mail(message)))
+
 
 def extract_email_tags(message, key):
     '''Extracts the fields defined above (email_tags) from the email datatype'''
@@ -131,6 +140,7 @@ def extract_email_tags(message, key):
 
     return tags
 
+
 def extract_all_email_tags(mbox):
     '''Applies the above over an mbox object'''
     
@@ -140,29 +150,28 @@ def extract_all_email_tags(mbox):
 
     return email_tags
 
-def split_email_into_lines(message):
+
+def extract_body(message):
     '''
-    Extracts the message body from an email, and returns a list
-    of its lines
+    Extracts the html-free message body from an email
     '''
     
     raw = str(read_main_mail(message))
-    no_html = strip_tags(raw)
+    #Trying filtering out all html emails
+    #no_html = strip_tags(raw)
     
-    return no_html.split('\r\n')
+    return raw #no_html
+
 
 def parse_into_emails(mbox):
     '''
-    Removes html, splits into lines (for compatibility with other
-    parsing script
+    Converts an mbox type into a list of strings, where each
+    string is the primary message body (hopefully free of html)
     '''
-    
-    email_lines = []
+    return [ extract_body(message) for message in mbox ]
 
-    for message in mbox:
-        email_lines.append( split_email_into_lines(message) )
-
-    return email_lines
+#=====================================================================
+#Script functionality
 
 def main(input_filename, output_prefix, min_word_count=-1, dynamic_stop_thr=-1,
     term_min_doc_thr=-1, doc_min_len_thr=-1):
@@ -177,10 +186,10 @@ def main(input_filename, output_prefix, min_word_count=-1, dynamic_stop_thr=-1,
     tags = extract_all_email_tags(mbox)
 
     print "Parsing filtered mbox into email texts"
-    email_lines = parse_into_emails(mbox)
+    emails = parse_into_emails(mbox)
 
     print "Creating vocabulary"
-    email_parser.parse_and_save_all(email_lines, tags, output_prefix,
+    email_parser.parse_and_save_all(emails, tags, output_prefix,
         min_word_count, dynamic_stop_thr,
         term_min_doc_thr, doc_min_len_thr)
 

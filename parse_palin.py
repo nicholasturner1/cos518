@@ -11,13 +11,13 @@ ORDER OF OPERATIONS
 -Passing to email_parser.py
 '''
 
+import email_parser as ep
 #Dependencies
 import numpy as np
 import scipy as sp
 import re
 import glob
 import argparse
-import parser
 
 email_tags = ['From','To','Sent','Subject']
 
