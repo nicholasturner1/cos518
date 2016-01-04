@@ -786,10 +786,10 @@ class test_frame(Frame):
         tag_dicts = pe.load_tags('./data/gmail1_dummy_tags.csv')
         e_x_sorted_topic = di.assign_emails(ext, 3)
         
-        print 'data acquired! Now creating groups'
+        #load mailbox file
+        mbox = pg.open_mbox('./data/gmail1_dummy.mbox')
                 
         for i in range(len(word_lists)):
-            print 'creating group', i
             name_name =  ', '.join(map(str,word_lists[i]))
             #print name_name
             temp_directory = inode(parents = [root], children = [], name =  'Topic: ' + str(i), description = name_name, type = "directory")
@@ -811,11 +811,10 @@ class test_frame(Frame):
                     name_name = name_name.replace(";", "")
                     email_directory = ''
                     tag =  tag_dicts[mail_idx]['From'].strip() + ' -- ' + tag_dicts[mail_idx]['Subject'].strip()
-                    _email = 'Temporary email text' #tag_dicts['email']
+                    _email = pg.extract_body(mbox[mail_idx])
                     email_subject = inode(parents = [temp_directory], name = name_name, description = tag, email_directory = email_directory, type = "email", children = [], email = _email)
                     emails.append(email_subject)
             temp_directory.children = emails
-            print 'appending!'
             self.directory.children.append(temp_directory)
         self.load_directory()
         
