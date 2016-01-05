@@ -28,8 +28,11 @@ from time import gmtime, strftime
 import hashlib
 import tkFont
 from PIL import Image, ImageDraw
-
-
+from multiprocessing.pool import ThreadPool
+import random
+import model_interface as mi
+import parse_gmails as pg
+#import social as soc
 tk = Tk()
 
 
@@ -70,8 +73,12 @@ separator_huge_height = 4
 #helv20 = tkFont.Font(family="Helvetica",size=20,weight="bold")
 
 save_file_short = 'temp_saved_file'
+
+################################################################################################
+#data structure, email: sender, to, title, date, email, vec
+#id: type + number, type: u(unknown), R(root), r(sub root), t(topic), s(social), e(email)
 class inode:
-    def __init__(self, parents = [], children = [], name = "New Entry", description = "" , type = "unknown", email_directory = "", email = []):
+    def __init__(self, parents = [], children = [], name = "New Entry", description = "" , type = "unknown", email_directory = "", email = [], id = [], vec = [], ext = []):
         self.parents = parents
         self.children = children
         self.name = name
@@ -79,11 +86,20 @@ class inode:
         self.description = description
         self.email_directory = email_directory
         self.email = email
-        
+        self.hash = 0
+        self.vec = vec
+        self.ext = ext
+        if len(id) > 2:
+            self.id = id
+        elif len(id) == 1:
+            self.id = id + str(int(random.random()*10000000))
+        else:
+            self.id = 'u' + str(int(random.random()*10000000))
         #ML Result Matrices for sub_root inodes
         self.email_x_group = []      #group = topic or social cluster
         self.group_x_individual = [] #individual = word or person
-        
+
+
     def hash(self, inode):
         #print inode
         m = hashlib.md5()
@@ -99,13 +115,13 @@ class inode:
         else:
             child_hash = []
             for child in inode.children:
-                child_hash.append(self.hash(child))
-            child_hash = sorted(child_hash, key=lambda x: x.lower(), reverse=True)
+                child_hash.append(child._hash())
+            child_hash = sorted(child_hash, key = lambda x: x.lower(), reverse = True)
             child_hash = "-".join(child_hash)
             m.update(child_hash)
             return m.hexdigest()
 
-
+################################################################################################
 
 class test_frame(Frame):
     def __init__(self, master, root):
@@ -166,6 +182,15 @@ class test_frame(Frame):
         
         ######################################################################################
         #config
+        try:
+            os.remove(real_path + '/log_file/log')
+        except OSError:
+            x = 0
+        
+        self.inode_map = {}
+        
+        self.log_file = open(real_path + '/log_file/log', 'w')
+        self.loading = False
         self.shift_down = False
         self.email = email_f
         self.keywords = email_f.keywords
@@ -286,6 +311,7 @@ class test_frame(Frame):
         for child in children:
             if not child.email:
                 child.email = self.read_email_text(child.email_directory)
+
         
         dropdown = 0
         #sort emails based on dropdown
@@ -433,7 +459,7 @@ class test_frame(Frame):
                         date = date[:-6] + ' ' + date[-6:]
                         date = date_parser(date)
                     except:
-                        print date
+                        #print date
                         date = "0000-00-00 00:00:00"
 
 
@@ -475,7 +501,7 @@ class test_frame(Frame):
             if not len(email.email) == 0:
                 position  = email.email['email'].find(keywords)
                 if not position == -1:
-                    print position, email
+                    #print position, email
                     self.directory.children.append(email)
         self.load_directory()
         self.directory_stack.append(self.search_directory)
@@ -484,6 +510,10 @@ class test_frame(Frame):
     
     ##########################################################################################
     #insertion and deletion
+    def _insert(self, root, inode):
+        self.inode_map[inode.id] = inode
+        self._add(inode, root)
+        #print "i " + str(root.id) + "," + str(inode.id)
     
     def insert_entry(self, event):
         if self.directory == self.search_directory:
@@ -492,10 +522,29 @@ class test_frame(Frame):
         self.master.wait_window(self._pop_up_insert.top)
         if self._pop_up_insert.value:
             
-            self.directory.children.insert(0, inode(name = self._pop_up_insert.value, parents = [self.directory], children = []))
+            self._insert(self.directory, inode(name = self._pop_up_insert.value, parents = [self.directory], children = [], type = "directory"))
             #self.temp_directory.name = self._pop_up_insert.value;
             self.load_directory()
-        
+
+    def _delete(self, root, inode):
+        while len(inode.children):
+            '''self._remove(child, inode)
+            if child.type == "email" and (not child.parents):
+                self._add(child, self.unsorted_email_folder)'''
+            child = inode.children[0]
+            self._delete(inode, child)
+        self._remove(inode, root)
+        if (not inode.parents):
+            if inode.type == "email" :
+                self._add(inode, self.unsorted_email_folder)
+                inode.children = []
+            else:
+                try:
+                    del self.inode_map[inode.id]
+                except:
+                    x = 0
+        #print "d " + str(root.id) + "," + str(inode.id)
+    
     def delete_entry(self, event):
         if self.directory == self.search_directory:
             directory = self.directory_back_up
@@ -510,25 +559,13 @@ class test_frame(Frame):
         
         if self._pop_up_delete.delete:
             for temp_directory in self.temp_directory:
-                for child in temp_directory.children:
-                    self._remove(child, temp_directory)
-                    if child.type == "email" and (not child.parents):
-                        self._add(child, self.unsorted_email_folder)
-        
-        #for parent in temp_directory.parents:
-                self._remove(temp_directory, directory)
+                self._delete(directory, temp_directory)
+                #self._remove(temp_directory, directory)
                 self._remove(temp_directory, self.search_directory)
-
-            #check if email
-            
-            #print self.temp_directory.parents
-                if temp_directory.type == "email" and (not temp_directory.parents):
-                    self._add(temp_directory, self.unsorted_email_folder)
-                    temp_directory.children = []
-
             self.load_directory()
     ##########################################################################################
     #rename
+
     def rename_entry(self, event):
         if not (len(self.temp_directory) == 1 and len(self.temp_frame) == 1):
             return
@@ -543,9 +580,19 @@ class test_frame(Frame):
         
         if new_name:
             change_text_field(temp_frame.line_one, new_name)
-            temp_directory.name = new_name
+            self._rename(temp_directory, new_name)
     ##########################################################################################
     #add and move entry
+    def _move(self, old_root, new_root, inode):
+        self._remove(inode, old_root)
+        self._add(inode, new_root)
+        #print "m " + str(old_root.id) + "," + str(new_root.id) + ","+ str(inode.id)
+
+    def _add_(self, root, inode):
+        self._add(inode, root)
+        #print "a " + str(root.id) + ","+ str(inode.id)
+
+
     def move_entry(self, event):
         
         if not self.temp_directory:
@@ -562,12 +609,13 @@ class test_frame(Frame):
                 parent = self.directory_back_up
         
             for temp_directory in self.temp_directory:
-                print temp_directory
                 temp_directory.children = []
-                self._remove(temp_directory, parent)
-                self._add(temp_directory, self._pop_up_move.select_inode)
+                self._move(parent, self._pop_up_move.select_inode, temp_directory)
+                #self._remove(temp_directory, parent)
+                #self._add(temp_directory, self._pop_up_move.select_inode)
             
             self.load_directory()
+
     def add_entry(self, event):
         if not self.temp_directory:
             return
@@ -583,13 +631,21 @@ class test_frame(Frame):
                 parent = self.directory_back_up
             for temp_directory in self.temp_directory:
                 temp_directory.children = []
-   
-                self._add(temp_directory, self._pop_up_move.select_inode)
+                self._add_(self._pop_up_move.select_inode, temp_directory)
 
             
             self.load_directory()
     ##########################################################################################
-    #add and remove inode
+    #modify inde
+    def _rename(self, inode, name):
+        inode.name = name
+        try:
+            self.log_file.flush()
+        except:
+            self.log_file = open(real_path + '/log_file/log', 'w')
+        self.log_file.write("r:" + str(inode.id) + ":" + name + '\n')
+        self.log_file.flush()
+
     def _remove(self, child, parent):
         try:
             parent.children.remove(child)
@@ -599,17 +655,34 @@ class test_frame(Frame):
             child.parents.remove(parent)
         except ValueError:
             x = 0
+        if parent == self.search_directory:
+            return
+    #print "d " + str(child.id) + "," + str(parent.id)
+        try:
+            self.log_file.flush()
+        except:
+            self.log_file = open(real_path + '/log_file/log', 'w')
+
+        self.log_file.write("d:" + str(child.id) + ":" + str(parent.id) + '\n')
+        self.log_file.flush()
     def _add(self, child, parent):
         try:
             parent.children.remove(child)
         except ValueError:
             x = 0
-        parent.children.append(child)
+        parent.children.insert(0, child)
         try:
             child.parents.remove(parent)
         except ValueError:
             x = 0
-        child.parents.append(parent)
+        child.parents.insert(0, parent)
+        try:
+            self.log_file.flush()
+        except:
+            self.log_file = open(real_path + '/log_file/log', 'w')
+        self.log_file.write("a:" + str(child.id) + ":" + str(parent.id) + '\n')
+        self.log_file.flush()
+#print "a " + str(child.id) + "," + str(parent.id)
 
     ##########################################################################################
     #log in, load new emails
@@ -639,7 +712,7 @@ class test_frame(Frame):
             result, data = mail.fetch(id, "(RFC822)")
             [sender, to, title, date, body] = self.parse_email_remote(data[0][1])
 
-            child = inode(parents = [self.unsorted_email_folder], name = sender[0], description = title, email = [body, sender, to, title, date], children = [], type = "email")
+            child = inode(parents = [self.unsorted_email_folder], name = sender[0], description = title, email = {'email': body, 'sender': sender, 'to':to, 'title': title, 'date': date}, children = [], type = "email")
             self.unsorted_email_folder.children.append(child)
 
 
@@ -666,79 +739,31 @@ class test_frame(Frame):
         else:
             body = b.get_payload(decode=True)
 
-
+        try:
+            date = date_parser(date)
+        except:
+            print date
         email = body
         return [sender, to, title, date, body]
     ##########################################################################################
     #save and load
     def save(self, event):
-        '''Saves tree starting from root into timestamped file'''
-        #go over inodes and write it to file.
-        time = strftime("_%Y_%m_%d_%H_%M_%S", gmtime())
-        print time
-        directory_root = self.root
-        queue = [directory_root]
-        visited = set()
-        count = 0
-        inode_set = []
-        while queue:
-            temp_root = queue.pop(0)
-            #print temp_root.inode.name
-            #print temp_root.parent_tree_node         
-            #tree.pack()
-            if temp_root not in visited:
-                inode_set.append(temp_root)
-                count = count + 1
-                visited.add(temp_root)
-                for child in temp_root.children:
-                    queue.append(child)
-
-        #remove history
-        all_files = glob.glob(save_file + '*')
-        all_files = sorted(all_files, key=lambda x: x.lower(), reverse=True)
-        
-        if len(all_files) >= 2:
-            for file in all_files[1:]:
-                try:
-                    os.remove(file)
-                except OSError:
-                    x = 0
-                    
-        #new history
-        temp_file_name = temp_save_file
-        file_name = save_file + time
-        f = open(temp_file_name, 'w')
-        pickle.dump(inode_set, f)
-        f.close()
-        #tttt.sleep(5)
-        os.rename(temp_file_name, file_name)
-        tkMessageBox.showinfo("Save To File", "Saved")
+        if self.loading:
+            tkMessageBox.showinfo("Still Loading...", "Please wait loading to finish before saving...")
+        else:
+            thread.start_new_thread(save_thread, (self.root, ))
     
     #load
     def load(self):
-        '''Loads most recent save file'''
-        all_files = glob.glob(save_file + '*')
-        all_files = sorted(all_files, key=lambda x: x.lower(), reverse=True)
-        #print all_files
-        if all_files:
-            #print "load from file: " + all_files[0]
-            f = open(all_files[0])
-            inode_set = pickle.load(f)
-            f.close()
-            root = inode_set[0]
-            self.root = root
-            self.directory = root
-            self.temp_directory = []
-            self.temp_frame = []
-            self.directory_stack = [root]
-            self.topic_folder = root.children[0]
-            self.social_folder = root.children[1]
-            self.unsorted_email_folder = root.children[2]
-        #root.children.append(self.unsorted_email_folder)
-            self.load_directory()
+        self.loading = True
+        thread.start_new_thread ( load_thread, (self,))
+
 
     def consistent_load(self, event):
-        '''Loads most recent save file. Compares root hash with save root hash to check for conflicts.'''
+        self.loading = True
+        thread.start_new_thread ( consistent_load_thread, (self,))
+
+    def consistent_load2(self, event):
         all_files = glob.glob(save_file + '*')
         all_files = sorted(all_files, key=lambda x: x.lower(), reverse=True)
         #print all_files
@@ -759,12 +784,12 @@ class test_frame(Frame):
             self.topic_folder = root.children[0]
             self.social_folder = root.children[1]
             self.unsorted_email_folder = root.children[2]
-            #root.children.append(self.unsorted_email_folder)
+    #root.children.append(self.unsorted_email_folder)
         self.load_directory()
-        
-    ##########################################################################################
+
+
+##########################################################################################
     def load_gmail_inbox(self, event):
-        '''Loads a gmail inbox and initializes the sub_root folders with ML results'''
         children = []
         topic_view = inode(parents = [root], children = children, type = "sub_root", name = "Topic Folder")
         social_view = inode(parents = [root], type = "sub_root", name = "Social Folder", children = [])
@@ -788,13 +813,13 @@ class test_frame(Frame):
         
         #load mailbox file
         mbox = pg.open_mbox('./data/gmail1_dummy.mbox')
-                
+        
         for i in range(len(word_lists)):
             name_name =  ', '.join(map(str,word_lists[i]))
             #print name_name
             temp_directory = inode(parents = [root], children = [], name =  'Topic: ' + str(i), description = name_name, type = "directory")
             children.append(temp_directory)
-        
+            
             #get emails
             cur_topic_emails = []
             
@@ -815,13 +840,229 @@ class test_frame(Frame):
                     email_subject = inode(parents = [temp_directory], name = name_name, description = tag, email_directory = email_directory, type = "email", children = [], email = _email)
                     emails.append(email_subject)
             temp_directory.children = emails
-            self.directory.children.append(temp_directory)
+
+        self.directory.children.append(temp_directory)
         self.load_directory()
+
+
+    ##########################################################################################
+    #reconstruct from a log file
+    def reconstruct_event(self, event):
+        self.reconstruct('log2')
+
+    def reconstruct(self, file):
+        log_file = open(real_path + '/log_file/' + file)
+        lines = log_file.readlines()
+        log_file.close()
+        for line in lines:
+            instruction, child_id, target = self._parse_log(line)
+            try:
+                inode = self.inode_map[str(child_id)]
+            except:
+                self._inconsistent(line)
+                return
+
+            if instruction == 'r':
+                self._rename(inode, target)
+            else:
+                try:
+                    parent = self.inode_map[str(target)]
+                except:
+                    self._inconsistent(line)
+                    return
+                if instruction == 'a':
+                    self._add(inode, parent)
+                if instruction == 'd':
+                    self._remove(inode, parent)
+
+
+    def _parse_log(self, line):
+        result = line.split(':')
+        instruction = result[0]
+        child_id = result[1]
+        target = result[2].replace('\n', '')
+        return instruction, child_id, target
+
+    def _inconsistent(self, id):
+        #print self.inode_map
+        print 'inconsistent! ' +  id
+    ##########################################################################################
+    #apply user feedbacks:
+    def user_feedback_event(self, event):
+        thread.start_new_thread(self.user_feedback, ('log2', ))
+
+    def user_feedback(self, file):
+        log_file = open(real_path + '/log_file/' + file)
+        lines = log_file.readlines()
+        log_file.close()
+        feedback = []
+        for line in lines:
+            instruction, child_id, target = self._parse_log(line)
+            try:
+                inode = self.inode_map[str(child_id)]
+            except:
+                self._inconsistent(line)
+                return
+
+            
+            if not instruction == 'r':
+                try:
+                    parent = self.inode_map[str(target)]
+                except:
+                    self._inconsistent(line)
+                    return
+                print parent.id, inode.id
+                if instruction == 'a' and parent.id[0] == 't' and inode.id[0] == 'e':
+                    
+                    feedback.append({'action' : 'add',    'topic-id' : int(parent.id[1:]), 'email-id' : str(inode.id[1:])})
+                if instruction == 'd' and inode.id[0] == 't':
+                    feedback.append({'action' : 'delete',    'topic-id' : int(inode.id[1:])})
+                if instruction == 'd' and parent.id[0] == 't' and inode.id[0] == 'e':
+                    feedback.append({'action' : 'delete',    'topic-id' : int(parent.id[1:]), 'email-id' : str(inode.id[1:])})
+        print feedback
+        ext2 = mi.apply_user_feedback( self.topic_folder.ext, feedback )
+        self.reconstruct_topic(ext2)
+
+    def reconstruct_topic(self, ext2):
+        while self.topic_folder.children:
+            self._delete(self.topic_folder.children[0], self.topic_folder)
+
+        e_x_sorted_topic = di.assign_emails(ext2, 3)
+        for i in range(len(ext2[0])):
+            temp_directory = inode(parents = [root], children = [], name =  'Topic: ' + str(i) , type = "directory", id = 't')
+        
+            self.topic_folder.children.append(temp_directory)
+            self.inode_map[temp_directory.id] =  temp_directory
+
+        
+        #Find email indice that belong in selected topic
+            for j in range(len(e_x_sorted_topic)):
+                if i in e_x_sorted_topic[j]:
+                    try:
+                        temp_directory.children.append(self.inode_map['e' + str(j)])
+                        self._remove(self.inode_map['e' + str(j)], self.unsorted_email_folder)
+                    except:
+                        x = 0
+                                                                  
+        self.temp_directory = self.topic_folder
+        self.load_directory
+
+#print feedback
+#mi.apply_user_feedback(self.e_x_t, feedback)
+
+##########################################################################################
+#thread for consistent load, save
+def save_thread(_root):
+    #go over inodes and write it to file.
+    time = strftime("_%Y_%m_%d_%H_%M_%S", gmtime())
+    print time
+    queue = [_root]
+    visited = set()
+    count = 0
+    inode_set = []
+    while queue:
+        temp_root = queue.pop(0)
+        if temp_root not in visited:
+            inode_set.append(temp_root)
+            count = count + 1
+            visited.add(temp_root)
+            for child in temp_root.children:
+                queue.append(child)
+
+#remove history
+    all_files = glob.glob(save_file + '*')
+    all_files = sorted(all_files, key=lambda x: x.lower(), reverse=True)
+    
+    if len(all_files) >= 2:
+        for file in all_files[1:]:
+            try:
+                os.remove(file)
+            except OSError:
+                x = 0
+
+#new history
+    temp_file_name = temp_save_file
+    file_name = save_file + time
+    f = open(temp_file_name, 'w')
+    pickle.dump(inode_set, f)
+    f.close()
+    os.rename(temp_file_name, file_name)
+    tkMessageBox.showinfo("Save To File", "Saved")
+
+
+def load_thread(_root):
+    all_files = glob.glob(save_file + '*')
+    all_files = sorted(all_files, key=lambda x: x.lower(), reverse=True)
+    if all_files:
+        #print "load from file: " + all_files[0]
+        f = open(all_files[0])
+        inode_set = pickle.load(f)
+        f.close()
+        _root.inode_map = {}
+        for inode in inode_set:
+            _root.inode_map[inode.id] = inode
+        root = inode_set[0]
+
+        _root.root = root
+        _root.directory = root
+        _root.temp_directory = root
+        _root.temp_frame = []
+        _root.directory_stack = [root]
+        _root.topic_folder = root.children[0]
+        _root.social_folder = root.children[1]
+        _root.unsorted_email_folder = root.children[2]
+    #root.children.append(self.unsorted_email_folder)
+    
+    _root.load_directory()
+    _root.loading = False
+    tkMessageBox.showinfo("Successfully Load...", "Load from: " + all_files[0])
+def consistent_load_thread(_root):
+    all_files = glob.glob(save_file + '*')
+    all_files = sorted(all_files, key=lambda x: x.lower(), reverse=True)
+    if all_files:
+        '''Loads most recent save file'''
+        all_files = glob.glob(save_file + '*')
+        all_files = sorted(all_files, key=lambda x: x.lower(), reverse=True)
+        tkMessageBox.showinfo("Chekcing for consistency...", "Please wait...")
+        f = open(all_files[0])
+        inode_set = pickle.load(f)
+        f.close()
+        root = inode_set[0]
+        if not consistency_check(root, _root.root):
+            if not tkMessageBox.askokcancel("Load conflict!", "Override or not?..."):
+                return
+        
+        _root.root = root
+        _root.directory = root
+        _root.temp_directory = root
+        _root.temp_frame = []
+        _root.directory_stack = [root]
+        _root.topic_folder = root.children[0]
+        _root.social_folder = root.children[1]
+        _root.unsorted_email_folder = root.children[2]
+
+    _root.load_directory()
+    _root.loading = False
+    tkMessageBox.showinfo("Successfully Load...", "Load from: " + all_files[0])
+
+
+def thread_with_return(Thread):
+    def __init__(self, function, args):
+        self.pool = ThreadPool(processes = 1)
+        self.function = function
+        self.args = args
+    def run():
+        async_result = self.pool.apply_async(self.f, self.args)
+        return_val = async_result.get()
+        return return_val
+
+
+
         
 ##########################################################################################
 #check for consistency
 def consistency_check(root1, root2):
-    return (root1.hash(root1) == root2.hash(root2))
+    return (root1._hash() == root2._hash())
 ##########################################################################################
 #change textfield
 def change_text_field(text_field, new_text):
@@ -1034,7 +1275,6 @@ class option_one_frame(Frame):
         pad_x = 20
         pad_y = 20
         Frame.__init__(self, master, bg = information_color, height = 30)
-        #insert_photo = PhotoImage(file = real_path + '/icons/insert.gif')
         
         option_1 = Label(self, text = "Insert", bd = 0, bg = information_color, font = option_one_font)
         option_1.bind("<Button-1>", event_handler.insert_entry)
@@ -1070,24 +1310,23 @@ class option_one_frame(Frame):
         option_8 = Label(self, text = "Load", bd = 0, bg = information_color, font = option_one_font)
         option_8.bind("<Button-1>", event_handler.consistent_load)
         option_8.grid(row = 1, column = 8, padx = pad_x, pady = pad_y)
+        option_11 = Label(self, text = "Recons", bd = 0, bg = information_color, font = option_one_font)
+        option_11.bind("<Button-1>", event_handler.reconstruct_event)
+        option_11.grid(row = 1, column = 10, padx = pad_x, pady = pad_y)
+        option_12 = Label(self, text = "Retrain", bd = 0, bg = information_color, font = option_one_font)
+        option_12.bind("<Button-1>", event_handler.user_feedback_event)
+        option_12.grid(row = 1, column = 11, padx = pad_x, pady = pad_y)
         option_9 = Label(self, text = "Sort", bd = 0, bg = information_color, font = option_one_font)
         option_9.bind("<Button-1>", event_handler.sort)
-        option_9.grid(row = 1, column = 9, padx = pad_x, pady = pad_y)
+        option_9.grid(row = 1, column = 12, padx = pad_x, pady = pad_y)
         
         option_6 = Label(self, text = "Back", bd = 0, bg = information_color, font = option_one_font)
         option_6.bind("<Button-1>", event_handler.back)
-        option_6.grid(row = 1, column = 10, padx = pad_x, pady = pad_y)
+        option_6.grid(row = 1, column = 13, padx = pad_x, pady = pad_y)
 
         option_10 = Label(self, text = "LoadGmail", bd = 0, bg = information_color, font = option_one_font)
         option_10.bind("<Button-1>", event_handler.load_gmail_inbox)
-        option_10.grid(row = 1, column = 11, padx = pad_x, pady = pad_y)
-
-#self.config(height = 50)
-#option_one.pack()
-#option_one.place(bordermode=OUTSIDE, height = 100, width = 100)
-        #option_two = Button(self, text = "Delete")
-        #option_two.pack()
-        #option_two.place(height = 200, width = 500, relx = 0, rely = 0.3)
+        option_10.grid(row = 1, column = 9, padx = pad_x, pady = pad_y)
 
 
 
@@ -1351,17 +1590,20 @@ class keywords_frame(Frame):
 
 
 def load_email_thread(tf, root, children):
+    tf.loading = True
     topic_x_word = pe.load_topic_x_word('./model_results/round3_LDA_topic_x_word_30.npy', 30)
     word_lists = email_lda.print_top_n_words(topic_x_word, './data/round3_vocab.csv', 10)
     ext = pe.load_email_x_topic('./model_results/round3_LDA_email_x_topic_FULL_14453.npy', 14453)
+    tf.topic_folder.ext = ext
     tag_dicts = pe.load_tags('./data/round3_full_tags.csv')
     e_x_sorted_topic = di.assign_emails(ext, 3)
     for i in range(len(word_lists)):
         name_name =  ', '.join(map(str,word_lists[i]))
         #print name_name
-        temp_directory = inode(parents = [root], children = [], name =  'Topic: ' + str(i), description = name_name, type = "directory")
-        children.append(temp_directory)
+        temp_directory = inode(parents = [root], children = [], name =  'Topic: ' + str(i), description = name_name, type = "directory", id = 't' + str(i))
         
+        children.append(temp_directory)
+        tf.inode_map[temp_directory.id] =  temp_directory
         #get emails
         cur_topic_emails = []
         
@@ -1373,33 +1615,42 @@ def load_email_thread(tf, root, children):
         #get emails
         emails = []
         for mail_idx in cur_topic_emails:
-            if mail_idx < 10000:
+            if mail_idx < 1000:
                 name_name = tag_dicts[mail_idx]['filename']
                 name_name = name_name.replace(";", "")
                 email_directory = './sarahs_inbox/parsed/msnbc/txt/' + name_name
                 tag =  tag_dicts[mail_idx]['From'].strip() + ' -- ' + tag_dicts[mail_idx]['Subject'].strip()
                 _email = tf.read_email_text(email_directory)
-                email_subject = inode(parents = [temp_directory], name = name_name, description = tag, email_directory = email_directory, type = "email", children = [], email = _email)
+                email_subject = inode(parents = [temp_directory], name = name_name, description = tag, email_directory = email_directory, type = "email", children = [], email = _email, vec = ext[mail_idx], id = 'e' + str(mail_idx))
+                #print email_subject.vec
+                tf.inode_map[email_subject.id] =  email_subject
                 emails.append(email_subject)
         temp_directory.children = emails
     children.append(temp_directory)
+    tf.loading = False
 
 if __name__ == '__main__':
 
     #eh = event_handler(tk)
-    root = inode( type = "root", name = "ROOT")
+    root = inode( type = "root", name = "ROOT", id = 'R')
     children = []
-    topic_view = inode(parents = [root], children = children, type = "sub_root", name = "Topic Folder")
-    social_view = inode(parents = [root], type = "sub_root", name = "Social Folder", children = [])
-    unsorted_email_folder = inode(parents = [root], children = [], type = "sub_root", name = "Unsorted Folder")
+    topic_view = inode(parents = [root], children = children, type = "sub_root", name = "Topic Folder", id = 'rt')
+    social_view = inode(parents = [root], type = "sub_root", name = "Social Folder", children = [], id = 'rs')
+    unsorted_email_folder = inode(parents = [root], children = [], type = "sub_root", name = "Unsorted Folder", id = 'ru')
     root.children = [topic_view, social_view, unsorted_email_folder]
     
     
     tf = test_frame(tk, root)
-    tf.pack()
+    tf.inode_map[root.id] = root
+    tf.inode_map[topic_view.id] = topic_view
+    tf.inode_map[social_view.id] = social_view
+    tf.inode_map[unsorted_email_folder.id] = unsorted_email_folder
     
+    tf.pack()
+    thread.start_new_thread ( tf.load, ())
+    #tf.consistent_load()
     #satf.search('s')
-    thread.start_new_thread(load_email_thread, (tf, topic_view, children))
+    #thread.start_new_thread(load_email_thread, (tf, topic_view, children))
     tk.mainloop()
 
 
