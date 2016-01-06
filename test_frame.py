@@ -32,6 +32,7 @@ from multiprocessing.pool import ThreadPool
 import random
 import model_interface as mi
 import parse_gmails as pg
+import mailbox
 #import social as soc
 tk = Tk()
 
@@ -194,7 +195,7 @@ class test_frame(Frame):
         self.shift_down = False
         self.email = email_f
         self.keywords = email_f.keywords
-    
+        self.master = master
         self.root = root
         self.directory = root
         self.directory_back_up = self.directory
@@ -283,11 +284,14 @@ class test_frame(Frame):
         if not _email:
             _email = self.read_email_text(inode.email_directory)
         #print email_text
-        change_text_field(self.email.email_text, _email['email'])
-        change_text_field(self.email.sender, _email['sender'])
-        change_text_field(self.email.to, _email['to'])
-        change_text_field(self.email.title, _email['title'])
-        change_text_field(self.email.date, _email['date'])
+        try:
+            change_text_field(self.email.email_text, _email['email'])
+            change_text_field(self.email.sender, _email['sender'])
+            change_text_field(self.email.to, _email['to'])
+            change_text_field(self.email.title, _email['title'])
+            change_text_field(self.email.date, _email['date'])
+        except:
+            return
     
     def load_directory(self):
         
@@ -790,60 +794,7 @@ class test_frame(Frame):
 
 ##########################################################################################
     def load_gmail_inbox(self, event):
-        children = []
-        topic_view = inode(parents = [root], children = children, type = "sub_root", name = "Topic Folder")
-        social_view = inode(parents = [root], type = "sub_root", name = "Social Folder", children = [])
-        unsorted_email_folder = inode(parents = [root], children = [], type = "sub_root", name = "Unsorted Folder")
-        root.children = [topic_view, social_view, unsorted_email_folder]
-        
-        #run the processing on given gmail inbox
-        #os.system("./parse_gmails.py -input_filename ./gmail1_dummy.mbox -min_word_count 10 ./model_results/gmail_test_")
-        
-        #load matrices and vocab from files
-        topic_x_word = pe.load_topic_x_word('./model_results/gmail1_LDA_topic_x_word_30.npy', 30)
-        ext = pe.load_email_x_topic('./model_results/gmail1_LDA_email_x_topic_49590.npy', 49590)
-        
-        #initialize sub_root node data
-        topic_view.email_x_group = ext
-        topic_view.group_x_individual = topic_x_word
-        
-        word_lists = email_lda.print_top_n_words(topic_x_word, './data/gmail1_vocab.csv', 10)
-        tag_dicts = pe.load_tags('./data/gmail1_dummy_tags.csv')
-        e_x_sorted_topic = di.assign_emails(ext, 3)
-        
-        #load mailbox file
-        mbox = pg.open_mbox('./data/gmail1_dummy.mbox')
-        
-        for i in range(len(word_lists)):
-            name_name =  ', '.join(map(str,word_lists[i]))
-            #print name_name
-            temp_directory = inode(parents = [root], children = [], name =  'Topic: ' + str(i), description = name_name, type = "directory")
-            children.append(temp_directory)
-            
-            #get emails
-            cur_topic_emails = []
-            
-            #Find email indice that belong in selected topic
-            for j in range(len(e_x_sorted_topic)):
-                if i in e_x_sorted_topic[j]:
-                    cur_topic_emails.append(j)
-        
-            #get emails
-            emails = []
-            for mail_idx in cur_topic_emails:
-                if mail_idx < 10000:
-                    name_name = tag_dicts[mail_idx]['Subject'].strip()
-                    name_name = name_name.replace(";", "")
-                    email_directory = ''
-                    tag =  tag_dicts[mail_idx]['From'].strip() + ' -- ' + tag_dicts[mail_idx]['Subject'].strip()
-                    _email = pg.extract_body(mbox[mail_idx])
-                    email_subject = inode(parents = [temp_directory], name = name_name, description = tag, email_directory = email_directory, type = "email", children = [], email = _email)
-                    emails.append(email_subject)
-            temp_directory.children = emails
-
-        self.directory.children.append(temp_directory)
-        self.load_directory()
-
+        thread.start_new_thread(load_gmail_inbox_thread, (self, ))
 
     ##########################################################################################
     #reconstruct from a log file
@@ -1057,8 +1008,105 @@ def thread_with_return(Thread):
         return return_val
 
 
-
+def load_gmail_inbox_thread(_root):
+    children = []
+    topic_view = inode(parents = [root], children = children, type = "sub_root", name = "Topic Folder")
+    social_view = inode(parents = [root], type = "sub_root", name = "Social Folder", children = [])
+    unsorted_email_folder = inode(parents = [root], children = [], type = "sub_root", name = "Unsorted Folder")
+    _root.root.children = [topic_view, social_view, unsorted_email_folder]
         
+    #run the processing on given gmail inbox
+    #os.system("./parse_gmails.py -input_filename ./gmail1_dummy.mbox -min_word_count 10 ./model_results/gmail_test_")
+        
+    #load matrices and vocab from files
+    topic_x_word = pe.load_topic_x_word('./model_results/gmail1_LDA_topic_x_word_30.npy', 30)
+    ext = pe.load_email_x_topic('./model_results/gmail1_LDA_email_x_topic_49590.npy', 49590)
+        
+    #initialize sub_root node data
+    topic_view.email_x_group = ext
+    topic_view.group_x_individual = topic_x_word
+        
+    word_lists = email_lda.print_top_n_words(topic_x_word, './data/gmail1_vocab.csv', 10)
+    tag_dicts = pe.load_tags('./data/gmail1_dummy_tags.csv')
+    e_x_sorted_topic = di.assign_emails(ext, 3)
+    
+    
+    
+    _root.top = Toplevel(_root.master)
+    _root.l = Label(_root.top, text = "Loading ...")
+    _root.l.pack(side = TOP)
+    _root.pb_hD = ttk.Progressbar(_root.top, orient='horizontal', mode='determinate', length = real_wid*40)
+    _root.pb_hD.pack(side = BOTTOM)
+    center(_root.top)
+    #load mailbox file
+    mbox = mailbox.mbox('./data/gmail1_dummy.mbox')
+
+    for i in range(len(word_lists)):
+        name_name =  ', '.join(map(str,word_lists[i]))
+        #print name_name
+        temp_directory = inode(parents = [root], children = [], name =  'Topic: ' + str(i), description = name_name, type = "directory")
+        children.append(temp_directory)
+            
+        #get emails
+        cur_topic_emails = []
+            
+        #Find email indice that belong in selected topic
+        for j in range(len(e_x_sorted_topic)):
+            if i in e_x_sorted_topic[j]:
+                cur_topic_emails.append(j)
+        
+        
+        #get emails
+        emails = []
+        step = 100/len(cur_topic_emails)
+        i = 0
+        if step  == 0:
+            step = 1
+        count = 0
+            
+            
+        for mail_idx in cur_topic_emails:
+            if mail_idx < 100000:
+
+                
+                try:
+                    name_name = tag_dicts[mail_idx]['Subject'].strip()
+                    name_name = name_name.replace(";", "")
+                    email_directory = ''
+                    tag =  tag_dicts[mail_idx]['From'].strip() + ' -- ' + tag_dicts[mail_idx]['Subject'].strip()
+                    _email = pg.extract_full(mbox[mail_idx])
+                    _email['date'] = str(date_parser(_email['date']))
+                except:
+                    _email = {'date': "0000-00-00 00:00:00", 'email': 'ah', 'title': 'ah', 'sender':'ah', 'to': 'ah'}
+                    tag = 'ah'
+                    name_name = 'ah'
+                email_subject = inode(parents = [temp_directory], name = name_name, description = tag, email_directory = [], type = "email", children = [], email = _email)
+                email_subject.children = []
+                emails.append(email_subject)
+
+            i = i + 1
+            if (i*100)/len(cur_topic_emails) > count:
+                _root.pb_hD.value = 10
+                _root.pb_hD.step(step)
+                _root.pb_hD.update_idletasks()
+                _root.l.configure(text = "Loading ..." + str(count) + "%")
+                count = count + step
+
+        temp_directory.children = emails
+
+
+    _root.top.destroy()
+            
+
+    _root.directory = root
+    _root.temp_directory = []
+    _root.directory_stack = [root]
+    
+    _root.load_directory()
+
+
+
+
 ##########################################################################################
 #check for consistency
 def consistency_check(root1, root2):
@@ -1647,7 +1695,7 @@ if __name__ == '__main__':
     tf.inode_map[unsorted_email_folder.id] = unsorted_email_folder
     
     tf.pack()
-    thread.start_new_thread ( tf.load, ())
+    #thread.start_new_thread ( tf.load, ())
     #tf.consistent_load()
     #satf.search('s')
     #thread.start_new_thread(load_email_thread, (tf, topic_view, children))
