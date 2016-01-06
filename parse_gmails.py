@@ -151,11 +151,23 @@ def extract_all_email_tags(mbox):
     return email_tags
 
 
+
+def extract_full(message):
+    '''
+        Extracts the html-free message body from an email
+        '''
+    
+    raw = str(read_main_mail(message))
+    #Trying filtering out all html emails
+    #no_html = strip_tags(raw)
+    
+    return {'email': raw, 'sender': message['From'], 'date': message['Date'], 'title': message['Subject'], 'to': message['To']}#no_html
+
 def extract_body(message):
     '''
     Extracts the html-free message body from an email
     '''
-    
+
     raw = str(read_main_mail(message))
     #Trying filtering out all html emails
     #no_html = strip_tags(raw)
