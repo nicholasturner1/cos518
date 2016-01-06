@@ -48,6 +48,8 @@ temp_save_file= os.path.dirname(os.path.realpath(__file__)) + '/saved_file/temp_
                                 
 ################################################################################################
 #font
+num_directory_words = 35
+all_column = 7
 current_location_font = ('Apple Chancery', '13')
 email_font = ('Apple Causal', '12')
 email_title_font = ('Georgia', '15', 'bold')
@@ -95,9 +97,11 @@ class inode:
         if len(id) > 2:
             self.id = id
         elif len(id) == 1:
-            self.id = id + str(int(random.random()*10000000))
+            self.id = id +  str(int(random.random()*10000000))
         else:
             self.id = 'u' + str(int(random.random()*10000000))
+        
+        self.code = str(int(random.random()*10000000))
         #ML Result Matrices for sub_root inodes
         self.email_x_group = []      #group = topic or social cluster
         self.group_x_individual = [] #individual = word or person
@@ -144,21 +148,24 @@ class test_frame(Frame):
         option_one = option_one_frame(self, event_handler)
         #option_one.pack()
         #option_one.place(height = 200, width = 500)
-        option_one.grid(row = 1, column = 1, columnspan = 8, sticky = EW)
-        
+        option_one.grid(row = 1, column = 1, columnspan = 6, sticky = EW)
+        load_info = load_info_frame(self)
+        load_info.grid(row = 1, column = 7, columnspan = 1, sticky = EW)
         
         option_two = option_two_frame(self, event_handler)
-        option_two.grid(row = 2, column = 1, columnspan = 8, sticky = EW)
+        option_two.grid(row = 2, column = 1, columnspan = 7, sticky = EW)
         
         
         current_location = current_location_frame(self, event_handler)
-        current_location.grid(row = 3, column = 1, columnspan = 8, sticky = EW)
+        current_location.grid(row = 3, column = 1, columnspan = 7, sticky = EW)
         self.current_location = current_location.current_location;
         _search_frame = search_frame(self, event_handler)
         _search_frame.grid(row = 3, column = 7, columnspan = 4, sticky = EW)
         
-        f = Frame(self, height = 1, bg = separator_color)
-        f.grid(row = 4, column = 1, columnspan = 8, sticky = EW)
+        #f = Frame(self, height = 1, bg = separator_color)
+        f = ttk.Progressbar(self, orient='horizontal', mode='determinate', style="TProgressbar")
+        f.grid(row = 4, column = 1, columnspan = all_column, sticky = EW)
+        self.pb = f
         
         left_option = left_option_frame(self, event_handler)
         left_option.grid(row = 5, column = 1, rowspan = 10, sticky = NS)
@@ -176,7 +183,7 @@ class test_frame(Frame):
         f.grid(row = 5, column = 2, rowspan = 2, sticky = NS)
         
         email_f = email_frame(self, event_handler)
-        email_f.grid(row = 5, column = 5, columnspan = 4, sticky = N)
+        email_f.grid(row = 5, column = 5, columnspan = 3, sticky = N)
         
             
         
@@ -292,14 +299,14 @@ class test_frame(Frame):
     def load_directory(self):
         
         children = self.directory.children
-        self.top_directory.forget()
+        self.top_directory.grid_forget()
         self.top_directory = top_directory_frame(self, self, children)
         self.top_directory.grid(row = 5, column = 3, sticky = NW)
 
     def sort(self, event):
         children = self.directory.children
         children = self.sort_children(children)
-        self.top_directory.forget()
+        self.top_directory.grid_forget()
         self.top_directory = top_directory_frame(self, self, children)
         self.top_directory.grid(row = 5, column = 3, sticky = NW)
     
@@ -760,7 +767,7 @@ class test_frame(Frame):
 
     def consistent_load(self, event):
         self.loading = True
-        thread.start_new_thread ( consistent_load_thread, (self,))
+        thread.start_new_thread ( load_thread, (self,))
 
     def consistent_load2(self, event):
         all_files = glob.glob(save_file + '*')
@@ -837,7 +844,7 @@ class test_frame(Frame):
     #social training:
     def social_training(self):
         inode_set = self.all_emails(self.root)
-        exs, descriptions = soc.social_clustering(inode_set)
+        exs, descriptions = soc.social_clustering(inode_set, num_cluster = 20)
         self.reconstruct_social(exs, descriptions)
 
     ##########################################################################################
@@ -977,6 +984,12 @@ def save_thread(_root):
 def load_thread(_root):
     all_files = glob.glob(save_file + '*')
     all_files = sorted(all_files, key=lambda x: x.lower(), reverse=True)
+    
+    info = load_info_frame(_root)
+    info.grid(row = 1, column = 7, sticky = EW)
+    info._label.configure(text = "Loading Emails")
+    
+    
     if all_files:
         #print "load from file: " + all_files[0]
         f = open(all_files[0])
@@ -998,8 +1011,11 @@ def load_thread(_root):
     #root.children.append(self.unsorted_email_folder)
     
     _root.load_directory()
+    info._label.configure(text = "Training Social Model...")
+    _root.social_training()
+    info.grid_forget()
     _root.loading = False
-    tkMessageBox.showinfo("Successfully Load...", "Load from: " + all_files[0])
+
 
 def consistent_load_thread(_root):
     all_files = glob.glob(save_file + '*')
@@ -1034,6 +1050,7 @@ def consistent_load_thread(_root):
 
 
 def load_gmail_inbox_thread(_root, _thread):
+
     children = []
     root = _root.root
     topic_view = inode(parents = [root], children = children, type = "sub_root", name = "Topic Folder", id = 'rt')
@@ -1046,6 +1063,10 @@ def load_gmail_inbox_thread(_root, _thread):
     _root.social_folder = social_view
     _root.unsorted_email_folder = unsorted_email_folder
     _root.inode_map = {}
+    _root.inode_map[root.id] = root
+    _root.inode_map[topic_view.id] = topic_view
+    _root.inode_map[social_view.id] = social_view
+    _root.inode_map[unsorted_email_folder.id] = unsorted_email_folder
     
     
     _root.directory = root
@@ -1069,18 +1090,15 @@ def load_gmail_inbox_thread(_root, _thread):
 
     
     
-    _root.top = Toplevel(_root.master)
-    _root.l = Label(_root.top, text = "Loading ...")
-    _root.l.pack(side = TOP)
-    _root.pb_hD = ttk.Progressbar(_root.top, orient='horizontal', mode='determinate', length = real_wid*40)
-    _root.pb_hD.pack(side = BOTTOM)
-    center(_root.top)
+    pb_hD = ttk.Progressbar(_root, orient='horizontal', mode='determinate', length = real_wid*40)
+    pb_hD.grid(row = 4, column = 1, columnspan = all_column, sticky = EW)
+    info = load_info_frame(_root)
+    info._label.configure(text = "Opening Gmail Box...")
+    info.grid(row = 1, column = 7, sticky = EW)
     #load mailbox file
     mbox = mailbox.mbox('./data/gmail1_dummy.mbox')
 
     for i in range(len(word_lists)):
-        if i > 1:
-            return
         name_name =  ', '.join(map(str,word_lists[i]))
         #print name_name
         temp_directory = inode(parents = [root], children = [], name =  'Topic: ' + str(i), description = name_name, type = "directory", id = 't' + str(i))
@@ -1108,7 +1126,8 @@ def load_gmail_inbox_thread(_root, _thread):
         for mail_idx in cur_topic_emails:
             if mail_idx < 10000:
                 if not _thread.run:
-                    _root.top.destroy()
+                    pb_hD.grid_forget()
+                    info.grid_forget()
                     return
                 
                 
@@ -1133,18 +1152,21 @@ def load_gmail_inbox_thread(_root, _thread):
 
             k = k + 1
             if (k * 100)/len(cur_topic_emails) > count:
-                _root.pb_hD.value = 10
-                _root.pb_hD.step(step)
-                _root.pb_hD.update_idletasks()
-                _root.l.configure(text = "Loading " + str(i) + "-th topic (out of " + str(len(word_lists)) +  ")..." + str(count) + "%")
+                pb_hD.value = 10
+                pb_hD.step(step)
+                info._label.configure(text = "Loading Gmail: " + str(i) + "-th topic (out of " + str(len(word_lists)) +  ")..." + str(count) + "%")
+                _root.update()
                 count = count + step
 
         temp_directory.children = emails
 
 
-    _root.top.destroy()
-
+    pb_hD.grid_forget()
+    info._label.configure(text = "Training Social Model...")
     _root.social_training()
+    info.grid_forget()
+
+
     _root.load_directory()
 
 
@@ -1157,7 +1179,7 @@ class _load_email_(threading.Thread):
         self._root = root
 
     def run(self):
-        check_thread(self.ident)
+        check_thread(self.ident, self.name)
         if self.method == "gmail":
             load_gmail_inbox_thread(self._root, self)
 
@@ -1433,6 +1455,13 @@ class option_one_frame(Frame):
 
 
 
+class load_info_frame(Frame):
+    def __init__(self, master):
+        Frame.__init__(self, master, bg = information_color, height = 30)
+        option_13 = Label(self, bd = 0, bg = information_color, font = option_one_font)
+        option_13.grid(row = 1, column = 1, padx = 0, pady = 20, stick = E)
+        self._label = option_13
+
 class option_two_frame(Frame):
     def __init__(self, master, event_handler):
         Frame.__init__(self, master)
@@ -1503,12 +1532,13 @@ class load_side_directory(threading.Thread):
         
     
     def run(self):
-        check_thread(self.ident)
+        check_thread(self.ident, self.name)
         children = self.children
         event_handler = self.event_handler
         _root = self._root
         if len(children) == 0:
-            _root.top.destroy()
+            _root.pb_hD.grid_forget()
+            _root.info.grid_forget()
             return
         i = 0
         step = 100/len(children)
@@ -1517,23 +1547,24 @@ class load_side_directory(threading.Thread):
         count = 0
         for child in children:
             if not self._run:
-                _root.top.destroy()
+                _root.pb_hD.grid_forget()
+                _root.info.grid_forget()
                 return
             _root.directory.append(directory_frame(_root.canvas, child, event_handler))
             #self.directory[i].grid(row = (2*i + 1), column = 1, sticky = NW)
             _root.canvas.create_window(0, _root._frame_height*i, anchor=NW, window=_root.directory[i])
             #self.directory[i].pack(side = TOP)
-            _root.f = Frame(_root.canvas, width = _root._wid * 2, height = 1, bg = separator_mid)
+            _root.f = Frame(_root.canvas, width = _root._wid , height = 1, bg = separator_mid)
             _root.canvas.create_window(0, _root._frame_height*(i + 1) - 1, anchor=NW, window=_root.f)
             i = i + 1
-            if (i*100)/len(children) > count:
+            if (i*100)/len(children) >= count:
                 _root.pb_hD.value = 10
                 _root.pb_hD.step(step)
                 _root.pb_hD.update_idletasks()
-                _root.l.configure(text = "Loading ..." + str(count) + "%")
+                _root.info._label.configure(text = "Loading ..." + str(count) + "%")
                 count = count + step
-        _root.top.destroy()
-
+        _root.pb_hD.grid_forget()
+        _root.info.grid_forget()
 
 class top_directory_frame(Frame):
     #top = 0
@@ -1542,18 +1573,20 @@ class top_directory_frame(Frame):
         Frame.__init__(self, master)
         ################################################################################################
         #progress bar
-        
-        self.top = Toplevel(master)
-        self.l = Label(self.top, text = "Loading ...")
-        self.l.pack(side = TOP)
-        self.pb_hD = ttk.Progressbar(self.top, orient='horizontal', mode='determinate', length = real_wid*40)
-        self.pb_hD.pack(side = BOTTOM)
-        center(self.top)
+        #self.top = Toplevel(master)
+        #self.l = Label(self.top, text = "Loading ...")
+        #self.l.pack(side = TOP)
+        self.pb_hD = ttk.Progressbar(master, orient='horizontal', mode='determinate', length = real_wid*40)
+        self.pb_hD.grid(row = 4, column = 1, columnspan = all_column, sticky = EW)
+        self.info = load_info_frame(master)
+        self.info.grid(row = 1, column = 7, sticky = EW)
+        #self.pb_hD.pack(side = BOTTOM)
+        #center(self.top)
         #pb_hD.update_idletasks()
 
         ################################################################################################
         self._frame_height = real_height * 3
-        self._wid = real_wid * 25
+        self._wid = real_wid * num_directory_words
         self._height = real_height * 60
         self.canvas = Canvas(self,width = self._wid,height = self._height, scrollregion = (0, 0, self._wid * 2, (len(children))*(self._frame_height + 8)))
         self.scroll_bar = Scrollbar(self, orient=VERTICAL)
@@ -1584,12 +1617,12 @@ class top_directory_frame(Frame):
 class directory_frame(Frame):
     def __init__(self, master, child, event_handler):
         Frame.__init__(self, master, highlightcolor = "grey")
-        self.line_one = Text(self, height = 1, width  = 30, font = directory_font)
+        self.line_one = Text(self, height = 1, width  = num_directory_words + 2, font = directory_font)
         self.line_one.insert(END, child.name)
         self.line_one.configure(state='disabled')
         self.line_one.pack(expand = True)
 
-        self.line_two = Text(self, height = 1, width  = 30, font = description_font)
+        self.line_two = Text(self, height = 1, width  = num_directory_words + 2, font = description_font)
         self.line_two.insert(END,  child.description)
         self.line_two.configure(state='disabled')
         self.line_two.pack(expand = True)
@@ -1644,7 +1677,7 @@ class email_frame(Frame):
         top_section = Frame(self);
         top_section.grid(row = 1, column = 1, sticky = EW)
 
-        self.date = Text(top_section, height = 1, width = 100, font = title_date_font)
+        self.date = Text(top_section, height = 1, width = 50, font = title_date_font)
         self.date.grid(row = 1, column = 2, sticky = NE)
         self.date.insert(END, "xx-xx-xxxx")
         
@@ -1690,7 +1723,7 @@ class email_frame(Frame):
         f = Frame(self, height = separator_huge_height, bg = separator_dark)
         f.grid(row = 2, column = 1, columnspan = 2, sticky = EW)
 
-        self.email_text = Text(self, height = 30, width = 200, font = email_font)
+        self.email_text = Text(self, height = 30, width = 150, font = email_font)
         self.email_text.grid(row = 3, column = 1, sticky = EW)
         self.email_text.configure(state = 'disable')
         
@@ -1709,13 +1742,10 @@ class email_frame(Frame):
 
 #########################################################################################################
 #check thread
-def check_thread(id):
+def check_thread(id, kill_name):
     threads = threading.enumerate()
     for thread in threads:
-        if thread.name == "load_directory" and not thread.ident == id:
-            print thread.name , thread.ident
-            thread._run = False
-        if thread.name == "load_email" and not thread.ident == id:
+        if thread.name == kill_name and not thread.ident == id:
             print thread.name , thread.ident
             thread._run = False
 
@@ -1771,7 +1801,7 @@ def load_email_thread(tf, root, children):
                 emails.append(email_subject)
         temp_directory.children = emails
     children.append(temp_directory)
-    tf.social_training()
+#tf.social_training()
     tf.loading = False
 
 if __name__ == '__main__':
@@ -1792,10 +1822,13 @@ if __name__ == '__main__':
     tf.inode_map[unsorted_email_folder.id] = unsorted_email_folder
     
     tf.pack()
+    s = Style()
+    s.theme_use("default")
+    s.configure("TProgressbar", thickness=1, foreground= information_color, background= 'red', border = 0, padding = 0)
     #thread.start_new_thread ( tf.load, ())
     #tf.consistent_load()
     #satf.search('s')
-    thread.start_new_thread(load_email_thread, (tf, topic_view, children))
+    #thread.start_new_thread(load_email_thread, (tf, topic_view, children))
     tk.mainloop()
 
 
