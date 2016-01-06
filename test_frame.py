@@ -33,6 +33,7 @@ import random
 import model_interface as mi
 import parse_gmails as pg
 import mailbox
+import social as soc
 #import social as soc
 tk = Tk()
 
@@ -60,7 +61,7 @@ search_font = ('Futura', '14')
 
 font = tkFont.Font(family=directory_font[0], size=directory_font[1])
 (real_wid,real_height) = (font.measure("a"),font.metrics("linespace"))
-#print real_wid,real_height
+
 ################################################################################################
 #color
 
@@ -164,8 +165,6 @@ class test_frame(Frame):
         
         
         self.top_directory = top_directory_frame(self, event_handler, root.children)
-        #top_directory = Frame(self, width=100, height=100)
-        #top_directory.bind("<Button-1>", self.callback)
         self.top_directory.grid(row = 5, column = 3, rowspan = 2, sticky = NW)
         #self.directories = top_directory.directory
         
@@ -256,8 +255,6 @@ class test_frame(Frame):
         
         if len(self.temp_directory) == 1 and self.temp_directory[0].type == "directory":
             change_text_field(self.keywords, self.temp_directory[0].description)
-            #print self.temp_directory.type
-
 
 
     def click_directory(self, select):
@@ -265,8 +262,6 @@ class test_frame(Frame):
         if select.type == "email":
             self.load_email(select)
         else:
-            #print self.directory.name
-            
             self.directory = select
             self.directory_stack.append(self.directory)
             self.load_directory()
@@ -370,7 +365,6 @@ class test_frame(Frame):
     #read email
     def read_email_text(self, filename):
         with open(filename) as f:
-            #print f
             lines = f.readlines()
             lines = [line.split('\n')[0] for line in lines]
             lines = [line.decode('utf-8',errors='ignore') for line in lines]
@@ -838,11 +832,19 @@ class test_frame(Frame):
         #print self.inode_map
         print 'inconsistent! ' +  id
     ##########################################################################################
+    #social training:
+    def social_training(self):
+        inode_set = self.all_emails(self.root)
+        exs, descriptions = soc.social_clustering(inode_set)
+        self.reconstruct_social(exs, descriptions)
+
+    ##########################################################################################
     #apply user feedbacks:
     def user_feedback_event(self, event):
         thread.start_new_thread(self.user_feedback, ('log2', ))
 
     def user_feedback(self, file):
+        #reconstruct topic
         log_file = open(real_path + '/log_file/' + file)
         lines = log_file.readlines()
         log_file.close()
@@ -874,13 +876,16 @@ class test_frame(Frame):
         ext2 = mi.apply_user_feedback( self.topic_folder.ext, feedback )
         self.reconstruct_topic(ext2)
 
+        #reconstruct social, working...
+
+
     def reconstruct_topic(self, ext2):
         while self.topic_folder.children:
             self._delete(self.topic_folder.children[0], self.topic_folder)
 
         e_x_sorted_topic = di.assign_emails(ext2, 3)
         for i in range(len(ext2[0])):
-            temp_directory = inode(parents = [root], children = [], name =  'Topic: ' + str(i) , type = "directory", id = 't')
+            temp_directory = inode(parents = [root], children = [], name =  'Topic: ' + str(i) , type = "directory", id = 'rt')
         
             self.topic_folder.children.append(temp_directory)
             self.inode_map[temp_directory.id] =  temp_directory
@@ -897,6 +902,38 @@ class test_frame(Frame):
                                                                   
         self.temp_directory = self.topic_folder
         self.load_directory
+
+
+    def reconstruct_social(self, ext2, descriptions):
+        while self.social_folder.children:
+            self._delete(self.social_folder.children[0], self.social_folder)
+        
+        e_x_sorted_topic = di.assign_emails(ext2, 3)
+        
+        
+        for i in range(len(ext2[0])):
+            temp_directory = inode(parents = [root], children = [], name =  'Social: ' + str(i) , type = "directory", id = 'rs')
+
+            #temp_directory.description = temp_directory.description + str(id) + ';'
+            temp_directory.description = descriptions[i]
+            self.social_folder.children.append(temp_directory)
+            self.inode_map[temp_directory.id] =  temp_directory
+            
+            
+            #Find email indice that belong in selected topic
+            for j in range(len(e_x_sorted_topic)):
+                if i in e_x_sorted_topic[j]:
+                    try:
+                        temp_directory.children.append(self.inode_map['e' + str(j)])
+                        self._remove(self.inode_map['e' + str(j)], self.unsorted_email_folder)
+                    except:
+                        x = 0
+    
+        self.temp_directory = self.social_folder
+        self.load_directory
+
+
+
 
 #print feedback
 #mi.apply_user_feedback(self.e_x_t, feedback)
@@ -1017,7 +1054,8 @@ def load_gmail_inbox_thread(_root):
     _root.topic_folder = topic_view
     _root.social_folder = social_view
     _root.unsorted_email_folder = unsorted_email_folder
-
+    _root.inode_map = {}
+    
     #run the processing on given gmail inbox
     #os.system("./parse_gmails.py -input_filename ./gmail1_dummy.mbox -min_word_count 10 ./model_results/gmail_test_")
         
@@ -1032,7 +1070,7 @@ def load_gmail_inbox_thread(_root):
     word_lists = email_lda.print_top_n_words(topic_x_word, './data/gmail1_vocab.csv', 10)
     tag_dicts = pe.load_tags('./data/gmail1_dummy_tags.csv')
     e_x_sorted_topic = di.assign_emails(ext, 3)
-    
+
     
     
     _root.top = Toplevel(_root.master)
@@ -1062,7 +1100,7 @@ def load_gmail_inbox_thread(_root):
         #get emails
         emails = []
         step = 100/len(cur_topic_emails)
-        i = 0
+        k = 0
         if step  == 0:
             step = 1
         count = 0
@@ -1083,28 +1121,33 @@ def load_gmail_inbox_thread(_root):
                     _email = {'date': "0000-00-00 00:00:00", 'email': 'ah', 'title': 'ah', 'sender':'ah', 'to': 'ah'}
                     tag = 'ah'
                     name_name = 'ah'
-                email_subject = inode(parents = [temp_directory], name = name_name, description = tag, email_directory = [], type = "email", children = [], email = _email)
+                try:
+                    email_subject = _root.inode_map['e' + str(mail_idx)]
+                except:
+                    email_subject = inode(parents = [temp_directory], name = name_name, description = tag, email_directory = [], type = "email", children = [], email = _email, vec = ext[mail_idx], id = 'e' + str(mail_idx))
+                
+                
                 email_subject.children = []
                 emails.append(email_subject)
 
-            i = i + 1
-            if (i*100)/len(cur_topic_emails) > count:
+            k = k + 1
+            if (k * 100)/len(cur_topic_emails) > count:
                 _root.pb_hD.value = 10
                 _root.pb_hD.step(step)
                 _root.pb_hD.update_idletasks()
-                _root.l.configure(text = "Loading ..." + str(count) + "%")
+                _root.l.configure(text = "Loading " + str(i) + "-th topic (out of " + str(len(word_lists)) +  ")..." + str(count) + "%")
                 count = count + step
 
         temp_directory.children = emails
 
 
     _root.top.destroy()
-            
+    
 
     _root.directory = root
     _root.temp_directory = []
     _root.directory_stack = [root]
-    
+    _root.social_training()
     _root.load_directory()
 
 
@@ -1610,7 +1653,7 @@ class email_frame(Frame):
         f = Frame(self, height = separator_huge_height, bg = separator_dark)
         f.grid(row = 2, column = 1, columnspan = 2, sticky = EW)
 
-        self.email_text = Text(self, height = 40, width = 200, font = email_font)
+        self.email_text = Text(self, height = 30, width = 200, font = email_font)
         self.email_text.grid(row = 3, column = 1, sticky = EW)
         self.email_text.configure(state = 'disable')
         
@@ -1678,6 +1721,7 @@ def load_email_thread(tf, root, children):
                 emails.append(email_subject)
         temp_directory.children = emails
     children.append(temp_directory)
+    tf.social_training()
     tf.loading = False
 
 if __name__ == '__main__':
@@ -1701,7 +1745,7 @@ if __name__ == '__main__':
     #thread.start_new_thread ( tf.load, ())
     #tf.consistent_load()
     #satf.search('s')
-    #thread.start_new_thread(load_email_thread, (tf, topic_view, children))
+    thread.start_new_thread(load_email_thread, (tf, topic_view, children))
     tk.mainloop()
 
 
