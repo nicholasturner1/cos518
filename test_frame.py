@@ -1,6 +1,7 @@
 from dateutil.parser import parse as date_parser
 import nltk
 import thread
+import threading
 from nltk import word_tokenize
 from nltk.corpus import stopwords
 import parse_emails as pe
@@ -788,8 +789,9 @@ class test_frame(Frame):
 
 ##########################################################################################
     def load_gmail_inbox(self, event):
-        thread.start_new_thread(load_gmail_inbox_thread, (self, ))
-
+#thread.start_new_thread(load_gmail_inbox_thread, (self, ))
+        lgi = _load_email_(self, "gmail")
+        lgi.start()
     ##########################################################################################
     #reconstruct from a log file
     def reconstruct_event(self, event):
@@ -864,7 +866,6 @@ class test_frame(Frame):
                 except:
                     self._inconsistent(line)
                     return
-                print parent.id, inode.id
                 if instruction == 'a' and parent.id[0] == 't' and inode.id[0] == 'e':
                     
                     feedback.append({'action' : 'add',    'topic-id' : int(parent.id[1:]), 'email-id' : str(inode.id[1:])})
@@ -872,7 +873,6 @@ class test_frame(Frame):
                     feedback.append({'action' : 'delete',    'topic-id' : int(inode.id[1:])})
                 if instruction == 'd' and parent.id[0] == 't' and inode.id[0] == 'e':
                     feedback.append({'action' : 'delete',    'topic-id' : int(parent.id[1:]), 'email-id' : str(inode.id[1:])})
-        print feedback
         ext2 = mi.apply_user_feedback( self.topic_folder.ext, feedback )
         self.reconstruct_topic(ext2)
 
@@ -885,7 +885,7 @@ class test_frame(Frame):
 
         e_x_sorted_topic = di.assign_emails(ext2, 3)
         for i in range(len(ext2[0])):
-            temp_directory = inode(parents = [root], children = [], name =  'Topic: ' + str(i) , type = "directory", id = 'rt')
+            temp_directory = inode(parents = [root], children = [], name =  'Topic: ' + str(i) , type = "directory", id = 't' + str(i))
         
             self.topic_folder.children.append(temp_directory)
             self.inode_map[temp_directory.id] =  temp_directory
@@ -912,7 +912,7 @@ class test_frame(Frame):
         
         
         for i in range(len(ext2[0])):
-            temp_directory = inode(parents = [root], children = [], name =  'Social: ' + str(i) , type = "directory", id = 'rs')
+            temp_directory = inode(parents = [root], children = [], name =  'Social: ' + str(i) , type = "directory", id = 's' + str(i))
 
             #temp_directory.description = temp_directory.description + str(id) + ';'
             temp_directory.description = descriptions[i]
@@ -933,13 +933,9 @@ class test_frame(Frame):
         self.load_directory
 
 
-
-
-#print feedback
-#mi.apply_user_feedback(self.e_x_t, feedback)
-
 ##########################################################################################
 #thread for consistent load, save
+
 def save_thread(_root):
     #go over inodes and write it to file.
     time = strftime("_%Y_%m_%d_%H_%M_%S", gmtime())
@@ -1004,6 +1000,7 @@ def load_thread(_root):
     _root.load_directory()
     _root.loading = False
     tkMessageBox.showinfo("Successfully Load...", "Load from: " + all_files[0])
+
 def consistent_load_thread(_root):
     all_files = glob.glob(save_file + '*')
     all_files = sorted(all_files, key=lambda x: x.lower(), reverse=True)
@@ -1034,27 +1031,26 @@ def consistent_load_thread(_root):
     tkMessageBox.showinfo("Successfully Load...", "Load from: " + all_files[0])
 
 
-def thread_with_return(Thread):
-    def __init__(self, function, args):
-        self.pool = ThreadPool(processes = 1)
-        self.function = function
-        self.args = args
-    def run():
-        async_result = self.pool.apply_async(self.f, self.args)
-        return_val = async_result.get()
-        return return_val
 
 
-def load_gmail_inbox_thread(_root):
+def load_gmail_inbox_thread(_root, _thread):
     children = []
-    topic_view = inode(parents = [root], children = children, type = "sub_root", name = "Topic Folder")
-    social_view = inode(parents = [root], type = "sub_root", name = "Social Folder", children = [])
-    unsorted_email_folder = inode(parents = [root], children = [], type = "sub_root", name = "Unsorted Folder")
+    root = _root.root
+    topic_view = inode(parents = [root], children = children, type = "sub_root", name = "Topic Folder", id = 'rt')
+    social_view = inode(parents = [root], type = "sub_root", name = "Social Folder", children = [], id = 'rs')
+    social_view.children = []
+    unsorted_email_folder = inode(parents = [root], children = [], type = "sub_root", name = "Unsorted Folder", id = 'ru')
+    unsorted_email_folder.children = []
     _root.root.children = [topic_view, social_view, unsorted_email_folder]
     _root.topic_folder = topic_view
     _root.social_folder = social_view
     _root.unsorted_email_folder = unsorted_email_folder
     _root.inode_map = {}
+    
+    
+    _root.directory = root
+    _root.temp_directory = []
+    _root.directory_stack = [root]
     
     #run the processing on given gmail inbox
     #os.system("./parse_gmails.py -input_filename ./gmail1_dummy.mbox -min_word_count 10 ./model_results/gmail_test_")
@@ -1083,11 +1079,14 @@ def load_gmail_inbox_thread(_root):
     mbox = mailbox.mbox('./data/gmail1_dummy.mbox')
 
     for i in range(len(word_lists)):
+        if i > 1:
+            return
         name_name =  ', '.join(map(str,word_lists[i]))
         #print name_name
-        temp_directory = inode(parents = [root], children = [], name =  'Topic: ' + str(i), description = name_name, type = "directory")
+        temp_directory = inode(parents = [root], children = [], name =  'Topic: ' + str(i), description = name_name, type = "directory", id = 't' + str(i))
+        temp_directory.children = []
         children.append(temp_directory)
-            
+        _root.inode_map[temp_directory.id] = temp_directory
         #get emails
         cur_topic_emails = []
             
@@ -1107,14 +1106,16 @@ def load_gmail_inbox_thread(_root):
             
             
         for mail_idx in cur_topic_emails:
-            if mail_idx < 100000:
-
+            if mail_idx < 10000:
+                if not _thread.run:
+                    _root.top.destroy()
+                    return
+                
                 
                 try:
-                    name_name = tag_dicts[mail_idx]['Subject'].strip()
-                    name_name = name_name.replace(";", "")
+                    name_name = tag_dicts[mail_idx]['From'].strip()
                     email_directory = ''
-                    tag =  tag_dicts[mail_idx]['From'].strip() + ' -- ' + tag_dicts[mail_idx]['Subject'].strip()
+                    tag =  tag_dicts[mail_idx]['Subject'].strip()
                     _email = pg.extract_full(mbox[mail_idx])
                     _email['date'] = str(date_parser(_email['date']))
                 except:
@@ -1126,7 +1127,7 @@ def load_gmail_inbox_thread(_root):
                 except:
                     email_subject = inode(parents = [temp_directory], name = name_name, description = tag, email_directory = [], type = "email", children = [], email = _email, vec = ext[mail_idx], id = 'e' + str(mail_idx))
                 
-                
+                _root.inode_map[email_subject.id] = email_subject
                 email_subject.children = []
                 emails.append(email_subject)
 
@@ -1142,15 +1143,23 @@ def load_gmail_inbox_thread(_root):
 
 
     _root.top.destroy()
-    
 
-    _root.directory = root
-    _root.temp_directory = []
-    _root.directory_stack = [root]
     _root.social_training()
     _root.load_directory()
 
 
+
+class _load_email_(threading.Thread):
+    def __init__(self, root, method):
+        threading.Thread.__init__(self, name = "load_email")
+        self._run = True
+        self.method = method
+        self._root = root
+
+    def run(self):
+        check_thread(self.ident)
+        if self.method == "gmail":
+            load_gmail_inbox_thread(self._root, self)
 
 
 ##########################################################################################
@@ -1483,12 +1492,54 @@ def center(win):
 #directory
 
 
+class load_side_directory(threading.Thread):
+    def __init__(self, children, event_handler, _root):
+        threading.Thread.__init__(self, name = "load_directory")
+        self.children = children
+        self._run = True
+        self.event_handler = event_handler
+        self._root = _root
+    
+        
+    
+    def run(self):
+        check_thread(self.ident)
+        children = self.children
+        event_handler = self.event_handler
+        _root = self._root
+        if len(children) == 0:
+            _root.top.destroy()
+            return
+        i = 0
+        step = 100/len(children)
+        if step  == 0:
+            step = 1
+        count = 0
+        for child in children:
+            if not self._run:
+                _root.top.destroy()
+                return
+            _root.directory.append(directory_frame(_root.canvas, child, event_handler))
+            #self.directory[i].grid(row = (2*i + 1), column = 1, sticky = NW)
+            _root.canvas.create_window(0, _root._frame_height*i, anchor=NW, window=_root.directory[i])
+            #self.directory[i].pack(side = TOP)
+            _root.f = Frame(_root.canvas, width = _root._wid * 2, height = 1, bg = separator_mid)
+            _root.canvas.create_window(0, _root._frame_height*(i + 1) - 1, anchor=NW, window=_root.f)
+            i = i + 1
+            if (i*100)/len(children) > count:
+                _root.pb_hD.value = 10
+                _root.pb_hD.step(step)
+                _root.pb_hD.update_idletasks()
+                _root.l.configure(text = "Loading ..." + str(count) + "%")
+                count = count + step
+        _root.top.destroy()
+
+
 class top_directory_frame(Frame):
     #top = 0
     
     def __init__(self, master, event_handler, children):
         Frame.__init__(self, master)
-
         ################################################################################################
         #progress bar
         
@@ -1509,41 +1560,23 @@ class top_directory_frame(Frame):
         self.scroll_bar.pack(side=RIGHT,fill=Y)
         # scroll_bar.grid(row = 1, rowspan = 800, column = 2, sticky = NS)
         self.directory = []
-        
-        ################################################################################################
-        #load
-        thread.start_new_thread ( self.load, (children, event_handler ) )
-        ################################################################################################
-       
+
         self.scroll_bar.config(command = self.canvas.yview)
         #self.canvas.config(width=wid,height=800)
         self.canvas.config(yscrollcommand=self.scroll_bar.set)
         self.canvas.pack(side=LEFT,expand=True,fill=BOTH)
     
-    def load(self, children, event_handler):
-        if len(children) == 0:
-            self.top.destroy()
-            return
-        i = 0
-        step = 100/len(children)
-        if step  == 0:
-            step = 1
-        count = 0
-        for child in children:
-            self.directory.append(directory_frame(self.canvas, child, event_handler))
-            #self.directory[i].grid(row = (2*i + 1), column = 1, sticky = NW)
-            self.canvas.create_window(0, self._frame_height*i, anchor=NW, window=self.directory[i])
-            #self.directory[i].pack(side = TOP)
-            self.f = Frame(self.canvas, width = self._wid * 2, height = 1, bg = separator_mid)
-            self.canvas.create_window(0, self._frame_height*(i + 1) - 1, anchor=NW, window=self.f)
-            i = i + 1
-            if (i*100)/len(children) > count:
-                self.pb_hD.value = 10
-                self.pb_hD.step(step)
-                self.pb_hD.update_idletasks()
-                self.l.configure(text = "Loading ..." + str(count) + "%")
-                count = count + step
-        self.top.destroy()
+    
+    ################################################################################################
+    #load
+    #thread.start_new_thread ( self.load, (children, event_handler ) )
+        load_sd = load_side_directory(children, event_handler, self)
+        load_sd.start()
+
+    ################################################################################################
+    
+    
+
 #progress_bar.top.destroy()
 
 
@@ -1596,6 +1629,10 @@ class directory_frame(Frame):
         self.line_two.configure(state = 'disabled')
     def callback(self, event):
         print "clicked at", event.x, event.y
+
+
+#########################################################################################################
+#robust thread management
 
 
 #########################################################################################################
@@ -1664,10 +1701,24 @@ class email_frame(Frame):
         keywords_fix.grid(row = 5, column = 1, sticky = W)
         keywords_fix.insert(END, "Keywords: ")
         keywords_fix.configure(state = 'disable')
-        self.keywords = Text(self,   font = title_info_font)
+        self.keywords = Text(self,   font = title_info_font, height = 10)
         self.keywords.grid(row = 6, column = 1, sticky = W)
         self.keywords.insert(END, " ")
         self.keywords.configure(state = 'disable')
+
+
+#########################################################################################################
+#check thread
+def check_thread(id):
+    threads = threading.enumerate()
+    for thread in threads:
+        if thread.name == "load_directory" and not thread.ident == id:
+            print thread.name , thread.ident
+            thread._run = False
+        if thread.name == "load_email" and not thread.ident == id:
+            print thread.name , thread.ident
+            thread._run = False
+
 #########################################################################################################
 #key words
 class keywords_frame(Frame):
@@ -1709,11 +1760,10 @@ def load_email_thread(tf, root, children):
         #get emails
         emails = []
         for mail_idx in cur_topic_emails:
-            if mail_idx < 1000:
-                name_name = tag_dicts[mail_idx]['filename']
-                name_name = name_name.replace(";", "")
-                email_directory = './sarahs_inbox/parsed/msnbc/txt/' + name_name
-                tag =  tag_dicts[mail_idx]['From'].strip() + ' -- ' + tag_dicts[mail_idx]['Subject'].strip()
+            if mail_idx < 100000:
+                name_name = tag_dicts[mail_idx]['From'].strip()
+                email_directory = './sarahs_inbox/parsed/msnbc/txt/' + tag_dicts[mail_idx]['filename'].strip().replace(";", "")
+                tag =  tag_dicts[mail_idx]['Subject'].strip()
                 _email = tf.read_email_text(email_directory)
                 email_subject = inode(parents = [temp_directory], name = name_name, description = tag, email_directory = email_directory, type = "email", children = [], email = _email, vec = ext[mail_idx], id = 'e' + str(mail_idx))
                 #print email_subject.vec
