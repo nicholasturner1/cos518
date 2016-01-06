@@ -103,7 +103,7 @@ def update_cluster(datas, centers):
 
 
 #the social clustering: takes a bounch of inodes for eamils and generate the social clustering result.
-def social_clustering(inode_set, iter = 50, num_cluster = 20):
+def social_clustering(inode_set, iter = 50, num_cluster = 10):
     social_dict = {}
     clusters = []
     datas = []
@@ -144,7 +144,7 @@ def social_clustering(inode_set, iter = 50, num_cluster = 20):
     for i in range(len(inode_set)):
         for j in range(num_cluster):
             #print i, j
-            dist_matrix[i][j] = _dist(clusters[j], inode_set[i])
+            dist_matrix[i][j] = -_dist(clusters[j], inode_set[i])
 
     exs = np.array(dist_matrix)
 
