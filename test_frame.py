@@ -1014,7 +1014,10 @@ def load_gmail_inbox_thread(_root):
     social_view = inode(parents = [root], type = "sub_root", name = "Social Folder", children = [])
     unsorted_email_folder = inode(parents = [root], children = [], type = "sub_root", name = "Unsorted Folder")
     _root.root.children = [topic_view, social_view, unsorted_email_folder]
-        
+    _root.topic_folder = topic_view
+    _root.social_folder = social_view
+    _root.unsorted_email_folder = unsorted_email_folder
+
     #run the processing on given gmail inbox
     #os.system("./parse_gmails.py -input_filename ./gmail1_dummy.mbox -min_word_count 10 ./model_results/gmail_test_")
         
