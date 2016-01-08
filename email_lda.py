@@ -8,88 +8,10 @@ import gensim
 import numpy as np
 import argparse
 
-#=====================================================================
-#GUI interface functions
-
-def load_model(model_filename):
-    '''Reads a model object from disk along with the model state'''
-    model = gensim.utils.SaveLoad.load(model_filename)
-    state = gensim.utils.SaveLoad.load(model_filename + '.state')
-
-    model.state = state
-
-    return model
-
-
-def apply_user_feedback(emailXtopic, topicXword, feedback):
-    '''Applies feedback actions to the supplied matrices'''
-    
-    for action in feedback:
-        pass
-
-    return emailXtopic, topicXword
-
-
-def update_model_extract_matrices(email_texts, other_bow, vocab_index, model_obj):
-    '''
-    Updates the model with new data, returns the new bow matrix, model state, 
-    and state matrices
-    '''
-
-    new_model, new_bow = add_new_email(email_texts, other_bow, vocab_index, model_obj)
-
-    ext, txw = extract_state_matrices(new_model, new_bow)
-
-    return new_model, new_bow, ext, txw
-
-
-def update_model(email_bow, model_obj):
-    '''
-    Takes a new bow matrix and updates the model using
-    the new data
-    '''
-    
-    email_corpus = gensim.matutils.Dense2Corpus(email_bow,
-                                    documents_columns=False)
-
-    model_obj.update(email_corpus)
-
-    return model_obj
-
-
-def extract_state_matrices(model_obj, bow):
-    '''
-    Pulls the matrices describing the state of the model
-    out of the object
-    '''
-
-    new_corpus = gensim.matutils.Dense2Corpus( bow,
-                                    documents_columns=False )
-
-    ext = run_inference(model_obj, new_corpus)
-    txw = extract_topic_word_dist(model_obj)
-
-    return ext, txw
-
-
-def add_new_emails(email_texts, other_bow, vocab_index, model_obj):
-    '''
-    Takes a list of new email message bodies, updates the model
-    with the new data, and adds the new bow vectors to the previous
-    bow matrix
-    '''
-    
-    email_bow = ep.map_text_to_bow(email_text, vocab_index=vocab_index)
-
-    new_model = update_model(email_bow, model_obj)
-
-    new_bow = np.append(other_bow, email_bow, axis=0)
- 
-    return new_model, new_bow
-
 
 #=====================================================================
-#Original Model Training Functions
+#Training Functions
+
 
 def train_model(data_filename, num_emails, num_topics=10, num_passes=1,
     topic_x_word=True, email_x_topic=True, binarize=False):
@@ -156,6 +78,7 @@ def extract_topic_word_dist(model_obj):
     topic_x_word = topic_x_word / topic_x_word.sum(1, keepdims=True)
 
     return topic_x_word
+
 
 #=====================================================================
 #Debug/Display Functions

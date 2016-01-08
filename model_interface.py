@@ -21,9 +21,12 @@ if the topic id is greater than the maximum index of the topics
 defined by the model, this interface will construct a new topic
 and append it onto the email_x_topic matrix
 
-NOTE: model-defined topics are deleted are signified by
+NOTE: model-defined topics which are deleted are signified by
 zeroing out all email assignments, not explicitly removed from
 the model matrices
+
+The module also includes functions for making explicit assignments
+of emails to topics given the model state matrices
 
 Also, see TESTS_model_interface.py for examples of feedback schema
 '''
@@ -130,7 +133,7 @@ def extract_state_matrices(model_obj, bow):
 #Replay user feedback
 
 
-def apply_user_feedback(emailXtopic, feedback):
+def apply_user_feedback(emailXtopic, topicXword, feedback):
     '''
     Applies feedback actions to the supplied matrices
 
@@ -154,9 +157,12 @@ def apply_user_feedback(emailXtopic, feedback):
     new_topics = compile_user_defined_topics(emailXtopic, feedback)
 
     #creating the user defined topics, and adding to the eXt matrix
-    emailXtopic = add_user_defined_topics( emailXtopic, new_topics ) 
+    emailXtopic, topicXword = add_user_defined_topics( 
+                                  emailXtopic, 
+                                  topicXword, 
+                                  new_topics ) 
 
-    return emailXtopic
+    return emailXtopic, topicXword
 
     
 def apply_model_defined_feedback(emailXtopic, feedback):
@@ -216,7 +222,7 @@ def compile_user_defined_topics( emailXtopic, feedback ):
     return user_defined_topics
 
 
-def add_user_defined_topics( emailXtopic, user_defined_topics ):
+def add_user_defined_topics( emailXtopic, topicXword, user_defined_topics ):
     '''
     Makes new topics according to the seed email structure, and 
     adds the new email distributions to the eXt matrix
@@ -224,20 +230,25 @@ def add_user_defined_topics( emailXtopic, user_defined_topics ):
 
     #initializing new email distributions to add
     num_emails = emailXtopic.shape[0]
+    num_words  = topicXword.shape[1]
     num_new_topics = len(user_defined_topics)
 
-    new_topics = np.empty((num_emails, num_new_topics), dtype=emailXtopic.dtype)
+    ext_new = np.empty((num_emails, num_new_topics), dtype=emailXtopic.dtype)
+    txw_new = np.empty((num_new_topics, num_words), dtype=topicXword.dtype)
 
     for index, topic_id in enumerate( sorted(user_defined_topics.keys()) ):
 
-        new_topics[:,index] = make_new_topic( emailXtopic, user_defined_topics[topic_id] )
+        ext_new[:,index], txw_new[index,:] = make_new_topic( emailXtopic, 
+                                                 topicXword,
+                                                 user_defined_topics[topic_id] )
 
     #np.append is slow, so we create all the topics before 
     # adding them to the eXt matrix in one call
-    return np.append( emailXtopic, new_topics, axis=1 )
+    full_ext = np.append( emailXtopic, ext_new, axis=1 )
+    full_txw = np.append( topicXword , txw_new, axis=0 )
+    return full_ext, full_txw
 
-
-def make_new_topic( emailXtopic, email_id_list ):
+def make_new_topic( emailXtopic, topicXword, email_id_list ):
     '''
     Current scheme is to generate a new topic
     by averaging the topic distribution of seed emails,
@@ -260,7 +271,10 @@ def make_new_topic( emailXtopic, email_id_list ):
     email_dist = emailXtopic.dot(avg_topic_dist)
     email_dist = email_dist / np.sum(email_dist) #norm
 
-    return email_dist
+    word_dist = topicXword.transpose().dot(avg_topic_dist)
+    word_dist = word_dist / np.sum(word_dist)
+
+    return email_dist, word_dist
 
 
 def add_email_to_model_topic(emailXtopic, email_index, topic_index):
@@ -377,3 +391,49 @@ def print_top_n_people( social_x_sender_matrix, sender_name_array, num_people=10
             
     return top_sender_lists
 
+#=====================================================================
+#Assignment Functions (originally within disp_interface.py)
+
+def assign_topic( email_x_topic_matrix, num_ids):
+    return column_cluster_ids( email_x_topic_matrix, num_ids )
+
+def assign_emails( email_x_topic_matrix, num_ids):
+    return row_cluster_ids( email_x_topic_matrix, num_ids )
+
+def row_cluster_ids( assign_matrix, num_ids ):
+    '''
+    Takes a matrix which makes a soft assignment of rows to 
+    a cluster (either content topic or social topic) and returns
+    an explicit hard assignment of each row to a {num_ids} number
+    of clusters
+    '''
+
+    rows, cols = assign_matrix.shape
+    
+    assignments = []
+
+    for i in range(rows):
+        row_assignment = np.argsort( assign_matrix[i,:] )[::-1][:num_ids]
+        assignments.append( row_assignment )
+
+    return assignments
+
+
+
+def column_cluster_ids( assign_matrix, num_ids ):
+    '''
+        Takes a matrix which makes a soft assignment of column to
+        a cluster (either content topic or social topic) and returns
+        an explicit hard assignment of each column to a {num_ids} number
+        of clusters
+        '''
+    
+    rows, cols = assign_matrix.shape
+    
+    assignments = []
+    
+    for i in range(cols):
+        col_assignment = np.argsort( assign_matrix[:,i] )[::-1][-num_ids:]
+        assignments.append( col_assignment )
+    
+    return assignments

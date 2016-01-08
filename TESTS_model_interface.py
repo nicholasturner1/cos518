@@ -4,6 +4,7 @@ import model_interface as mi
 import numpy as np
 
 ext = np.eye(5)
+txw = np.eye(5).transpose() 
 
 feedback = [
 
@@ -22,7 +23,15 @@ feedback = [
 
 ]
 
-ext2 = mi.apply_user_feedback( ext, feedback )
+ext2, txw2 = mi.apply_user_feedback( ext, txw, feedback )
 
-print ext2 
+print "orig ext"
+print ext
+print "ext"
+print ext2
+print
+print "orig txw"
+print txw 
+print "txw"
+print txw2
 
