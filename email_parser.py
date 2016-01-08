@@ -26,34 +26,27 @@ import email_io
 
 #Dependencies
 import numpy as np
+import scipy.sparse as sp
+
 import nltk
-from nltk import word_tokenize
-from nltk.corpus import stopwords
+nltk.data.path.append('./nltk_data')
 
 #=============================================
-stemmer = nltk.PorterStemmer() # also lancaster stemmer
-lemmatizer = nltk.WordNetLemmatizer()
-stopWords = stopwords.words("english")
-
-#Fields wh
-tags = ['From','To','Sent','Subject']
+#Contants
+LEMMATIZER = nltk.WordNetLemmatizer()
+STOP_WORDS = nltk.corpus.stopwords.words('english')
 
 #Filtered out of all email texts within process_tokens
-junk_chars = ['{','}','#','%','&','\(','\)','\[','\]','<','>',',', '!', '.', ';', 
+JUNK_CHARS = ['{','}','#','%','&','\(','\)','\[','\]','<','>',',', '!', '.', ';', 
 '?', '*', '\\', '\/', '~', '_','|','=','+','^',':','\"','\'','@','-']
 
 #filtering URL tokens
-junk_words = ['com','http','edu','www','gov','biz']
+JUNK_WORDS = ['com','http','edu','www','gov','biz']
 
 #=============================================
 #Helper functions
 def contains_num(word):
-    num_strings = ['0','1','2','3','4','5','6','7','8','9']
-
-    for num in num_strings:
-        if num in word:
-            return True
-    return False
+    return not (re.search('[0-9]',word) == None)
 
 
 #=============================================
@@ -81,6 +74,7 @@ def tokenize_and_count(emails):
 
     return(word_counts, res_emails)
 
+
 def process_email_tokens( email ):
     '''
     Takes an individual email, splits it into tokens,
@@ -90,19 +84,13 @@ def process_email_tokens( email ):
     # remove noisy characters
     email = email.decode('ascii',errors='ignore')
     email = email.replace('\n','').replace('\r','')
-    junk_removed = re.sub('[%s]' % ''.join(junk_chars), ' ', email)
+    junk_removed = re.sub('[%s]' % ''.join(JUNK_CHARS), ' ', email)
 
     #Splitting document into words
-    tokens = word_tokenize(junk_removed)
+    tokens = nltk.word_tokenize(junk_removed)
 
     #Converts to lowercase
     tokens = [w.lower() for w in tokens]
-
-    #Removes stopwords from argument
-    tokens = [w for w in tokens if w not in stopWords]
-
-    #Removes 'junk words' defined above
-    tokens = [w for w in tokens if w not in junk_words]
 
     #Removes words containing a number (filtering dates, prices, etc.)
     tokens = [w for w in tokens if not contains_num(w)]
@@ -110,16 +98,24 @@ def process_email_tokens( email ):
     #Removes urls and html tags (not ready yet)
     #tokens = [w for w in tokens if not contains_url(w)]
 
+    #Lemmatizes words to condense across grammatical forms
+    tokens = [LEMMATIZER.lemmatize(t) for t in tokens]
+
+    #Stemming is similar to lemmatization, but works differently.
+    # Easier to implement, but worse is most ways
+    #tokens = [stemmer.stem(t) for t in tokens]
+
     #Removes short terms
     tokens = [w for w in tokens if len(w) >= 3]
 
-    #Lemmatizes words to condense across grammatical forms
-    tokens = [lemmatizer.lemmatize(t) for t in tokens]
+    #Removes 'junk words' defined above
+    tokens = [w for w in tokens if w not in JUNK_WORDS]
 
-    #Stemming is similar to lemmatization, but works differently
-    #tokens = [stemmer.stem(t) for t in tokens]
+    #Removes stopwords from argument
+    tokens = [w for w in tokens if w not in STOP_WORDS]
 
     return tokens
+
 
 def add_tokens_to_counts( word_counts, tokens ):
     '''
@@ -137,6 +133,7 @@ def add_tokens_to_counts( word_counts, tokens ):
 
     return word_counts
 
+
 def wordcount_filter(word_counts, thr=5):
     '''
     Filters the dictionary above for words which
@@ -151,9 +148,11 @@ def wordcount_filter(word_counts, thr=5):
 
     return res
 
+
 def vocab_index_from_list(vocab_list):
     '''Creates a dict mapping words to indices'''
     return { vocab_list[i] : i for i in range(len(vocab_list)) }
+
 
 def map_text_to_bow(email_text, vocab_list=None, vocab_index=None):
     '''
@@ -162,13 +161,15 @@ def map_text_to_bow(email_text, vocab_list=None, vocab_index=None):
     '''
     return map_text_list_to_bow([email_text], vocab_list, vocab_index)
 
+
 def map_text_list_to_bow(email_list, vocab_list=None, vocab_index=None):
 
     email_tokens = [process_email_tokens(email) for email in email_list]
 
     return map_tokens_to_bow(email_tokens, vocab_list, vocab_index)
 
-def map_tokens_to_bow(docs, vocab_list=None, vocab_index=None):
+
+def map_tokens_to_bow(docs, vocab_list=None, vocab_index=None, dense=True):
     '''
     Forms the document-term matrix over preprocessed
     line-lists and vocabulary
@@ -179,7 +180,8 @@ def map_tokens_to_bow(docs, vocab_list=None, vocab_index=None):
     if vocab_index is None:
       vocab_index = vocab_index_from_list( sorted(vocab_list) )
 
-    bagofwords = np.zeros(shape=(len(docs),len(vocab_index)), dtype=np.uint8)
+    #bagofwords = np.zeros(shape=(len(docs),len(vocab_index)), dtype=np.uint8)
+    bagofwords = sp.dok_matrix( (len(docs),len(vocab_index)), dtype=np.uint8)
 
     for i in range(len(docs)):
         doc = docs[i]
@@ -187,9 +189,58 @@ def map_tokens_to_bow(docs, vocab_list=None, vocab_index=None):
         for word in doc:
            index = vocab_index.get(word)
            if (index >= 0) and (bagofwords[i,index] < 255):
-              bagofwords[i,index] = bagofwords[i,index]+1
+              bagofwords[i,index] += 1
+
+    if dense:
+        bagofwords = bagofwords.todense()
+    else:
+        bagofwords = bagofwords.tocoo()
 
     return bagofwords
+
+
+def coo_remove(coo, to_remove, axis):
+    '''
+    Removes the corresponding indices from a coo matrix
+
+    only for 2D matrices
+    '''
+    #Making sure we don't screw up indices when
+    # deleting some
+    #to_remove = np.sort(to_remove)[::-1]
+
+    i, j, d = sp.find(coo)
+    num_to_remove = to_remove.size
+
+    if axis==0:
+        indices_of_interest = i
+        aux_indices = j
+        res_shape = np.array(coo.shape) - np.array([num_to_remove,0])
+    else:
+        indices_of_interest = j
+        aux_indices = i
+        res_shape = np.array(coo.shape) - np.array([0,num_to_remove])
+
+    #Removing entries in the given row/column
+    value_mask = np.in1d(indices_of_interest, to_remove, invert=True)
+    
+    d = d[value_mask]
+    aux_indices = aux_indices[value_mask]
+    indices_of_interest = indices_of_interest[value_mask] 
+
+    #shifting index values > index
+    rem_values = np.unique(indices_of_interest)
+    for index,v in enumerate(rem_values):
+        indices_of_interest[ indices_of_interest == v ] = index
+        
+    if axis==0:
+        i, j = indices_of_interest, aux_indices
+    else:
+        i, j = aux_indices, indices_of_interest
+
+    print "creating result matrix"
+    return sp.coo_matrix((d,(i,j)), shape=res_shape) 
+
 
 def remove_indices_from_bow(bow, aux, to_remove, axis):
     '''
@@ -197,54 +248,74 @@ def remove_indices_from_bow(bow, aux, to_remove, axis):
     and an auxiliary list (either the vocab or the email id's
     w/ tag fields
     '''
-    bow = np.delete(bow, to_remove, axis)
-    to_remove = to_remove[::-1]
+    print "%d items to remove" % to_remove.size
+
+    bow = coo_remove(bow, to_remove, axis)
+
+    #Making sure we don't go out of bounds when removing
+    to_remove = np.sort(to_remove)[::-1]
     aux = list(aux) # copying so references are intact
 
-    print "%d items to remove" % to_remove.size
     for i in to_remove:
         del aux[i]
 
     return bow, aux
 
-def dynamic_stopword_filter(bow, vocab=None, threshold=None):
-    '''Filtering out the ${threshold} most common words'''
 
+def dynamic_stopword_filter(bow, vocab=None, threshold=None):
+    '''
+    Filtering out the ${threshold} most common words
+
+    Expects the bow matrix to be a coo sparse matrix
+    '''
+
+    #sp version of sum keeps dimension of original array
     word_counts = bow.sum(0)
 
     word_ranks = np.argsort(word_counts)
 
-    to_remove = np.where(word_ranks >= (word_ranks.size - threshold) )[0]
+    #since the sum array has 2 indices, we want the column one in this case
+    to_remove = np.where(word_ranks >= (word_ranks.size - threshold) )[1]
 
     return remove_indices_from_bow(bow, vocab, to_remove, 1)
+
+
+def binarize_coo(coo):
+    '''
+    Returns a copy of a coo matrix whose nonzero
+    entries have been mapped to 1
+    '''
+    i, j, d = sp.find(coo)
+    d = np.ones(d.shape)
+    return sp.coo_matrix((d,(i,j)),shape=coo.shape)
+
 
 def term_min_doc_filter(bow, vocab, threshold):
     '''
     Filters out terms which appear in fewer than ${threshold} 
     documents
+
+    Expects the bow matrix in coo format
     '''
 
-    #i, j, d = sp.find(bow)
-    #binarize
-    #d = np.ones(d.shape)
-    #bow_copy = coo_matrix((d,(i,j)),shape=bow.shape)
-    print "copying..."
-    bow_copy = np.copy(bow)
-    bow_copy[np.nonzero(bow)] = 1
-    print "done"
+    bin_bow = binarize_coo(bow)
 
-    word_counts = bow.sum(0)
+    #sp version of sum keeps dimension of original array
+    word_counts = bin_bow.sum(0)
 
-    to_remove = np.where( word_counts < threshold )[0]
+    #since the sum array has 2 indices, we want the column one in this case
+    to_remove = np.where( word_counts < threshold )[1]
 
     return remove_indices_from_bow(bow, vocab, to_remove, 1)
+
 
 def document_min_length_filter(bow, tags, threshold):
     '''Removing documents with fewer than threshold terms'''
 
-    #scipy version of ravel can be buggy
+    #sp version of sum keeps dimension of original array
     doc_counts = bow.sum(1)
 
+    #since the sum array has 2 indices, we want the row one in this case
     to_remove = np.where(doc_counts < threshold)[0]
 
     return remove_indices_from_bow(bow, tags, to_remove, 0)
@@ -269,15 +340,18 @@ def parse(email_list, email_tags,
   print "Generating data matrix..."
   bow = map_tokens_to_bow(cleaned_emails, vocab)
 
-  if dynamic_stopword_thr > 0:
-    print "Filtering out common terms..."
-    bow, vocab = dynamic_stopword_filter(bow, vocab,
-                      dynamic_stopword_thr)
+  print "Initial data matrix shape"
+  print bow.shape
 
   if term_min_doc_thr > 0:
     print "Filtering out uncommon terms..."  
     bow, vocab = term_min_doc_filter(bow, vocab, 
                       term_min_doc_thr)
+
+  if dynamic_stopword_thr > 0:
+    print "Filtering out common terms..."
+    bow, vocab = dynamic_stopword_filter(bow, vocab,
+                      dynamic_stopword_thr)
 
   if doc_min_len_thr > 0:
     print "Filtering out small documents..."
@@ -288,6 +362,7 @@ def parse(email_list, email_tags,
   print filtered_bow.shape
 
   return bow, filtered_bow, email_tags, filtered_email_tags, vocab
+
 
 def save_all(bow_matrix, email_tags, vocabulary, output_prefix,
    filtered_email_tags=None, filtered_bow=None):
@@ -303,10 +378,11 @@ def save_all(bow_matrix, email_tags, vocabulary, output_prefix,
                            email_io.vocab_filename(output_prefix))
 
   print "Saving data matrix..."
-  email_io.save_bow_as_dense(filtered_bow, 
-                             email_io.mat_filename(output_prefix))
-  email_io.save_bow_as_dense(bow_matrix, 
-                             email_io.mat_filename(output_prefix + "_full"))
+  email_io.save_bow(filtered_bow, 
+                     email_io.mat_filename(output_prefix))
+  email_io.save_bow(bow_matrix, 
+                     email_io.mat_filename(output_prefix + "_full"))
+
 
 def parse_and_save_all(email_text_lines, email_tags, output_prefix,
   min_word_count=-1, dynamic_stopword_thr=-1, term_min_doc_thr=-1, doc_min_len_thr=-1):

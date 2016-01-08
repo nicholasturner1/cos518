@@ -86,7 +86,7 @@ def add_new_emails(email_texts, other_bow, vocab_index, model_obj):
     bow matrix
     '''
     
-    email_bow = ep.map_text_to_bow(email_text, vocab_index=vocab_index)
+    email_bow = ep.map_text_to_bow(email_text, vocab_index=vocab_index, dense=True)
 
     new_model = update_model(email_bow, model_obj)
 
