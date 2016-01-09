@@ -9,7 +9,6 @@ from ttk import *
 from Tkinter import *
 import tkFont
 import ttk
-import Tkinter as ttttk
 import email as em
 import imaplib
 import pickle
@@ -32,38 +31,17 @@ from Dialog import Dialog
 import time
 
 
-buffer_size = 1024
-buffer_time = 0.01
+buffer_size = 5000
+buffer_time = 0.05
 
-#import social as soc
-tk = Tk()
-wait_time = 5
+wait_time = 50
 Active_Thread = []
 
+
 ################################################################################################
-#write to disk
-class disk_writer(threading.Thread):
-    def __init__(self):
-        threading.Thread.__init__(self)
-        self.buffer = ''
-        self.time = time.clock()
-    
-    
-    def run(self):
-        
-        if len(self.buffer) > buffer_size or time.clock() - self.time > buffer_time:
-            
-            log_file = open(real_path + '/log_file/log', 'w')
-            log_file.write(self.buffer)
-            log_file.close()
-            buffer = ''
-            self.time = time.clock()
-        
-        tk.after(1000, self.run, )
+#CONSTANTS
 
-
-_disk_writer = disk_writer()
-_disk_writer.start()
+NUM_TOPICS_PER_EMAIL = 3
 
 ################################################################################################
 #route
@@ -72,7 +50,32 @@ real_path = os.path.dirname(os.path.realpath(__file__))
 save_file = os.path.dirname(os.path.realpath(__file__)) + '/saved_file/saved_file'
 log_file = os.path.dirname(os.path.realpath(__file__)) + '/log_file/server_log'
 temp_save_file= os.path.dirname(os.path.realpath(__file__)) + '/saved_file/temp_saved_file'
-                                
+################################################################################################
+#write to disk
+class disk_writer(threading.Thread):
+    def __init__(self):
+        threading.Thread.__init__(self)
+        self.buffer = ''
+        self.time = time.clock()
+        self.log_file = open(real_path + '/log_file/log', 'w')
+    
+    def run(self):
+        
+        if len(self.buffer) > buffer_size or time.clock() - self.time > buffer_time:
+
+            log_file = open(real_path + '/log_file/log', 'w')
+            log_file.write(self.buffer)
+            log_file.close()
+            buffer = ''
+            self.time = time.clock()
+
+#tk.after(1000, self.run, )
+
+
+_disk_writer = disk_writer()
+
+
+
 ################################################################################################
 #font
 num_directory_words = 35
@@ -89,8 +92,6 @@ left_option_font = ('Krungthep', 15)
 option_one_font = ('Copperplate', 14)
 search_font = ('Futura', '14')
 
-font = tkFont.Font(family=directory_font[0], size=directory_font[1])
-(real_wid,real_height) = (font.measure("a"),font.metrics("linespace"))
 
 ################################################################################################
 #color
@@ -579,7 +580,7 @@ class test_frame(Frame):
         
         if self._pop_up_delete.delete:
             for temp_directory in self.temp_directory:
-                _delete(directory, temp_directory)
+                _delete(directory, temp_directory, self.unsorted_email_folder)
                 #self._remove(temp_directory, directory)
                 _remove(temp_directory, self.search_directory)
     #self.load_directory()
@@ -863,6 +864,8 @@ class test_frame(Frame):
             print file
             self.reconstruct(file, _info_session)
             os.remove(file)
+        _info_session.destory()
+        self.loading = False
     #return
     
     def reconstruct(self, file, _info_session):
@@ -872,7 +875,7 @@ class test_frame(Frame):
         count = 0
         for line in lines:
             count = count + 1
-            _info_session.new_message = "Loading from server...line " + str(count) + "(out of" + str(len(line)) + ")"
+            _info_session.new_message = "Loading from server...line " + str(count) + "(out of" + str(len(lines)) + ")"
             instruction, child, target = self._parse_log(line)
             child_id = child[0]
             child_code = child[1]
@@ -895,8 +898,8 @@ class test_frame(Frame):
             except:
                 self._inconsistent(line)
                 #return
-            
-        _info_session.destory()
+        
+
 
 
     def _parse_log(self, line):
@@ -1045,18 +1048,18 @@ def reconstruct_topic(root, inode_map, ext2, _info_session, unsorted_email_folde
 ##########################################################################################
 #Modification
 
-def _delete(root, inode):
-    thread.start_new_thread(_delete_thread, ( root, inode,))
+def _delete(root, inode, unsorted_email_folder):
+    thread.start_new_thread(_delete_thread, ( root, inode, unsorted_email_folder, ))
 
-def _delete_thread(root, inode):
+def _delete_thread(root, inode, unsorted_email_folder):
     _remove(inode, root)
     while len(inode.children):
         child = inode.children[0]
-        _delete_thread(inode, child)
+        _delete_thread(inode, child, unsorted_email_folder)
         
     if (not inode.parents):
         if inode.type == "email" :
-            _add(inode, self.unsorted_email_folder)
+            _add(inode, unsorted_email_folder)
             inode.children = []
         else:
             try:
@@ -1076,6 +1079,7 @@ def _remove(child, parent):
         #print "d " + str(child.id) + "," + str(parent.id)
         
     _disk_writer.buffer =  _disk_writer.buffer + "d:" + str(child.id)+ '#' + str(child.code)  + ":" + str(parent.id) +  '#' + str(parent.code)+ '\n'
+    _disk_writer.run()
 
 def _direct_add(child, parent):
     parent.children.append(child)
@@ -1094,7 +1098,7 @@ def _add( child, parent):
         pass
     child.parents.insert(0, parent)
     _disk_writer.buffer =  _disk_writer.buffer + "a:" + str(child.id)+ '#' + str(child.code)  + ":" + str(parent.id) +  '#' + str(parent.code)+ '\n'
-
+    _disk_writer.run()
 
 ##########################################################################################
 #thread for consistent load, save
@@ -1222,45 +1226,47 @@ def consistent_load_thread(_root):
 
 def load_gmail_inbox_thread(_root, _thread, _info_session ):
 
-    children = []
+    #building foundation inode structure
+    #root inode
     root = _root.root
+
     topic_view = inode(parents = [root], children = children, type = "sub_root", name = "Topic Folder", id = 'rt')
     social_view = inode(parents = [root], type = "sub_root", name = "Social Folder", children = [], id = 'rs')
-    social_view.children = []
     unsorted_email_folder = inode(parents = [root], children = [], type = "sub_root", name = "Unsorted Folder", id = 'ru')
-    unsorted_email_folder.children = []
+    
     _root.root.children = [topic_view, social_view, unsorted_email_folder]
     _root.topic_folder = topic_view
     _root.social_folder = social_view
     _root.unsorted_email_folder = unsorted_email_folder
+
+    #not sure what this data structure accomplishes yet
+    # seems like a dict containing all nodes
     _root.inode_map = {}
     _root.inode_map[root.id] = root
     _root.inode_map[topic_view.id] = topic_view
     _root.inode_map[social_view.id] = social_view
     _root.inode_map[unsorted_email_folder.id] = unsorted_email_folder
     
-    
+    #or these 
     _root.directory = root
     _root.temp_directory = []
     _root.directory_stack = [root]
     
-    #run the processing on given gmail inbox
-    #os.system("./parse_gmails.py -input_filename ./gmail1_dummy.mbox -min_word_count 10 ./model_results/gmail_test_")
-        
     #load matrices and vocab from files
     topic_x_word = eio.load_topic_x_word('./model_results/gmail1_LDA_topic_x_word_30.npy', 30)
-    ext = eio.load_email_x_topic('./model_results/gmail1_LDA_email_x_topic_49590.npy', 49590)
+    email_x_topic = eio.load_email_x_topic('./model_results/gmail1_LDA_email_x_topic_49590.npy', 49590)
         
     #initialize sub_root node data
-    topic_view.email_x_group = ext
+    topic_view.email_x_group = email_x_topic
     topic_view.group_x_individual = topic_x_word
         
     word_lists = email_lda.print_top_n_words(topic_x_word, './data/gmail1_vocab.csv', 10)
     tag_dicts = eio.load_tags('./data/gmail1_dummy_tags.csv')
-    e_x_sorted_topic = di.assign_emails(ext, 3)
+    e_x_sorted_topic = di.assign_emails(email_x_topic, NUM_TOPICS_PER_EMAIL)
 
     
-    
+    num_topics = topic_x_word.shape[0]
+    num_emails = email_x_topic.shape[0]
 
     #load mailbox file
     _info_session.new_message = "Openining Inbox..."
@@ -1268,11 +1274,17 @@ def load_gmail_inbox_thread(_root, _thread, _info_session ):
     k = 0
     count = 0
     step = 1
-    for i in range(len(word_lists)):
+    for i in range( num_topics ):
         
         name_name =  ', '.join(map(str,word_lists[i]))
         #print name_name
-        temp_directory = inode(parents = [root], children = [], name =  'Topic: ' + str(i), description = name_name, type = "directory", id = 't' + str(i))
+        temp_directory = inode(parents = [root], 
+                               children = [], 
+                               name =  'Topic: ' + str(i), 
+                               description = name_name,
+                               type = "directory", 
+                               id = 't' + str(i))
+
         temp_directory.children = []
         children.append(temp_directory)
         _root.inode_map[temp_directory.id] = temp_directory
@@ -1280,7 +1292,7 @@ def load_gmail_inbox_thread(_root, _thread, _info_session ):
         cur_topic_emails = []
             
         #Find email indice that belong in selected topic
-        for j in range(len(e_x_sorted_topic)):
+        for j in range( num_emails ):
             if i in e_x_sorted_topic[j]:
                 cur_topic_emails.append(j)
         
@@ -1307,7 +1319,7 @@ def load_gmail_inbox_thread(_root, _thread, _info_session ):
                 try:
                     email_subject = _root.inode_map['e' + str(mail_idx)]
                 except:
-                    email_subject = inode(parents = [], name = name_name, description = tag, email_directory = [], type = "email", children = [], email = _email, vec = ext[mail_idx], id = 'e' + str(mail_idx))
+                    email_subject = inode(parents = [], name = name_name, description = tag, email_directory = [], type = "email", children = [], email = _email, vec = email_x_topic[mail_idx], id = 'e' + str(mail_idx))
                 
                 
                 _root.inode_map[email_subject.id] = email_subject
@@ -2004,6 +2016,10 @@ def load_email_thread(tf, root, children):
     tf.loading = False
 
 if __name__ == '__main__':
+
+    tk = Tk()
+    font = tkFont.Font(family=directory_font[0], size=directory_font[1])
+    (real_wid,real_height) = (font.measure("a"),font.metrics("linespace"))
 
     #eh = event_handler(tk)
     root = inode( type = "root", name = "ROOT", id = 'R')

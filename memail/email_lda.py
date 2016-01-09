@@ -13,11 +13,11 @@ import argparse
 #Training Functions
 
 
-def train_model(data_filename, num_emails, num_topics=10, num_passes=1,
+def train_model(data_filename, num_topics=10, num_passes=1,
     topic_x_word=True, email_x_topic=True, binarize=False):
 
     print "Loading data..."
-    data = eio.load_bow_as_dense(data_filename, num_emails)
+    data = eio.load_bow(data_filename)
 
     if binarize:
         data[np.nonzero(data)] = 1
@@ -46,10 +46,10 @@ def train_model(data_filename, num_emails, num_topics=10, num_passes=1,
         return model
 
 
-def run_inference_over_file(data_filename, num_emails, model_filename):
+def run_inference_over_file(data_filename, model_filename):
 
     print "Loading data..."
-    data = eio.load_bow_as_dense(data_filename, num_emails)
+    data = eio.load_bow(data_filename)
 
     #Converting to gensim corpus
     corpus = gensim.matutils.Dense2Corpus(data, documents_columns=False)
@@ -128,22 +128,31 @@ def print_top_n_people( social_x_sender_matrix, sender_name_array, num_people=10
             
     return top_sender_lists
 
+def output_filenames( output_prefix, num_emails, num_topics ):
+    return {
+        'email_x_topic': output_prefix + "_LDA_email_x_topic_%d.npy" % num_emails,
+        'topic_x_word' : output_prefix + "_LDA_topic_x_word_%d.npy"  % num_topics,
+        'model'        : output_prefix + "_LDA_model"
+        }
+
 #=====================================================================
 #Script functionality
 
-def main( data_filename, num_emails, num_topics, num_passes, output_prefix ):
+def main( data_filename, num_topics, num_passes, output_prefix ):
 
-    model, ext, txw = train_model( data_filename, num_emails, 
-                                   num_topics, num_passes, True, True )
+    model, ext, txw = train_model( data_filename, num_topics, 
+                                   num_passes, True, True )
 
     #Adding the number of rows to each saved result file
     # to assist in reading
-    ext_suffix = str( ext.shape[0] )
-    txw_suffix = str( txw.shape[0] )
+    num_emails = ext.shape[0]
+    num_topics = txw.shape[0]
 
-    ext.tofile( output_prefix + "_LDA_email_x_topic_%s.npy" % ext_suffix)
-    txw.tofile( output_prefix + "_LDA_topic_x_word_%s.npy" % txw_suffix)
-    model.save( output_prefix + "_LDA_model")
+    filenames = output_filenames( output_prefix, num_emails, num_topics )
+
+    ext.tofile( filenames['email_x_topic'] )
+    txw.tofile( filenames['topic_x_word']  )
+    model.save( filenames['model'] )
 
 if __name__ == '__main__':
    
@@ -152,9 +161,6 @@ if __name__ == '__main__':
     parser.add_argument('data_filename',
         default='data/14453.npy',
         help="Name of data file")
-    parser.add_argument('num_emails',
-        type=int, default=14453,
-        help="Number of emails contained within data file")
     parser.add_argument('-num_topics',
         type=int, default=15,
         help="Number of topics to fit")
@@ -168,7 +174,6 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     main(args.data_filename,
-         args.num_emails,
          args.num_topics,
          args.num_passes,
          args.output_prefix)

@@ -22,6 +22,7 @@ Does the same for the bag-of-words matrix
 '''
 
 import re
+import constants
 import email_io
 
 #Dependencies
@@ -29,7 +30,9 @@ import numpy as np
 import scipy.sparse as sp
 
 import nltk
-nltk.data.path.append('./nltk_data')
+
+#Allowing nltk to see data
+nltk.data.path.append( constants.memail_directory + '/nltk_data' )
 
 #=============================================
 #Contants
@@ -363,26 +366,36 @@ def parse(email_list, email_tags,
 
   return bow, filtered_bow, email_tags, filtered_email_tags, vocab
 
+def output_filenames( output_prefix ):
+    '''
+    Returns the filenames to which files are saved given an
+    output prefix. Used for gluing saving files below, and glue
+    scripts (see prepare_memail.py)
+    '''
+    return { 
+      'email_tags':         email_io.tag_filename(output_prefix),
+      'full email_tags':    email_io.tag_filename(output_prefix + "_full"),
+      'vocabulary':         email_io.vocab_filename(output_prefix),
+      'bag_of_words':       email_io.mat_filename(output_prefix),
+      'full bag_of_words' : email_io.mat_filename(output_prefix + "_full")
+      }
 
 def save_all(bow_matrix, email_tags, vocabulary, output_prefix,
    filtered_email_tags=None, filtered_bow=None):
+  '''Saves the results of parsing to files'''
+
+  filenames = output_filenames(output_prefix)
 
   print "Saving tagged fields..."
-  email_io.save_email_tags(filtered_email_tags, 
-                           email_io.tag_filename(output_prefix))
-  email_io.save_email_tags(email_tags, 
-                           email_io.tag_filename(output_prefix + "_full"))
-
+  email_io.save_email_tags(filtered_email_tags, filenames['email_tags'])
+  email_io.save_email_tags(email_tags, filenames['full email_tags'])
+ 
   print "Saving vocabulary..."
-  email_io.save_vocabulary(vocabulary, 
-                           email_io.vocab_filename(output_prefix))
+  email_io.save_vocabulary(vocabulary, filenames['vocabulary'])
 
   print "Saving data matrix..."
-  email_io.save_bow(filtered_bow, 
-                     email_io.mat_filename(output_prefix))
-  email_io.save_bow(bow_matrix, 
-                     email_io.mat_filename(output_prefix + "_full"))
-
+  email_io.save_bow(filtered_bow, filenames['bag_of_words'])
+  email_io.save_bow(bow_matrix, filenames['full bag_of_words'])
 
 def parse_and_save_all(email_text_lines, email_tags, output_prefix,
   min_word_count=-1, dynamic_stopword_thr=-1, term_min_doc_thr=-1, doc_min_len_thr=-1):

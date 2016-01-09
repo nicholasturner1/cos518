@@ -49,6 +49,9 @@ def open_mbox(input_filename):
     '''Serves both reading and writing'''
     return mailbox.mbox(input_filename)
 
+def num_emails(input_filename):
+    '''Returns the number of emails in an mbox file'''
+    return len( open_mbox(input_filename) )
 
 def filter_sensitive_emails(mbox):
     '''

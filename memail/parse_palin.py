@@ -72,7 +72,7 @@ def print_email_rep(bow_filename, vocab_filename, num_emails, email_num):
 #=============================================
 #Preprocessing 
 
-def get_email_tags(email_lines, email_filename, tags_fields=tags):
+def get_email_tags(email_lines, email_filename, tag_fields=email_tags):
     '''
     Extracts the lines of the email which match a certain
     tag, and will only return the first matching line
@@ -80,7 +80,7 @@ def get_email_tags(email_lines, email_filename, tags_fields=tags):
 
     split_lines = [line.split(':') for line in email_lines]
 
-    fields = {key: "" for key in tags}
+    fields = {key: "" for key in tag_fields}
 
     fields['filename'] = email_filename
 
@@ -102,9 +102,9 @@ def get_email_tags(email_lines, email_filename, tags_fields=tags):
 
     return fields
 
-def get_all_email_tags(emails, email_filenames, tag_fields=tags):
+def get_all_email_tags(emails, email_filenames, tag_fields=email_tags):
   '''Loops get_email_tags over a list of email line-lists and filenames'''
-  return [get_email_tags(emails[i], email_filenames[i], tags) 
+  return [get_email_tags(emails[i], email_filenames[i], tag_fields) 
     for i in range(len(emails))]
 
 def remove_junk_lines(emails):
