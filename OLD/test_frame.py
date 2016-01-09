@@ -35,6 +35,7 @@ import model_interface as mi
 import parse_gmails as pg
 import mailbox
 import social as soc
+from Dialog import Dialog
 #import social as soc
 tk = Tk()
 
@@ -44,6 +45,7 @@ tk = Tk()
 TYPE = ["root", "email", "directory", "unknown", "sub_root"]
 real_path = os.path.dirname(os.path.realpath(__file__))
 save_file = os.path.dirname(os.path.realpath(__file__)) + '/saved_file/saved_file'
+log_file = os.path.dirname(os.path.realpath(__file__)) + '/log_file/server_log'
 temp_save_file= os.path.dirname(os.path.realpath(__file__)) + '/saved_file/temp_saved_file'
                                 
 ################################################################################################
@@ -348,7 +350,7 @@ class test_frame(Frame):
         new_directory  = self.unsorted_email_folder
         self.directory_stack = [self.root, new_directory]
         self.directory = new_directory
-        self.temp_directory = new_directory
+        self.temp_directory = [new_directory]
         self.change_current_location()
         self.load_directory()
 
@@ -356,7 +358,7 @@ class test_frame(Frame):
         new_directory  = self.social_folder
         self.directory_stack = [self.root, new_directory]
         self.directory = new_directory
-        self.temp_directory = new_directory
+        self.temp_directory = [new_directory]
         self.change_current_location()
         self.load_directory()
         
@@ -364,7 +366,7 @@ class test_frame(Frame):
         new_directory  = self.topic_folder
         self.directory_stack = [self.root, new_directory]
         self.directory = new_directory
-        self.temp_directory = new_directory
+        self.temp_directory = [new_directory]
         self.change_current_location()
         self.load_directory()
 
@@ -583,7 +585,8 @@ class test_frame(Frame):
         self._pop_up_rename = pop_up_rename(self.master)
         self.master.wait_window(self._pop_up_rename.top)
         new_name = self._pop_up_rename.name
-        
+        new_name = new_name.replace('#', '')
+        new_name = new_name.replace(':', '')
         if new_name:
             change_text_field(temp_frame.line_one, new_name)
             self._rename(temp_directory, new_name)
@@ -644,12 +647,13 @@ class test_frame(Frame):
     ##########################################################################################
     #modify inde
     def _rename(self, inode, name):
+        old_name = inode.name
         inode.name = name
         try:
             self.log_file.flush()
         except:
             self.log_file = open(real_path + '/log_file/log', 'w')
-        self.log_file.write("r:" + str(inode.id) + ":" + name + '\n')
+        self.log_file.write("r:" + str(inode.id) + '#' + str(inode.code) + ":" + name + '#' + old_name + '\n')
         self.log_file.flush()
 
     def _remove(self, child, parent):
@@ -669,7 +673,7 @@ class test_frame(Frame):
         except:
             self.log_file = open(real_path + '/log_file/log', 'w')
 
-        self.log_file.write("d:" + str(child.id) + ":" + str(parent.id) + '\n')
+        self.log_file.write("d:" + str(child.id)+ '#' + str(child.code)  + ":" + str(parent.id) +  '#' + str(parent.code)+ '\n')
         self.log_file.flush()
     def _add(self, child, parent):
         try:
@@ -686,7 +690,7 @@ class test_frame(Frame):
             self.log_file.flush()
         except:
             self.log_file = open(real_path + '/log_file/log', 'w')
-        self.log_file.write("a:" + str(child.id) + ":" + str(parent.id) + '\n')
+        self.log_file.write("a:"+ str(child.id)+ '#' + str(child.code)  + ":" + str(parent.id) +  '#' + str(parent.code)+ '\n')
         self.log_file.flush()
 #print "a " + str(child.id) + "," + str(parent.id)
 
@@ -757,17 +761,34 @@ class test_frame(Frame):
         if self.loading:
             tkMessageBox.showinfo("Still Loading...", "Please wait loading to finish before saving...")
         else:
-            thread.start_new_thread(save_thread, (self.root, ))
+            ans = Dialog(self,title   = 'Options',text    = 'Save to local or server?', bitmap  = 'questhead', default = 0, strings = ('Local', 'Server', 'Cancel'))
+            if ans.num == 0:
+                thread.start_new_thread(save_thread, (self, ))
+            if ans.num == 1:
+                thread.start_new_thread(save_server, (self, ))
     
     #load
     def load(self):
-        self.loading = True
-        thread.start_new_thread ( load_thread, (self,))
+        ans = Dialog(self,title   = 'Options',text    = 'Load from local or server?', bitmap  = 'questhead', default = 0, strings = ('Local', 'Server', 'Cancel'))
+        if ans.num == 0:
+            self.loading = True
+            thread.start_new_thread ( load_thread, (self,))
+        if ans.num == 1:
+            self.loading = True
+            thread.start_new_thread ( self.reconstruct_thread, ())
+    
+    
 
 
     def consistent_load(self, event):
-        self.loading = True
-        thread.start_new_thread ( load_thread, (self,))
+        ans = Dialog(self,title   = 'Options',text    = 'Load from local or server?', bitmap  = 'questhead', default = 0, strings = ('Local', 'Server', 'Cancel'))
+        if ans.num == 0:
+            self.loading = True
+            lgi = _load_email_(self, "local_email")
+            lgi.start()
+        if ans.num == 1:
+            self.loading = True
+            thread.start_new_thread ( self.reconstruct_thread, ( ))
 
     def consistent_load2(self, event):
         all_files = glob.glob(save_file + '*')
@@ -784,7 +805,7 @@ class test_frame(Frame):
                     return
             self.root = root
             self.directory = root
-            self.temp_directory = root
+            self.temp_directory = [root]
             self.temp_frame = []
             self.directory_stack = [root]
             self.topic_folder = root.children[0]
@@ -804,38 +825,52 @@ class test_frame(Frame):
     def reconstruct_event(self, event):
         self.reconstruct('log2')
 
+    def reconstruct_thread(self):
+        all_files = glob.glob(log_file + '*')
+        all_files = sorted(all_files, key=lambda x: x.lower(), reverse=False)
+        for file in all_files:
+            print file
+            self.reconstruct(file)
+            os.remove(file)
+    #return
+    
     def reconstruct(self, file):
-        log_file = open(real_path + '/log_file/' + file)
+        log_file = open(file)
         lines = log_file.readlines()
         log_file.close()
         for line in lines:
-            instruction, child_id, target = self._parse_log(line)
+            instruction, child, target = self._parse_log(line)
+            child_id = child[0]
+            child_code = child[1]
+            target_id = target[0]
+            target_code = target[1]
             try:
                 inode = self.inode_map[str(child_id)]
+                if instruction == 'r':
+                    self._rename(inode, target_id)
+                else:
+                    try:
+                        parent = self.inode_map[str(target_id)]
+                    except:
+                        self._inconsistent(line)
+                #return
+                    if instruction == 'a':
+                        self._add(inode, parent)
+                    if instruction == 'd':
+                        self._remove(inode, parent)
             except:
                 self._inconsistent(line)
-                return
+                #return
+            
 
-            if instruction == 'r':
-                self._rename(inode, target)
-            else:
-                try:
-                    parent = self.inode_map[str(target)]
-                except:
-                    self._inconsistent(line)
-                    return
-                if instruction == 'a':
-                    self._add(inode, parent)
-                if instruction == 'd':
-                    self._remove(inode, parent)
 
 
     def _parse_log(self, line):
         result = line.split(':')
         instruction = result[0]
-        child_id = result[1]
-        target = result[2].replace('\n', '')
-        return instruction, child_id, target
+        child = result[1].split('#')
+        target = result[2].replace('\n', '').split('#')
+        return instruction, child, target
 
     def _inconsistent(self, id):
         #print self.inode_map
@@ -907,14 +942,14 @@ class test_frame(Frame):
                     except:
                         x = 0
                                                                   
-        self.temp_directory = self.topic_folder
+        self.temp_directory = [self.topic_folder]
         self.load_directory
 
 
     def reconstruct_social(self, ext2, descriptions):
-        while self.social_folder.children:
-            self._delete(self.social_folder.children[0], self.social_folder)
-        
+        #while self.social_folder.children:
+        #   self._delete(self.social_folder.children[0], self.social_folder)
+        self.social_folder.children = []
         e_x_sorted_topic = di.assign_emails(ext2, 3)
         
         
@@ -936,14 +971,31 @@ class test_frame(Frame):
                     except:
                         x = 0
     
-        self.temp_directory = self.social_folder
+        self.temp_directory = [self.social_folder]
         self.load_directory
 
 
 ##########################################################################################
 #thread for consistent load, save
 
-def save_thread(_root):
+def save_server(master):
+    time = strftime("_%Y_%m_%d_%H_%M_%S", gmtime())
+    print time
+    master.log_file.close()
+    temp_file_name = real_path + '/log_file/' + 'log'
+    file_name = real_path + '/log_file/' + 'server_log' + time
+    try:
+        os.rename(temp_file_name, file_name)
+    except:
+        return
+    ans = Dialog(master,title   = 'Saved',text = 'Successfully saved to server! File name: ' + file_name, bitmap  = 'questhead', default = 0, strings = ('Ok', 'Good'))
+
+
+def save_thread(master):
+    _root = master.root
+    info = load_info_frame(master)
+    info.grid(row = 1, column = 7, sticky = EW)
+    info._label.configure(text = "Saving to local")
     #go over inodes and write it to file.
     time = strftime("_%Y_%m_%d_%H_%M_%S", gmtime())
     print time
@@ -978,10 +1030,12 @@ def save_thread(_root):
     pickle.dump(inode_set, f)
     f.close()
     os.rename(temp_file_name, file_name)
-    tkMessageBox.showinfo("Save To File", "Saved")
+    info.grid_forget()
+    ans = Dialog(master,title   = 'Saved',text    = 'Successfully saved to local! File name: ' + file_name, bitmap  = 'questhead', default = 0, strings = ('Ok', 'Good!'))
 
 
 def load_thread(_root):
+    
     all_files = glob.glob(save_file + '*')
     all_files = sorted(all_files, key=lambda x: x.lower(), reverse=True)
     
@@ -1002,7 +1056,7 @@ def load_thread(_root):
 
         _root.root = root
         _root.directory = root
-        _root.temp_directory = root
+        _root.temp_directory = [root]
         _root.temp_frame = []
         _root.directory_stack = [root]
         _root.topic_folder = root.children[0]
@@ -1012,7 +1066,7 @@ def load_thread(_root):
     
     _root.load_directory()
     info._label.configure(text = "Training Social Model...")
-    _root.social_training()
+    #_root.social_training()
     info.grid_forget()
     _root.loading = False
 
@@ -1035,7 +1089,7 @@ def consistent_load_thread(_root):
         
         _root.root = root
         _root.directory = root
-        _root.temp_directory = root
+        _root.temp_directory = [root]
         _root.temp_frame = []
         _root.directory_stack = [root]
         _root.topic_folder = root.children[0]
@@ -1090,11 +1144,11 @@ def load_gmail_inbox_thread(_root, _thread):
 
     
     
-    pb_hD = ttk.Progressbar(_root, orient='horizontal', mode='determinate', length = real_wid*40)
-    pb_hD.grid(row = 4, column = 1, columnspan = all_column, sticky = EW)
-    info = load_info_frame(_root)
-    info._label.configure(text = "Opening Gmail Box...")
-    info.grid(row = 1, column = 7, sticky = EW)
+    #pb_hD = ttk.Progressbar(_root, orient='horizontal', mode='determinate', length = real_wid*40)
+    #pb_hD.grid(row = 4, column = 1, columnspan = all_column, sticky = EW)
+    #info = load_info_frame(_root)
+    #info._label.configure(text = "Opening Gmail Box...")
+    #info.grid(row = 1, column = 7, sticky = EW)
     #load mailbox file
     mbox = mailbox.mbox('./data/gmail1_dummy.mbox')
 
@@ -1124,10 +1178,11 @@ def load_gmail_inbox_thread(_root, _thread):
             
             
         for mail_idx in cur_topic_emails:
+            print mail_idx
             if mail_idx < 10000:
-                if not _thread.run:
-                    pb_hD.grid_forget()
-                    info.grid_forget()
+                if not _thread._run:
+                    #pb_hD.grid_forget()
+                    #info.grid_forget()
                     return
                 
                 
@@ -1152,19 +1207,19 @@ def load_gmail_inbox_thread(_root, _thread):
 
             k = k + 1
             if (k * 100)/len(cur_topic_emails) > count:
-                pb_hD.value = 10
-                pb_hD.step(step)
-                info._label.configure(text = "Loading Gmail: " + str(i) + "-th topic (out of " + str(len(word_lists)) +  ")..." + str(count) + "%")
-                _root.update()
+                #pb_hD.value = 10
+                #pb_hD.step(step)
+                #info._label.configure(text = "Loading Gmail: " + str(i) + "-th topic (out of " + str(len(word_lists)) +  ")..." + str(count) + "%")
+                #_root.update()
                 count = count + step
 
         temp_directory.children = emails
 
 
-    pb_hD.grid_forget()
-    info._label.configure(text = "Training Social Model...")
-    _root.social_training()
-    info.grid_forget()
+    #pb_hD.grid_forget()
+    #info._label.configure(text = "Training Social Model...")
+    #_root.social_training()
+    #info.grid_forget()
 
 
     _root.load_directory()
@@ -1182,6 +1237,8 @@ class _load_email_(threading.Thread):
         check_thread(self.ident, self.name)
         if self.method == "gmail":
             load_gmail_inbox_thread(self._root, self)
+        if self.method == "local_email":
+            load_thread(self._root)
 
 
 ##########################################################################################
@@ -1435,9 +1492,9 @@ class option_one_frame(Frame):
         option_8 = Label(self, text = "Load", bd = 0, bg = information_color, font = option_one_font)
         option_8.bind("<Button-1>", event_handler.consistent_load)
         option_8.grid(row = 1, column = 8, padx = pad_x, pady = pad_y)
-        option_11 = Label(self, text = "Recons", bd = 0, bg = information_color, font = option_one_font)
-        option_11.bind("<Button-1>", event_handler.reconstruct_event)
-        option_11.grid(row = 1, column = 10, padx = pad_x, pady = pad_y)
+        #option_11 = Label(self, text = "Recons", bd = 0, bg = information_color, font = option_one_font)
+        #option_11.bind("<Button-1>", event_handler.reconstruct_event)
+        #option_11.grid(row = 1, column = 10, padx = pad_x, pady = pad_y)
         option_12 = Label(self, text = "Retrain", bd = 0, bg = information_color, font = option_one_font)
         option_12.bind("<Button-1>", event_handler.user_feedback_event)
         option_12.grid(row = 1, column = 11, padx = pad_x, pady = pad_y)
@@ -1452,6 +1509,8 @@ class option_one_frame(Frame):
         option_10 = Label(self, text = "LoadGmail", bd = 0, bg = information_color, font = option_one_font)
         option_10.bind("<Button-1>", event_handler.load_gmail_inbox)
         option_10.grid(row = 1, column = 9, padx = pad_x, pady = pad_y)
+
+
 
 
 
@@ -1531,40 +1590,7 @@ class load_side_directory(threading.Thread):
     
         
     
-    def run(self):
-        check_thread(self.ident, self.name)
-        children = self.children
-        event_handler = self.event_handler
-        _root = self._root
-        if len(children) == 0:
-            _root.pb_hD.grid_forget()
-            _root.info.grid_forget()
-            return
-        i = 0
-        step = 100/len(children)
-        if step  == 0:
-            step = 1
-        count = 0
-        for child in children:
-            if not self._run:
-                _root.pb_hD.grid_forget()
-                _root.info.grid_forget()
-                return
-            _root.directory.append(directory_frame(_root.canvas, child, event_handler))
-            #self.directory[i].grid(row = (2*i + 1), column = 1, sticky = NW)
-            _root.canvas.create_window(0, _root._frame_height*i, anchor=NW, window=_root.directory[i])
-            #self.directory[i].pack(side = TOP)
-            _root.f = Frame(_root.canvas, width = _root._wid , height = 1, bg = separator_mid)
-            _root.canvas.create_window(0, _root._frame_height*(i + 1) - 1, anchor=NW, window=_root.f)
-            i = i + 1
-            if (i*100)/len(children) >= count:
-                _root.pb_hD.value = 10
-                _root.pb_hD.step(step)
-                _root.pb_hD.update_idletasks()
-                _root.info._label.configure(text = "Loading ..." + str(count) + "%")
-                count = count + step
-        _root.pb_hD.grid_forget()
-        _root.info.grid_forget()
+
 
 class top_directory_frame(Frame):
     #top = 0
@@ -1593,18 +1619,39 @@ class top_directory_frame(Frame):
         self.scroll_bar.pack(side=RIGHT,fill=Y)
         # scroll_bar.grid(row = 1, rowspan = 800, column = 2, sticky = NS)
         self.directory = []
+        self._run(children, event_handler)
 
         self.scroll_bar.config(command = self.canvas.yview)
         #self.canvas.config(width=wid,height=800)
         self.canvas.config(yscrollcommand=self.scroll_bar.set)
         self.canvas.pack(side=LEFT,expand=True,fill=BOTH)
-    
-    
+
     ################################################################################################
     #load
-    #thread.start_new_thread ( self.load, (children, event_handler ) )
-        load_sd = load_side_directory(children, event_handler, self)
-        load_sd.start()
+    
+    def _run(self, children, event_handler):
+        
+        #check_thread(self.ident, self.name)
+        if len(children) == 0:
+            return
+        i = 0
+        step = 100/len(children)
+        if step  == 0:
+            step = 1
+        count = 0
+        for child in children:
+            #if not self._run:
+            #    _root.pb_hD.grid_forget()
+            #    _root.info.grid_forget()
+            #    return
+            self.directory.append(directory_frame(self.canvas, child, event_handler))
+            #self.directory[i].grid(row = (2*i + 1), column = 1, sticky = NW)
+            self.canvas.create_window(0, self._frame_height*i, anchor=NW, window=self.directory[i])
+            #self.directory[i].pack(side = TOP)
+            self.f = Frame(self.canvas, width = self._wid , height = 1, bg = separator_mid)
+            self.canvas.create_window(0, self._frame_height*(i + 1) - 1, anchor=NW, window=self.f)
+            i = i + 1
+
 
     ################################################################################################
     
