@@ -1,0 +1,3 @@
+
+recursive-include memail/nltk_data *
+include memail/TESTS_model_interface.py

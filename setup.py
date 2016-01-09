@@ -8,6 +8,7 @@ setup(name='memail',
       author_email='nturner.stanford@gmail.com',
       license='MIT',
       packages=['memail'],
+
       install_requires=[
       'numpy',
       'scipy',
@@ -16,5 +17,8 @@ setup(name='memail',
       'sklearn',
       'pip-autoremove'
       ],
+
       scripts=[
-      'bin/uninstall-memail.sh'])
+      'memail/bin/uninstall-memail.sh'],
+
+       include_package_data=True)
