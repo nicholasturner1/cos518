@@ -1,16 +1,9 @@
 from dateutil.parser import parse as date_parser
-import nltk
 import thread
 import threading
-from nltk import word_tokenize
-from nltk.corpus import stopwords
-import parse_emails as pe
-import gensim
-import time as tttt
+import email_io as eio
 import numpy as np
-import argparse
 import disp_interface as di
-import scipy as sp
 from scipy import io
 from ttk import *
 from Tkinter import *
@@ -1255,15 +1248,15 @@ def load_gmail_inbox_thread(_root, _thread, _info_session ):
     #os.system("./parse_gmails.py -input_filename ./gmail1_dummy.mbox -min_word_count 10 ./model_results/gmail_test_")
         
     #load matrices and vocab from files
-    topic_x_word = pe.load_topic_x_word('./model_results/gmail1_LDA_topic_x_word_30.npy', 30)
-    ext = pe.load_email_x_topic('./model_results/gmail1_LDA_email_x_topic_49590.npy', 49590)
+    topic_x_word = eio.load_topic_x_word('./model_results/gmail1_LDA_topic_x_word_30.npy', 30)
+    ext = eio.load_email_x_topic('./model_results/gmail1_LDA_email_x_topic_49590.npy', 49590)
         
     #initialize sub_root node data
     topic_view.email_x_group = ext
     topic_view.group_x_individual = topic_x_word
         
     word_lists = email_lda.print_top_n_words(topic_x_word, './data/gmail1_vocab.csv', 10)
-    tag_dicts = pe.load_tags('./data/gmail1_dummy_tags.csv')
+    tag_dicts = eio.load_tags('./data/gmail1_dummy_tags.csv')
     e_x_sorted_topic = di.assign_emails(ext, 3)
 
     
@@ -1972,11 +1965,11 @@ class keywords_frame(Frame):
 
 def load_email_thread(tf, root, children):
     tf.loading = True
-    topic_x_word = pe.load_topic_x_word('./model_results/round3_LDA_topic_x_word_30.npy', 30)
+    topic_x_word = eio.load_topic_x_word('./model_results/round3_LDA_topic_x_word_30.npy', 30)
     word_lists = email_lda.print_top_n_words(topic_x_word, './data/round3_vocab.csv', 10)
-    ext = pe.load_email_x_topic('./model_results/round3_LDA_email_x_topic_FULL_14453.npy', 14453)
+    ext = eio.load_email_x_topic('./model_results/round3_LDA_email_x_topic_FULL_14453.npy', 14453)
     tf.topic_folder.ext = ext
-    tag_dicts = pe.load_tags('./data/round3_full_tags.csv')
+    tag_dicts = eio.load_tags('./data/round3_full_tags.csv')
     e_x_sorted_topic = di.assign_emails(ext, 3)
     for i in range(len(word_lists)):
         name_name =  ', '.join(map(str,word_lists[i]))

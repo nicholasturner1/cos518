@@ -156,7 +156,7 @@ if __name__ == '__main__':
         type=int, default=14453,
         help="Number of emails contained within data file")
     parser.add_argument('-num_topics',
-        type=int, default=10,
+        type=int, default=15,
         help="Number of topics to fit")
     parser.add_argument('-num_passes',
         type=int, default=1,
