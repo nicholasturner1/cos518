@@ -53,7 +53,7 @@ def num_emails(input_filename):
     '''Returns the number of emails in an mbox file'''
     return len( open_mbox(input_filename) )
 
-def filter_sensitive_emails(mbox):
+def filter_emails(mbox):
     '''
     Returns a list of mailbox messages which exclude
     the messages satisfying any criteria below
@@ -65,34 +65,13 @@ def filter_sensitive_emails(mbox):
     new_mbox = []
 
     for i in range(len(mbox)):
-        print "Email: # %d of %d" % (i, len(mbox))
+        print "Filtering Email: # %d of %d" % (i, len(mbox))
         message = mbox[i]
 
         if in_field("Chat",'X-Gmail-Labels',message):
             continue
 
         if in_field("Calendar",'From',message):
-            continue
-
-        if in_field("Niegocki",'From',message):
-            continue
-
-        if in_field("Niegocki",'To',message):
-            continue
-
-        if in_field("Smith",'To',message):
-            continue
-
-        if in_field("Smith",'From',message):
-            continue
-
-        if in_field("OkCupid",'From',message):
-            continue
-
-        if in_field("Hinge",'From',message):
-            continue
-
-        if in_field("POF",'From',message):
             continue
 
         if in_field("html",'Content-Type',message):
@@ -196,8 +175,8 @@ def main(input_filename, output_prefix, min_word_count=-1, dynamic_stop_thr=-1,
     print "Creating original mailbox..." 
     mbox = open_mbox(input_filename)
 
-    #print "Filtering sensitive emails..."
-    #mbox = filter_sensitive_emails(mbox)
+    print "Filtering emails..."
+    mbox = filter_emails(mbox)
 
     print "Extracting Email tags..."
     tags = extract_all_email_tags(mbox)

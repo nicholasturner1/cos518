@@ -67,7 +67,7 @@ def tokenize_and_count(emails):
     res_emails = []
 
     for i in range(len(emails)):
-      print "Email: # %d of %d" % (i+1, len(emails))
+      print "Tokenizing Email: # %d of %d" % (i+1, len(emails))
 
       tokens = process_email_tokens( emails[i] )
 
