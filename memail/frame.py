@@ -25,6 +25,7 @@ from multiprocessing.pool import ThreadPool
 import random
 import model_interface as mi
 import parse_gmails as pg
+import email_parser as ep
 import mailbox
 import social as soc
 from Dialog import Dialog
@@ -348,13 +349,20 @@ class test_frame(Frame):
             if not child.email:
                 child.email = self.read_email_text(child.email_directory)
 
-        
-        dropdown = 0
+        dropdown = 2
         #sort emails based on dropdown
         if dropdown == 0: #sort by date
             sorted_children = sorted(children, key=lambda x: str(x.email['date']).lower(), reverse=True)
+
         elif dropdown == 1: #sort by subject
             sorted_children = sorted(children, key=lambda x: x.email['title'].lower(), reverse=False)
+
+        elif dropdown == 2: #sort by topic proportion
+	    topic_directories = self.directory.parents[0].children
+	    topic_index = [i for i in range(len(topic_directories)) 
+			     if topic_directories[i] == self.directory][0] 
+
+            sorted_children = sorted(children, key=lambda x: x.vec[topic_index], reverse=True)
         else:
             sorted_children = children
 
@@ -1169,6 +1177,7 @@ def save_inode_tree(_root):
 
 def load_thread(_root, _info_session):
     
+    
     all_files = glob.glob(save_file + '*')
     all_files = sorted(all_files, key=lambda x: x.lower(), reverse=True)
     
@@ -1197,6 +1206,7 @@ def load_thread(_root, _info_session):
     #root.children.append(self.unsorted_email_folder)
 
     #_info_session.new_message = "Training Social Model..."
+
     _root.social_training()
     #_info_session.destory()
     _root.loading = False

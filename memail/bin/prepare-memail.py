@@ -6,11 +6,10 @@ from memail import email_lda
 from memail import frame
 from memail import constants
 from memail import email_parser
+from memail import email_io
 
 
 input_mbox = argv[1]
-
-num_emails = parse_gmails.num_emails(input_mbox)
 
 #===============================================================================
 #Parsing original emails
@@ -22,7 +21,7 @@ parse_gmails.main( input_mbox, constants.output_prefix,
 
 parser_output_filenames = email_parser.output_filenames( constants.output_prefix ) 
 
-
+num_emails = email_io.load_num_emails( parser_output_filenames['num_emails'] )
 #===============================================================================
 #Running LDA model
 email_lda.main( parser_output_filenames['bag_of_words'],
@@ -52,5 +51,5 @@ root = frame.create_gmail_inode_tree(
 frame.save_inode_tree(root)
 
 print "MeMail Preparation COMPLETE! (Weeuuw!)"
-print "Run memail.py in order to view your sorted email"
+print "enter 'run-memail.py' in order to view your sorted email"
 

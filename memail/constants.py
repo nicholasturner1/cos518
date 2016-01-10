@@ -33,6 +33,6 @@ num_data_passes = 5
 
 #========================================
 #DISPLAY CONSTANTS
-num_topics_per_email = 3
+num_topics_per_email = 2
 num_words_per_topic = 10
 

@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/bin/bash
 
 pip-autoremove memail -y
 

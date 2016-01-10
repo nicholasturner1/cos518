@@ -433,7 +433,7 @@ def column_cluster_ids( assign_matrix, num_ids ):
     assignments = []
     
     for i in range(cols):
-        col_assignment = np.argsort( assign_matrix[:,i] )[::-1][-num_ids:]
+        col_assignment = np.argsort( assign_matrix[:,i] )[::-1][:num_ids]
         assignments.append( col_assignment )
     
     return assignments

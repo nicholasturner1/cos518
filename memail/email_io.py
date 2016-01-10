@@ -181,6 +181,19 @@ def load_tags(filename):
     return tag_dicts
 
 ###################################################################
+#num emails (important for display)
+
+def save_num_emails(num_emails, filename):
+    with open(filename,'w+') as f:
+        f.write(str(num_emails))
+        f.close()
+
+def load_num_emails(filename):
+    with open(filename) as f:
+        num_emails = int(f.read())
+        f.close()
+    return num_emails
+###################################################################
 #mbox files
 
 def read_main_mail(message):
