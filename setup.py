@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='memail',
-      version='0.03',
+      version='0.04',
       description='Personalized Email Project for COS518',
       url='http://github.com/nicholasturner1/cos518',
       author='Nicholas Turner, Yuanzhi Li, Paul Jackson',
