@@ -197,6 +197,21 @@ def read_main_mail(message):
 
     return result
 
+def import_message( message ):
+    '''
+    Translates an mbox message to a dict structure handled by
+    the GUI
+    '''
+    message_dict = {}
+
+    message_dict['email'] = read_main_mail(message)
+    message_dict['sender'] = safe_extract(message, "From")
+    message_dict['to'] = safe_extract(message, "To")
+    message_dict['title'] = safe_extract(message, "Subject")
+    message_dict['date'] = safe_extract(message, "Date")
+
+    return message_dict
+
 def import_mbox(mbox_filename):
     
     mbox = mailbox.mbox( mbox_filename )
@@ -204,15 +219,8 @@ def import_mbox(mbox_filename):
     dict_list = []
 
     for message in mbox:
-        message_dict = {}
 
-        message_dict['email'] = read_main_mail(message)
-        message_dict['sender'] = safe_extract(message, "From")
-        message_dict['to'] = safe_extract(message, "To")
-        message_dict['title'] = safe_extract(message, "Subject")
-        message_dict['date'] = safe_extract(message, "Date")
-
-        dict_list.append( message_dict )
+        dict_list.append( import_message(message) )
 
     return dict_list
 

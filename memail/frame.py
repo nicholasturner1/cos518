@@ -29,6 +29,7 @@ import mailbox
 import social as soc
 from Dialog import Dialog
 import time
+import constants
 
 
 buffer_size = 5000
@@ -1222,6 +1223,118 @@ def consistent_load_thread(_root):
     tkMessageBox.showinfo("Successfully Load...", "Load from: " + all_files[0])
 
 
+
+def create_gmail_inode_tree( mbox_filename, vocab_filename,
+                             ext_filename, num_emails, 
+                             txw_filename, num_topics ):
+    '''
+    Takes the result of the topic modeling, 
+    and returns a new inode tree containing the model
+    organization
+    '''
+
+    root = create_base_inode_tree()
+
+    root = create_topic_nodes( root, num_topics, txw_filename, vocab_filename )
+    
+    root = populate_topic_nodes( root, mbox_filename, ext_filename, num_emails )
+
+    return root
+
+
+def create_base_inode_tree():
+    '''Creates the inode structure common to all of our trees'''
+
+    root = inode( type = "root", name = "ROOT", id = 'R')
+
+    topic_view = inode(parents = [root], children = [],
+                       type='sub root', name='Topic Folder',
+                       id='rt')
+    social_view = inode(parents = [root], children = [],
+                       type='sub root', name='Social Folder',
+                       id='rs')
+    unsorted_view = inode(parents = [root], children = [],
+                       type='sub root', name='Unsorted Folder',
+                       id='ru')
+    
+    root.children = [topic_view, social_view, unsorted_view]
+
+    return root
+        
+
+def fetch_topic_view( root ):
+    '''Returns the topic view inode from an initialized tree'''
+    return [child for child in root.children if child.name == "Topic Folder"][0]
+
+
+def create_topic_nodes( root, num_topics, txw_filename, vocab_filename ):
+    '''Adds an inode for each topic onto the passed inode tree'''
+    
+    topic_view = fetch_topic_view( root )
+
+    topic_x_word = eio.load_topic_x_word( txw_filename, num_topics )
+
+    word_lists = email_lda.print_top_n_words( topic_x_word, 
+                                              vocab_filename, 
+                                              constants.num_words_per_topic )
+
+    for i in range( num_topics ): 
+
+        topic_name =  ', '.join(map(str,word_lists[i]))
+
+        topic_directory = inode(parents = [topic_view], 
+                               children = [], 
+                               name =  'Topic: ' + str(i+1), 
+                               description = topic_name,
+                               type = "directory", 
+                               id = 't' + str(i))
+
+        topic_view.children.append(topic_directory)
+
+    return root
+
+
+def populate_topic_nodes( root, mbox_filename, ext_filename, num_emails ):
+    '''Takes a root inode with empty topic nodes, and populates them with emails'''
+
+    topic_view = fetch_topic_view( root )
+    topic_inodes = topic_view.children
+
+    email_x_topic = eio.load_email_x_topic( ext_filename, num_emails )
+
+    email_assignments = mi.assign_emails( email_x_topic, 
+                                          constants.num_topics_per_email )
+
+    mbox = pg.open_mbox( mbox_filename )
+    mbox_ids = mbox.keys() #likely [0,n-1], but maybe not
+    for i in range( num_emails ):
+        print "Linking Email %d of %d" % (i+1, num_emails)
+
+        message = eio.import_message(mbox[mbox_ids[i]])
+
+        #Creating inode
+        try:
+            message['date'] = str(date_parser( message['date'] )) 
+	    email_inode = inode( parents = [],
+                                 name = message['sender'].strip(),
+				 description = message['title'].strip(), 
+                                 email_directory = [], 
+                                 type = "email",
+                                 children = [], 
+                                 email = message, 
+                                 vec = email_x_topic[i], 
+                                 id = 'e' + str(i) )
+	except:
+            print "WARNING: exception occured in email %d" % i
+            continue
+
+        #Linking to parent topics
+        print email_assignments[i]
+        for topic_id in email_assignments[i]:
+            email_inode.parents.append( topic_inodes[topic_id] )
+            topic_inodes[topic_id].children.append( email_inode )
+    
+    return root
 
 
 def load_gmail_inbox_thread(_root, _thread, _info_session ):
