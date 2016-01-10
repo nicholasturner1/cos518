@@ -20,6 +20,7 @@ setup(name='memail',
 
       scripts=[
       'memail/bin/uninstall-memail.sh',
-      'memail/bin/prepare-memail.py'],
+      'memail/bin/prepare-memail.py',
+      'memail/bin/run-memail.py'],
 
        include_package_data=True)

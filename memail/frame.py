@@ -2143,6 +2143,7 @@ def load_email_thread(tf, root, children):
 #tf.social_training()
     tf.loading = False
 
+root=None #making us able to refer to it outside the module
 def main():
 
     tk = Tk()
@@ -2153,9 +2154,8 @@ def main():
     topic_view = inode(parents = [root], children = children, type = "sub_root", name = "Topic Folder", id = 'rt')
     social_view = inode(parents = [root], type = "sub_root", name = "Social Folder", children = [], id = 'rs')
     unsorted_email_folder = inode(parents = [root], children = [], type = "sub_root", name = "Unsorted Folder", id = 'ru')
-    root.children = [topic_view, social_view, unsorted_email_folder]
-    
-    
+    root.children = [topic_view, social_view, unsorted_email_folder] 
+
     tf = test_frame(tk, root)
     tf.inode_map[root.id] = root
     tf.inode_map[topic_view.id] = topic_view
@@ -2171,6 +2171,8 @@ def main():
     #satf.search('s')
     #thread.start_new_thread(load_email_thread, (tf, topic_view, children))
     tk.mainloop()
+
+    tk.quit()
 
 if __name__ == '__main__':
     main()
