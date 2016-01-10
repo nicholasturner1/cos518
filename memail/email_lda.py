@@ -2,6 +2,7 @@
 
 import email_io as eio
 import email_parser as ep
+import model_interface as mi
 
 #Dependencies
 import gensim
@@ -46,7 +47,8 @@ def train_model(data_filename, num_topics=10, num_passes=1,
         return model
 
 
-def run_inference_over_file(data_filename, model_filename):
+def run_inference_over_file(data_filename, model_filename, save=False,
+     num_topics=None, output_prefix=None):
 
     print "Loading data..."
     data = eio.load_bow(data_filename)
@@ -55,9 +57,20 @@ def run_inference_over_file(data_filename, model_filename):
     corpus = gensim.matutils.Dense2Corpus(data, documents_columns=False)
 
     print "Loading model..."
-    model = gensim.utils.SaveLoad.load(model_filename)
+    model = mi.load_model( model_filename )
 
-    return run_inference(model, corpus)
+    ext = run_inference(model, corpus)
+
+    if save:
+        assert num_topics is not None
+        assert output_prefix is not None
+
+        num_emails = ext.shape[0]
+        filenames = output_filenames( output_prefix, num_emails, num_topics )
+
+        ext.tofile( filenames['email_x_topic'] )
+
+    return ext
 
 
 def run_inference(model_obj, corpus):

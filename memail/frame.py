@@ -1338,7 +1338,6 @@ def populate_topic_nodes( root, mbox_filename, ext_filename, num_emails ):
             continue
 
         #Linking to parent topics
-        print email_assignments[i]
         for topic_id in email_assignments[i]:
             email_inode.parents.append( topic_inodes[topic_id] )
             topic_inodes[topic_id].children.append( email_inode )
