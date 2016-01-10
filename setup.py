@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='memail',
-      version='0.04',
+      version='0.05',
       description='Personalized Email Project for COS518',
       url='http://github.com/nicholasturner1/cos518',
       author='Nicholas Turner, Yuanzhi Li, Paul Jackson',
@@ -14,7 +14,7 @@ setup(name='memail',
       'scipy==0.16.0',
       'gensim',
       'nltk',
-      'sklearn==0.16.1',
+      'sklearn',
       'pip-autoremove'
       ],
 
