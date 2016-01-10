@@ -986,7 +986,7 @@ class test_frame(Frame):
         
         
         for i in range(len(ext2[0])):
-            temp_directory = inode(parents = [root], children = [], name =  'Social: ' + str(i) , type = "directory", id = 's' + str(i))
+            temp_directory = inode(parents = [self.root], children = [], name =  'Social: ' + str(i) , type = "directory", id = 's' + str(i))
 
             #temp_directory.description = temp_directory.description + str(id) + ';'
             temp_directory.description = descriptions[i]
@@ -1173,7 +1173,7 @@ def load_thread(_root, _info_session):
     all_files = sorted(all_files, key=lambda x: x.lower(), reverse=True)
     
     
-    _info_session.new_message = "Loading Emails..."
+    #_info_session.new_message = "Loading Emails..."
     
     
     if all_files:
@@ -1196,9 +1196,9 @@ def load_thread(_root, _info_session):
         _root.unsorted_email_folder = root.children[2]
     #root.children.append(self.unsorted_email_folder)
 
-    _info_session.new_message = "Training Social Model..."
-    #_root.social_training()
-    _info_session.destory()
+    #_info_session.new_message = "Training Social Model..."
+    _root.social_training()
+    #_info_session.destory()
     _root.loading = False
 
 
@@ -1830,6 +1830,7 @@ class load_side_directory():
         self._root = _root
         self.name = "load_directory"
         Active_Thread.append(self)
+        self.master = master
         self.info_session = info_session(master)
     
         
@@ -1868,7 +1869,7 @@ class load_side_directory():
                 self.info_session.new_message = "loading directory..." + str(count) + "%"
         
         
-        tk.after(wait_time, self.run, i, count)
+        self.master.master.after(wait_time, self.run, i, count)
 
 
 class top_directory_frame(Frame):
@@ -1878,6 +1879,9 @@ class top_directory_frame(Frame):
         Frame.__init__(self, master)
         
         ################################################################################################
+
+	font = tkFont.Font(family=directory_font[0], size=directory_font[1])
+	(real_wid,real_height) = (font.measure("a"),font.metrics("linespace"))
         self._frame_height = real_height * 3
         self._wid = real_wid * num_directory_words
         self._height = real_height * 60
@@ -1960,11 +1964,14 @@ class directory_frame(Frame):
 #info session
 class info_session():
     def __init__(self, master):
+	font = tkFont.Font(family=directory_font[0], size=directory_font[1])
+	(real_wid,real_height) = (font.measure("a"),font.metrics("linespace"))
         self.master = master
         self.pb_hD = ttk.Progressbar(master, orient='horizontal', mode='determinate', length = real_wid*40)
         self.pb_hD.grid(row = 4, column = 1, columnspan = all_column, sticky = EW)
         self.info = load_info_frame(master)
         self.info.grid(row = 1, column = 7, sticky = EW)
+        self.master = master
         self.old_value = 0
         self.new_value = 0
         self.old_message = ''
@@ -1986,7 +1993,7 @@ class info_session():
         if not self.new_message == self.old_message:
             self.info._label.configure(text = self.new_message)
             self.old_message = self.new_message
-        tk.after(wait_time, self.update)
+        self.master.master.after(wait_time, self.update)
 
     def destory(self):
         self.pb_hD.grid_forget()
@@ -2136,11 +2143,9 @@ def load_email_thread(tf, root, children):
 #tf.social_training()
     tf.loading = False
 
-if __name__ == '__main__':
+def main():
 
     tk = Tk()
-    font = tkFont.Font(family=directory_font[0], size=directory_font[1])
-    (real_wid,real_height) = (font.measure("a"),font.metrics("linespace"))
 
     #eh = event_handler(tk)
     root = inode( type = "root", name = "ROOT", id = 'R')
@@ -2167,10 +2172,7 @@ if __name__ == '__main__':
     #thread.start_new_thread(load_email_thread, (tf, topic_view, children))
     tk.mainloop()
 
-
-
-
-
-    #tf.login('setsee0000@gmail.com', 'B-Dap3ub')
+if __name__ == '__main__':
+    main()
 
 
