@@ -36,7 +36,7 @@ import constants
 buffer_size = 5000
 buffer_time = 0.05
 
-wait_time = 50
+wait_time = 20
 Active_Thread = []
 
 
@@ -124,6 +124,7 @@ class inode:
         self.hash = 0
         self.vec = vec
         self.ext = ext
+        self.sorted_chronologically = True
         if len(id) >= 2:
             self.id = id
         elif len(id) == 1:
@@ -349,22 +350,31 @@ class test_frame(Frame):
             if not child.email:
                 child.email = self.read_email_text(child.email_directory)
 
-        dropdown = 2
+        
         #sort emails based on dropdown
-        if dropdown == 0: #sort by date
+        #dropdown = 0 #not really a dropdown yet
+
+        #toggled sort between chrono and topic
+        #if dropdown == 0: #sort by date
+        if not self.directory.sorted_chronologically:
             sorted_children = sorted(children, key=lambda x: str(x.email['date']).lower(), reverse=True)
 
-        elif dropdown == 1: #sort by subject
-            sorted_children = sorted(children, key=lambda x: x.email['title'].lower(), reverse=False)
+            self.directory.sorted_chronologically=True
 
-        elif dropdown == 2: #sort by topic proportion
+        #elif dropdown == 1: #sort by subject
+            #sorted_children = sorted(children, key=lambda x: x.email['title'].lower(), reverse=False)
+
+        else:
+        #elif dropdown == 2: #sort by topic proportion
 	    topic_directories = self.directory.parents[0].children
 	    topic_index = [i for i in range(len(topic_directories)) 
 			     if topic_directories[i] == self.directory][0] 
 
             sorted_children = sorted(children, key=lambda x: x.vec[topic_index], reverse=True)
-        else:
-            sorted_children = children
+            
+            self.directory.sorted_chronologically=False
+        #else:
+        #    sorted_children = children
 
         return sorted_children
         
