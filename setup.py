@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='memail',
-      version='0.05',
+      version='0.7',
       description='Personalized Email Project for COS518',
       url='http://github.com/nicholasturner1/cos518',
       author='Nicholas Turner, Yuanzhi Li, Paul Jackson',
@@ -21,6 +21,7 @@ setup(name='memail',
       scripts=[
       'memail/bin/uninstall-memail.sh',
       'memail/bin/prepare-memail.py',
-      'memail/bin/run-memail.py'],
+      'memail/bin/run-memail.py',
+      'memail/bin/remove-memail-data.py'],
 
        include_package_data=True)
