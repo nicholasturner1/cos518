@@ -16,6 +16,7 @@ import email_io
 import mailbox
 import base64
 import argparse
+import random
 
 email_tags = ["From","To","Date","Subject"]
 #=====================================================================
@@ -165,7 +166,27 @@ def parse_into_emails(mbox):
     string is the primary message body (hopefully free of html)
     '''
     return [ extract_body(message) for message in mbox ]
+#=====================================================================
+#Data collection
 
+def subset_mbox(input_filename, num_emails):
+    '''
+    Takes a mbox file and returns a randomized subset of a specified size
+    '''
+    mbox = open_mbox(input_filename)
+    if (num_emails >= len(mbox)):
+        print "ERROR: Mailbox size too small (", len(mbox), " <= ", num_emails, ")"
+        return
+    
+    suffix_idx = input_filename.find('.mbox')
+    output_filename = input_filename[:suffix_idx] + '_subsampled_' + str(num_emails) + '.mbox'
+    mbox_out = mailbox.mbox(output_filename)
+    
+    messages = random.sample(mbox, num_emails)
+    
+    for msg in messages:
+        mbox_out.add(msg)    
+    
 #=====================================================================
 #Script functionality
 
