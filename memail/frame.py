@@ -1118,8 +1118,19 @@ def save_server(master):
 
 
 def save_thread(master, _info_session):
-    _root = master.root
+    '''Usual interface by GUI button'''
+
     _info_session.new_message = "Saving..."
+
+    save_inode_tree(master.root)
+
+    _info_session.destory()
+    ans = Dialog(master,title   = 'Saved',text    = 'Successfully saved to local! File name: ' + file_name, bitmap  = 'questhead', default = 0, strings = ('Ok', 'Good!'))
+
+
+def save_inode_tree(_root):
+    '''Interface used by prepare script'''
+
     #go over inodes and write it to file.
     time = strftime("_%Y_%m_%d_%H_%M_%S", gmtime())
     print time
@@ -1136,7 +1147,7 @@ def save_thread(master, _info_session):
             for child in temp_root.children:
                 queue.append(child)
 
-#remove history
+    #remove history
     all_files = glob.glob(save_file + '*')
     all_files = sorted(all_files, key=lambda x: x.lower(), reverse=True)
     
@@ -1147,15 +1158,13 @@ def save_thread(master, _info_session):
             except OSError:
                 x = 0
 
-#new history
+    #new history
     temp_file_name = temp_save_file
     file_name = save_file + time
     f = open(temp_file_name, 'w')
     pickle.dump(inode_set, f)
     f.close()
     os.rename(temp_file_name, file_name)
-    _info_session.destory()
-    ans = Dialog(master,title   = 'Saved',text    = 'Successfully saved to local! File name: ' + file_name, bitmap  = 'questhead', default = 0, strings = ('Ok', 'Good!'))
 
 
 def load_thread(_root, _info_session):
