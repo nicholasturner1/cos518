@@ -27,17 +27,17 @@ num_emails = email_io.load_num_emails( parser_output_filenames['num_emails'] )
 email_lda.main( parser_output_filenames['bag_of_words'],
                 constants.num_content_topics,
                 constants.num_data_passes,
-                constants.output_prefix ) #we'll be redoing this computation next
-
+                constants.output_prefix )
+ 
 lda_output_filenames = email_lda.output_filenames( constants.output_prefix,
                                                    num_emails, 
                                                    constants.num_content_topics )
 
-email_lda.run_inference_over_file( parser_output_filenames['full bag_of_words'],
-                                   lda_output_filenames['model'],
-                                   save=True,
-                                   num_topics=constants.num_content_topics,
-                                   output_prefix=constants.output_prefix )
+#email_lda.run_inference_over_file( parser_output_filenames['full bag_of_words'],
+#                                   lda_output_filenames['model'],
+#                                   save=True,
+#                                   num_topics=constants.num_content_topics,
+#                                   output_prefix=constants.output_prefix )
  
 
 #===============================================================================

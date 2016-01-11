@@ -1335,7 +1335,8 @@ def populate_topic_nodes( root, mbox_filename, ext_filename, num_emails ):
                                           constants.num_topics_per_email )
 
     mbox = pg.open_mbox( mbox_filename )
-    mbox_ids = mbox.keys() #likely [0,n-1], but maybe not
+    mbox = pg.filter_emails( mbox )
+    mbox_ids = range(len( mbox )) #mbox.keys() #likely [0,n-1], but maybe not
     for i in range( num_emails ):
         print "Linking Email %d of %d" % (i+1, num_emails)
 

@@ -378,7 +378,8 @@ def output_filenames( output_prefix ):
       'vocabulary':         email_io.vocab_filename(output_prefix),
       'bag_of_words':       email_io.mat_filename(output_prefix),
       'full bag_of_words' : email_io.mat_filename(output_prefix + "_full"),
-      'num_emails' :        output_prefix + "_full_num_emails"
+      'full num_emails' :   output_prefix + "_full_num_emails",
+      'num_emails' :        output_prefix + "_num_emails"  
       }
 
 def save_all(bow_matrix, email_tags, vocabulary, output_prefix,
@@ -398,7 +399,8 @@ def save_all(bow_matrix, email_tags, vocabulary, output_prefix,
   email_io.save_bow(filtered_bow, filenames['bag_of_words'])
   email_io.save_bow(bow_matrix, filenames['full bag_of_words'])
 
-  email_io.save_num_emails(bow_matrix.shape[0], filenames['num_emails'])
+  email_io.save_num_emails(bow_matrix.shape[0], filenames['full num_emails'])
+  email_io.save_num_emails(filtered_bow.shape[0], filenames['num_emails'])
 
 def parse_and_save_all(email_text_lines, email_tags, output_prefix,
   min_word_count=-1, dynamic_stopword_thr=-1, term_min_doc_thr=-1, doc_min_len_thr=-1):
