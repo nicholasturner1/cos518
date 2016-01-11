@@ -1767,7 +1767,7 @@ class option_one_frame(Frame):
         option_6.bind("<Button-1>", event_handler.back)
         option_6.grid(row = 1, column = 13, padx = pad_x, pady = pad_y)
 
-        option_10 = Label(self, text = "LoadGmail", bd = 0, bg = information_color, font = option_one_font)
+        option_10 = Label(self, text = "ImportGmail", bd = 0, bg = information_color, font = option_one_font)
         option_10.bind("<Button-1>", event_handler.load_gmail_inbox)
         option_10.grid(row = 1, column = 9, padx = pad_x, pady = pad_y)
 
